@@ -232,6 +232,20 @@ public class JSONTemplate {
         List<Variable> returnValue=new ArrayList<>();
         for (Object key:
                 ((JSONObject)jsonTemplate).keySet()) {
+            if(key instanceof String){
+                if(isVariable((String)key)){
+                    String variableName=getVariableName((String)key);
+                    if(variableName.startsWith("_") && !variableName.equals("_this")){
+                        //do nothing;
+                    } else{
+                        Variable variable=new Variable();
+                        variable.setName(variableName);
+                        variable.setType("String");
+                        returnValue.add(variable);
+                    }
+                }
+            }
+
             Object oValue=((JSONObject)jsonTemplate).get(key);
 
             if(oValue instanceof String){
