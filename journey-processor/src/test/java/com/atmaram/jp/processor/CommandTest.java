@@ -93,7 +93,7 @@ public class CommandTest {
         GetUnit step1=new GetUnit();
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
-        BodiedUnit step2=new BodiedUnit();
+        PostUnit step2=new PostUnit();
         step2.setUrlTemplate("http://localhost");
         step2.setResponseTemplate("{\"name\":\"World\"}");
         step2.setRequestTemplate("{\"place\": \"Mumbai\"}");

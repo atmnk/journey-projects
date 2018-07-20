@@ -21,7 +21,7 @@ public abstract class BodiedUnit extends RestUnit {
     }
 
     public Unit fillObject(BodiedUnit bodiedUnit,ValueStore valueStore){
-        fillObject(bodiedUnit,valueStore);
+        fillObject((RestUnit) bodiedUnit,valueStore);
         String body = requestTemplate;
         try {
             bodiedUnit.requestTemplate = JSONTemplate.parse(body).fill(valueStore.getValues()).toJSONString();
