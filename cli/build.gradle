@@ -1,0 +1,12 @@
+dependencies {
+    compile project(':journey-processor')
+    compile project(':template-processor')
+}
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.atmaram.jp.cli.Main'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

@@ -1,0 +1,9 @@
+repositories {
+
+}
+
+dependencies {
+    compile project(':template-processor')
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
+
+}

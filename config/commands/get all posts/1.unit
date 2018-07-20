@@ -1,0 +1,5 @@
+Method=GET
+https://jsonplaceholder.typicode.com/posts
+RequestHeader={"content-type":"application/json"}
+Response=[{{#posts}}{"userId":${userId},"id":${id},"title":${title},"body":${body}}{{/posts}}]
+ResponseHeader={}
