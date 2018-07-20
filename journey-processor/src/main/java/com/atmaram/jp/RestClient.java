@@ -69,4 +69,37 @@ public class RestClient {
         return postRequest.body(body)
                 .asString();
     }
+    public HttpResponse<String> put(String url,List<RequestHeader> headers,String body) throws UnirestException {
+        HttpRequestWithBody putRequest= Unirest.put(url);
+        if(headers!=null) {
+            for (RequestHeader requestHeader :
+                    headers) {
+                putRequest = putRequest.header(requestHeader.getName(), requestHeader.getValueTemplate());
+            }
+        }
+        return putRequest.body(body)
+                .asString();
+    }
+    public HttpResponse<String> patch(String url,List<RequestHeader> headers,String body) throws UnirestException {
+        HttpRequestWithBody patchRequest= Unirest.patch(url);
+        if(headers!=null) {
+            for (RequestHeader requestHeader :
+                    headers) {
+                patchRequest = patchRequest.header(requestHeader.getName(), requestHeader.getValueTemplate());
+            }
+        }
+        return patchRequest.body(body)
+                .asString();
+    }
+    public HttpResponse<String> delete(String url,List<RequestHeader> headers,String body) throws UnirestException {
+        HttpRequestWithBody deleteRequest= Unirest.delete(url);
+        if(headers!=null) {
+            for (RequestHeader requestHeader :
+                    headers) {
+                deleteRequest = deleteRequest.header(requestHeader.getName(), requestHeader.getValueTemplate());
+            }
+        }
+        return deleteRequest.body(body)
+                .asString();
+    }
 }

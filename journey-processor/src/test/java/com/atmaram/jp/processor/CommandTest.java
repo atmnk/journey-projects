@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -94,7 +93,7 @@ public class CommandTest {
         GetUnit step1=new GetUnit();
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
-        PostUnit step2=new PostUnit();
+        BodiedUnit step2=new BodiedUnit();
         step2.setUrlTemplate("http://localhost");
         step2.setResponseTemplate("{\"name\":\"World\"}");
         step2.setRequestTemplate("{\"place\": \"Mumbai\"}");

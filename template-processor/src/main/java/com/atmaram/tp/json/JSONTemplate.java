@@ -305,27 +305,34 @@ public class JSONTemplate {
 
         for (Object key:
                 joObject.keySet()) {
+            Object newKey=key;
+            if(key instanceof String){
+                if(((String)key).startsWith("${") && ((String)key).endsWith("}")){
+                    String variableName=((String)key).substring(2,((String)key).length()-1);
+                    newKey=VariableValueProcessor.getValue(variableName,data);
+                }
+            }
             Object value=joObject.get(key);
             if(value instanceof String){
                 if(((String)value).startsWith("${") && ((String)value).endsWith("}")){
                     String variableName=((String)value).substring(2,((String)value).length()-1);
-                    ojoObject.put(key, VariableValueProcessor.getValue(variableName,data));
+                    ojoObject.put(newKey, VariableValueProcessor.getValue(variableName,data));
                 } else {
-                    ojoObject.put(key,value);
+                    ojoObject.put(newKey,value);
                 }
             } else if(value instanceof JSONLoop){
                 JSONTemplate loopJSONTemplate=new JSONTemplate((JSONLoop)value);
                 JSONAware arrayOutput=loopJSONTemplate.fillJSONLoop(data);
-                ojoObject.put(key,arrayOutput);
+                ojoObject.put(newKey,arrayOutput);
             }
             else if (value instanceof JSONObject){
                 JSONTemplate jsonTemplate =new JSONTemplate((JSONObject) value);
-                ojoObject.put(key, jsonTemplate.fill(data));
+                ojoObject.put(newKey, jsonTemplate.fill(data));
             } else if (value instanceof JSONArray){
                 JSONTemplate jsonTemplate =new JSONTemplate((JSONArray) value);
-                ojoObject.put(key, jsonTemplate.fill(data));
+                ojoObject.put(newKey, jsonTemplate.fill(data));
             } else {
-                ojoObject.put(key,value);
+                ojoObject.put(newKey,value);
             }
         }
 

@@ -192,6 +192,13 @@ public class JSONTemplateTest {
         JSONObject op=(JSONObject)JSONTemplate.parse("{\"name\":[{{#items}}{\"name\":${name},\"place\":${place}}{{/items}}]}").fill(objData);
         assertThat(op.toJSONString()).isEqualTo("{\"name\":[{\"name\":\"Atmaram\",\"place\":\"Mumbai\"},{\"name\":\"Roopa\",\"place\":\"Pune\"}]}");
     }
+    @Test
+    public void should_fill_keys_with_variables() throws TemplateParseException {
+        HashMap<String,Object> objData=new JSONObject();
+        objData.put("name","Hello");
+        JSONObject op=(JSONObject)JSONTemplate.parse("{${name}:\"World\"}").fill(objData);
+        assertThat(op.toJSONString()).isEqualTo("{\"Hello\":\"World\"}");
+    }
 
     //Extract Tests
     @Test

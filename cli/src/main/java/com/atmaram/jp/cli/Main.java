@@ -6,7 +6,6 @@ import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.model.*;
 
 import com.atmaram.tp.Variable;
-import com.atmaram.tp.common.exceptions.TemplateParseException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -18,20 +17,52 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException {
 
         Scanner input=new Scanner(System.in);
+
+//        if(args.length>0){
+//            for(int i=0;i<args.length;i++){
+//                System.out.println(args[i]);
+//            }
+//        }
+
+
+
+        List<String> commands=getCommands(Paths.get("config/commands"));
+        List<String> filtered_commands;
+        if(args.length==0){
+            filtered_commands=commands;
+        } else {
+            filtered_commands = commands.stream().filter(s -> {
+                for (int i = 0; i < args.length; i++) {
+                    if (!s.toLowerCase().contains(args[i].toLowerCase()))
+                        return false;
+                }
+                return true;
+            }).collect(Collectors.toList());
+        }
+        int iCommand=0;
+        if(filtered_commands.size()>1){
+            System.out.println("Select command:");
+            for(int i=0;i<filtered_commands.size();i++){
+                System.out.println(i+") "+filtered_commands.get(i));
+            }
+            iCommand=Integer.parseInt(input.nextLine());
+        }
+        if(filtered_commands.size()==0){
+            System.out.println("No Matching command");
+            return;
+        }
+        System.out.println("Running Command: "+filtered_commands.get(iCommand));
+
+
         System.out.println("Input Environment:");
         String[] envs=input.nextLine().split(" ");
-        List<String> commands=getCommands(Paths.get("config/commands"));
 
-        System.out.println("Select command:");
-        for(int i=0;i<commands.size();i++){
-            System.out.println(i+") "+commands.get(i));
-        }
-        int iCommand=Integer.parseInt(input.nextLine());
         List<Environment> environments=new ArrayList<>();
         for (int i=0;i<envs.length;i++) {
             Path baseEnvFile = Paths.get("config/env/" + envs[i]);
@@ -39,7 +70,7 @@ public class Main {
             environments.add(environment);
         }
 
-        Path baseCommandDir = Paths.get("config/commands/"+commands.get(iCommand));
+        Path baseCommandDir = Paths.get("config/commands/"+filtered_commands.get(iCommand));
 
         Command command=readCommand(baseCommandDir);
         ValueStore valueStore=new ValueStore();
@@ -264,7 +295,7 @@ public class Main {
             String method = scanner.nextLine().split("=")[1];
             String url = scanner.nextLine();
             String body = "";
-            if (method.equals("POST")) {
+            if (method.equals("POST") || method.equals("PUT") || method.equals("PATCH") || method.equals("DELETE")) {
                 body = scanner.nextLine().split("=")[1];
             }
             String requestHeader = scanner.nextLine().split("=")[1];
@@ -313,6 +344,36 @@ public class Main {
                 postUnit.setWait(wait);
                 postUnit.setName(file.getName());
                 return postUnit;
+            } else if(method.equals("PUT")){
+                PutUnit putUnit = new PutUnit();
+                putUnit.setUrlTemplate(url);
+                putUnit.setRequestTemplate(body);
+                putUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
+                putUnit.setRequestHeaders(requestHeaders);
+                putUnit.setResponseHeaders(responseHeaders);
+                putUnit.setWait(wait);
+                putUnit.setName(file.getName());
+                return putUnit;
+            }else if(method.equals("PATCH")){
+                PatchUnit patchUnit = new PatchUnit();
+                patchUnit.setUrlTemplate(url);
+                patchUnit.setRequestTemplate(body);
+                patchUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
+                patchUnit.setRequestHeaders(requestHeaders);
+                patchUnit.setResponseHeaders(responseHeaders);
+                patchUnit.setWait(wait);
+                patchUnit.setName(file.getName());
+                return patchUnit;
+            }else if(method.equals("DELETE")){
+                DeleteUnit deleteUnit = new DeleteUnit();
+                deleteUnit.setUrlTemplate(url);
+                deleteUnit.setRequestTemplate(body);
+                deleteUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
+                deleteUnit.setRequestHeaders(requestHeaders);
+                deleteUnit.setResponseHeaders(responseHeaders);
+                deleteUnit.setWait(wait);
+                deleteUnit.setName(file.getName());
+                return deleteUnit;
             }
         }
         return null;
