@@ -8,7 +8,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -228,7 +231,7 @@ public class JSONTemplateTest {
                 "    \"Number\": \"213231231231231\",\n" +
                 "    \"Id\": {\n" +
                 "      \"Id\": \"My-ID\",\n" +
-                "      \"Number\": \"BTY-X393700\"" +
+                "      \"Number\": \"ABCD-X393700\"" +
                 "    }\n" +
                 "  }\n" +
                 "]");
@@ -278,6 +281,91 @@ public class JSONTemplateTest {
             assertThat(listElement.get("name")).isIn("Atmaram","Roopa");
             assertThat(listElement.get("place")).isIn("Pune","Mumbai");
         }
+    }
+
+
+
+    //This tests
+
+//    @Test
+//    public void should_extract_this_variable_in_loop_containing_just_variable_this() throws TemplateParseException, ParseException {
+//        JSONParser parser=new JSONParser();
+//        JSONTemplate jsonTemplate =JSONTemplate.parse("{\"names\":[{{#names}}${_this}{{/names}}]}");
+//        JSONObject objResult=(JSONObject) parser.parse("{\"names\":[\"Atmaram\",\"Roopa\"]}");
+//        HashMap<String,Object> objData= jsonTemplate.extract(objResult);
+//        assertThat(objData.containsKey("names")).isTrue();
+//        assertThat(objData.get("names")).isInstanceOf(List.class);
+//        assertThat(((ArrayList)objData.get("names")).size()).isEqualTo(2);
+//        List list=(List)objData.get("names");
+//        for(int i=0;i<list.size();i++){
+//            Object listElement=list.get(i);
+//            assertThat(listElement).isInstanceOf(String.class);
+//            assertThat(listElement).isIn("Atmaram","Roopa");
+//        }
+//    }
+
+    @Test
+    public void should_extract_this_variable_in_loop() throws TemplateParseException, ParseException {
+        JSONParser parser=new JSONParser();
+        JSONTemplate jsonTemplate =JSONTemplate.parse("{\"names\":[{{#names}}{\"name\":${_this}}{{/names}}]}");
+        JSONObject objResult=(JSONObject) parser.parse("{\"names\":[{\"name\":\"Atmaram\"},{\"name\":\"Roopa\"}]}");
+        HashMap<String,Object> objData= jsonTemplate.extract(objResult);
+        assertThat(objData.containsKey("names")).isTrue();
+        assertThat(objData.get("names")).isInstanceOf(List.class);
+        assertThat(((ArrayList)objData.get("names")).size()).isEqualTo(2);
+        List list=(List)objData.get("names");
+        for(int i=0;i<list.size();i++){
+            Object listElement=list.get(i);
+            assertThat(listElement).isInstanceOf(String.class);
+            assertThat(listElement).isIn("Atmaram","Roopa");
+        }
+    }
+
+    @Test
+    public void should_extract_this_variable_in_loop_with_object() throws TemplateParseException, ParseException {
+        JSONParser parser=new JSONParser();
+        JSONTemplate jsonTemplate =JSONTemplate.parse("{\"names\":[{{#names}}{\"name\":{\"name1\":${_this}}}{{/names}}]}");
+        JSONObject objResult=(JSONObject) parser.parse("{\"names\":[{\"name\":{\"name1\":\"Atmaram\"}},{\"name\":{\"name1\":\"Roopa\"}}]}");
+        HashMap<String,Object> objData= jsonTemplate.extract(objResult);
+        assertThat(objData.containsKey("names")).isTrue();
+        assertThat(objData.get("names")).isInstanceOf(List.class);
+        assertThat(((ArrayList)objData.get("names")).size()).isEqualTo(2);
+        List list=(List)objData.get("names");
+        for(int i=0;i<list.size();i++){
+            Object listElement=list.get(i);
+            assertThat(listElement).isInstanceOf(String.class);
+            assertThat(listElement).isIn("Atmaram","Roopa");
+        }
+    }
+
+    @Test
+    public void should_extract_this_variable_as_loop_variable() throws TemplateParseException, ParseException {
+        JSONParser parser=new JSONParser();
+        JSONTemplate jsonTemplate =JSONTemplate.parse("{\"names\":[{{#names}}{\"name\":[{{#_this}}{\"place\":${_this}}{{/_this}}]}{{/names}}]}");
+        JSONObject objResult=(JSONObject) parser.parse("{\n" +
+                "\t\"names\": [{\n" +
+                "\t\t\"name\": [{\n" +
+                "\t\t\t\"place\": \"Pune\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"place\": \"Mumbai\"\n" +
+                "\t\t}]\n" +
+                "\t}, {\n" +
+                "\t\t\"name\": [{\n" +
+                "\t\t\t\"place\": \"London\"\n" +
+                "\t\t}, {\n" +
+                "\t\t\t\"place\": \"Paris\"\n" +
+                "\t\t}]\n" +
+                "\t}]\n" +
+                "}");
+        HashMap<String,Object> objData= jsonTemplate.extract(objResult);
+        assertThat(objData.containsKey("names")).isTrue();
+        assertThat(objData.get("names")).isInstanceOf(List.class);
+        assertThat(((ArrayList)objData.get("names")).size()).isEqualTo(2);
+        List list=(List)objData.get("names");
+        for(int i=0;i<list.size();i++){
+            Object listElement=list.get(i);
+            assertThat(listElement).isInstanceOf(List.class);
+            assertThat(listElement).isIn(Arrays.asList(Arrays.asList("Pune","Mumbai"),Arrays.asList("London","Paris")));        }
     }
 
     //getVariables Tests

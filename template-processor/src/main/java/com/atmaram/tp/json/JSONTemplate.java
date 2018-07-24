@@ -120,7 +120,12 @@ public class JSONTemplate {
                 JSONObject arrayElementJSONResult=(JSONObject)oValue;
                 JSONTemplate jsonTemplate =new JSONTemplate();
                 jsonTemplate.jsonTemplate=jlValue.inner_object;
-                lst.add(jsonTemplate.extract(arrayElementJSONResult));
+                HashMap<String,Object> extracted=jsonTemplate.extract(arrayElementJSONResult);
+                if(extracted.containsKey("_this") && extracted.keySet().size()==1){
+                    lst.add(extracted.get("_this"));
+                } else {
+                    lst.add(extracted);
+                }
             } else if(oValue instanceof String){
                 if(isVariable((String)oValue)){
                     String newVariableName=getVariableName((String)oValue);
