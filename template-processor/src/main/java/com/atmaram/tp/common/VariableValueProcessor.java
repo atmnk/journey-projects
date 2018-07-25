@@ -1,21 +1,34 @@
 package com.atmaram.tp.common;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class VariableValueProcessor {
+    private Executable executable;
+    private Matchable matchable;
+
+    public VariableValueProcessor(Matchable matchable,Executable executable) {
+        this.executable = executable;
+        this.matchable = matchable;
+    }
+
+    static VariableValueProcessor timestamp=new VariableValueProcessor((String expression)->expression.equals("_timestamp"),(String expression)->new Date().getTime());
+    static VariableValueProcessor eval=new VariableValueProcessor((String expression)->expression.startsWith("_eval"),(String expression)->getVal(expression.substring(6,expression.length()-1)));
+    static VariableValueProcessor uuid=new VariableValueProcessor((String expression)->expression.equals("_uuid"), (String expression)->UUID.randomUUID().toString());
+    static List<VariableValueProcessor> allProcessors=Arrays.asList(timestamp,eval,uuid);
+    public static void addProcessor(VariableValueProcessor variableValueProcessor){
+        allProcessors.add(variableValueProcessor);
+    }
     public static Object getValue(String name, HashMap<String,Object> data) {
         if(name.startsWith("_")){
             if(name.equals("_this")){
                 return data.get("_this");
-            } else if(name.equals("_timestamp")){
-                return new Date().getTime();
-            } else if(name.startsWith("_eval")){
-                return getVal(name.substring(6,name.length()-1));
-            } else if(name.equals("_uuid")){
-                return UUID.randomUUID().toString();
+            } else {
+                for (VariableValueProcessor variableValueProcessor:
+                     allProcessors) {
+                    if(variableValueProcessor.matchable.match(name)){
+                        return variableValueProcessor.executable.execute(name);
+                    }
+                }
             }
         }
         if(data.containsKey(name)){

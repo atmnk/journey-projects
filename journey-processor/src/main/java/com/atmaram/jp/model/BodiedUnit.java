@@ -10,6 +10,7 @@ import com.atmaram.tp.json.JSONTemplate;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.Data;
+import org.json.simple.JSONAware;
 
 import java.util.List;
 
@@ -24,7 +25,12 @@ public abstract class BodiedUnit extends RestUnit {
         fillObject((RestUnit) bodiedUnit,valueStore);
         String body = requestTemplate;
         try {
-            bodiedUnit.requestTemplate = JSONTemplate.parse(body).fill(valueStore.getValues()).toJSONString();
+            JSONTemplate rTemplate=JSONTemplate.parse(body).fill(valueStore.getValues());
+            if(rTemplate.toJSONCompatibleObject() instanceof JSONAware)
+                bodiedUnit.requestTemplate = ((JSONAware) rTemplate.toJSONCompatibleObject()).toJSONString();
+            else{
+                bodiedUnit.requestTemplate=rTemplate.toJSONCompatibleObject().toString();
+            }
         } catch (TemplateParseException e) {
             e.printStackTrace();
         }

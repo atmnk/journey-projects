@@ -116,7 +116,7 @@ public abstract class RestUnit extends Unit{
         if(!responseTemplate.trim().equals("")) {
             HashMap<String, Object> extractedValues = null;
             try {
-                extractedValues = JSONTemplate.parse(responseTemplate).extract((JSONAware) (new JSONParser()).parse(output.getBody()));
+                extractedValues = JSONTemplate.parse(responseTemplate).extract((new JSONParser()).parse(output.getBody()));
             } catch (TemplateParseException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
