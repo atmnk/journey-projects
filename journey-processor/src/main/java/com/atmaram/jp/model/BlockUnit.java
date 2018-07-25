@@ -8,7 +8,6 @@ import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.text.TextTemplate;
 import lombok.Data;
-import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,11 +84,7 @@ public class BlockUnit extends Unit {
                             e.printStackTrace();
                         }
                         String envValue = null;
-                        try {
-                            envValue = TextTemplate.parse(textTemplate.fill(valueStore.getValues())).fill(newValueStore.getValues());
-                        } catch (TemplateParseException e) {
-                            e.printStackTrace();
-                        }
+                        envValue = textTemplate.fill(valueStore.getValues()).fill(newValueStore.getValues()).toValue();
                         newValueStore.add(environmentVariable.getName(), envValue);
                     }
                 }

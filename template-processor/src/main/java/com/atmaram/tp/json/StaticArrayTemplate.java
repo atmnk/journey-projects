@@ -2,13 +2,12 @@ package com.atmaram.tp.json;
 
 import com.atmaram.tp.Variable;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StaticArrayTemplate implements JSONTemplate {
+class StaticArrayTemplate implements JSONTemplate {
     List<JSONTemplate> memberTemplates=new ArrayList<>();
 
     public StaticArrayTemplate() {

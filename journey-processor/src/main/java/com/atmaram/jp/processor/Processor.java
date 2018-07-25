@@ -1,24 +1,5 @@
 package com.atmaram.jp.processor;
 
-import com.atmaram.jp.RestClient;
-import com.atmaram.jp.ValueStore;
-import com.atmaram.jp.VariableStore;
-import com.atmaram.jp.model.*;
-import com.atmaram.tp.Variable;
-import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.json.JSONTemplate;
-import com.atmaram.tp.text.TextTemplate;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.simple.JSONAware;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 public class Processor {
 //    RestClient restClient;
 //    public Processor(){

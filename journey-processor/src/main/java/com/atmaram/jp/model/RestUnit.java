@@ -10,7 +10,6 @@ import com.atmaram.tp.json.JSONTemplate;
 import com.atmaram.tp.text.TextTemplate;
 import com.mashape.unirest.http.HttpResponse;
 import lombok.Data;
-import org.json.simple.JSONAware;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -76,7 +75,7 @@ public abstract class RestUnit extends Unit{
         String url = urlTemplate;
 
         try {
-            restUnit.urlTemplate = TextTemplate.parse(url).fill(valueStore.getValues());
+            restUnit.urlTemplate = TextTemplate.parse(url).fill(valueStore.getValues()).toValue();
         } catch (TemplateParseException e) {
             e.printStackTrace();
         }
@@ -87,7 +86,7 @@ public abstract class RestUnit extends Unit{
                 RequestHeader filledRequestHeader=new RequestHeader();
                 filledRequestHeader.setName(requestHeader.getName());
                 try {
-                    filledRequestHeader.setValueTemplate(TextTemplate.parse(requestHeader.getValueTemplate()).fill(valueStore.getValues()));
+                    filledRequestHeader.setValueTemplate(TextTemplate.parse(requestHeader.getValueTemplate()).fill(valueStore.getValues()).toValue());
                 } catch (TemplateParseException e) {
                     e.printStackTrace();
                 }

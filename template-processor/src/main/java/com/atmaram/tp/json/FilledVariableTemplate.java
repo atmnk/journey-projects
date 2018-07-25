@@ -7,9 +7,8 @@ import org.json.simple.JSONAware;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class FilledVariableTemplate implements JSONTemplate {
+class FilledVariableTemplate implements JSONTemplate {
     Object variableValue;
 
     public FilledVariableTemplate(Object variableValue) {

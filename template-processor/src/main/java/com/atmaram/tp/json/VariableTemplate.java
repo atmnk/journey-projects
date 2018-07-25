@@ -2,14 +2,13 @@ package com.atmaram.tp.json;
 
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.VariableValueProcessor;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VariableTemplate implements JSONTemplate {
+class VariableTemplate implements JSONTemplate {
     String variableName;
 
     public VariableTemplate(String variableName) {

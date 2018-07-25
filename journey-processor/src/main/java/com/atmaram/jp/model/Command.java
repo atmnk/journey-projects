@@ -7,18 +7,10 @@ import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.json.JSONTemplate;
 import com.atmaram.tp.text.TextTemplate;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.Data;
-import org.json.simple.JSONAware;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -45,7 +37,7 @@ public class Command {
                 } catch (TemplateParseException e) {
                     e.printStackTrace();
                 }
-                String envValue = textTemplate.fill(valueStore.getValues());
+                String envValue = textTemplate.fill(valueStore.getValues()).toValue();
                 valueStore.add(environmentVariable.getName(), envValue);
             }
         }
@@ -60,7 +52,7 @@ public class Command {
                     } catch (TemplateParseException e) {
                         e.printStackTrace();
                     }
-                    String envValue = textTemplate.fill(valueStore.getValues());
+                    String envValue = textTemplate.fill(valueStore.getValues()).toValue();
                     valueStore.add(environmentVariable.getName(), envValue);
                 }
             }

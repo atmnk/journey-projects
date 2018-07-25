@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class LoopTemplate implements JSONTemplate {
+class LoopTemplate implements JSONTemplate {
     String variableName;
     JSONTemplate innerObjectTemplate;
 

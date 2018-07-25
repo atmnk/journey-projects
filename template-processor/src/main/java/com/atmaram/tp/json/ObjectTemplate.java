@@ -1,15 +1,13 @@
 package com.atmaram.tp.json;
 
 import com.atmaram.tp.Variable;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ObjectTemplate implements JSONTemplate {
+class ObjectTemplate implements JSONTemplate {
     HashMap<JSONTemplate,JSONTemplate> keyValueTemplates=new HashMap<>();
     public void put(JSONTemplate keyTemplate,JSONTemplate valueTemplate){
         keyValueTemplates.put(keyTemplate,valueTemplate);
