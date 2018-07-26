@@ -13,7 +13,11 @@ class ArrayTextTemplate implements TextTemplate{
         blocks=new ArrayList<>();
     }
     public void add(TextTemplate block){
-        blocks.add(block);
+        if(blocks.size()>0 && blocks.get(blocks.size()-1) instanceof FilledTextTemplate && block instanceof FilledTextTemplate){
+            ((FilledTextTemplate)blocks.get(blocks.size()-1)).merge((FilledTextTemplate)block);
+        } else {
+            blocks.add(block);
+        }
     }
     @Override
     public TextTemplate fill(HashMap<String, Object> data) {

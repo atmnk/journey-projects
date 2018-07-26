@@ -26,4 +26,8 @@ class FilledTextTemplate implements TextTemplate {
     public String toValue() {
         return value;
     }
+
+    public void merge(FilledTextTemplate toAdd){
+        this.value=this.value+toAdd.value;
+    }
 }
