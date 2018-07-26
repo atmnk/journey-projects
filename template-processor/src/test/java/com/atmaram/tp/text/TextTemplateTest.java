@@ -2,6 +2,8 @@ package com.atmaram.tp.text;
 
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 
+import com.atmaram.tp.json.JSONTemplate;
+import org.json.simple.JSONArray;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,6 +13,23 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TextTemplateTest {
+    @Test
+    public void should_fill_expressions_having_uuid() throws TemplateParseException {
+        String obj=TextTemplate.parse("${_uuid}").fill(null).toValue();
+        assertThat(obj).isInstanceOf(String.class);
+    }
+
+    @Test
+    public void should_fill_expressions_having_eval() throws TemplateParseException {
+        String obj=TextTemplate.parse("${_eval(####)}").fill(null).toValue();
+        assertThat(obj).isInstanceOf(String.class);
+        assertThat(obj.length()).isEqualTo(4);
+    }
+    @Test
+    public void should_fill_expressions_having_timestamp() throws TemplateParseException {
+        String obj=TextTemplate.parse("${_timestamp}").fill(null).toValue();
+        assertThat(obj).isInstanceOf(String.class);
+    }
     @Test
     public void should_parse_text_template_without_variable() throws TemplateParseException {
         TextTemplate textTemplate=TextTemplate.parse("Hello");

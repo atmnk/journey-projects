@@ -49,7 +49,11 @@ public interface JSONTemplate {
             } else {
                 try {
                     Object parsed=new JSONParser().parse((String)jsonTemplate);
-                    return JSONTemplate.from(parsed);
+                    if(parsed instanceof JSONAware){
+                        JSONTemplate.from(parsed);
+                    } else {
+                        return new FilledVariableTemplate(jsonTemplate);
+                    }
                 } catch (ParseException e) {
                     return new FilledVariableTemplate(jsonTemplate);
                 }

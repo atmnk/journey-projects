@@ -26,10 +26,14 @@ class TextVariableTemplate implements TextTemplate {
 
     @Override
     public List<Variable> getVariables() {
-        Variable variable=new Variable();
-        variable.setName(variableName);
-        variable.setType("String");
-        return Arrays.asList(variable);
+        if(variableName.startsWith("_") && !variableName.equals("_this")){
+            return Arrays.asList();
+        } else {
+            Variable variable = new Variable();
+            variable.setName(variableName);
+            variable.setType("String");
+            return Arrays.asList(variable);
+        }
     }
 
     @Override
