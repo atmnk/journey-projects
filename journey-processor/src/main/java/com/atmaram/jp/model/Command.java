@@ -60,7 +60,7 @@ public class Command {
         if(units!=null) {
             for (int i = 0; i < units.size(); i++) {
                 Unit currentUnit = units.get(i);
-                currentUnit.fill(valueStore).execute(restClient,valueStore);
+                currentUnit.fill(valueStore).execute(restClient,valueStore,0);
 
             }
         }

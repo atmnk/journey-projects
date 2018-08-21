@@ -11,14 +11,20 @@ public class VariableValueProcessor {
         this.matchable = matchable;
     }
 
-    static VariableValueProcessor timestamp=new VariableValueProcessor((String expression)->expression.equals("_timestamp"),(String expression)->new Date().getTime());
-    static VariableValueProcessor eval=new VariableValueProcessor((String expression)->expression.startsWith("_eval"),(String expression)->getVal(expression.substring(6,expression.length()-1)));
-    static VariableValueProcessor uuid=new VariableValueProcessor((String expression)->expression.equals("_uuid"), (String expression)->UUID.randomUUID().toString());
+    static VariableValueProcessor timestamp=new VariableValueProcessor((String expression)->expression.startsWith("_timestamp"),(String expression,HashMap<String,Object> data)->new Date().getTime());
+    static VariableValueProcessor eval=new VariableValueProcessor((String expression)->expression.startsWith("_eval"),(String expression,HashMap<String,Object> data)->{
+        String newExpr=expression.split(">")[0];
+        return getVal(newExpr.substring(6,newExpr.length()-1));
+    });
+    static VariableValueProcessor uuid=new VariableValueProcessor((String expression)->expression.startsWith("_uuid"), (String expression,HashMap<String,Object> data)->UUID.randomUUID().toString());
     static List<VariableValueProcessor> allProcessors=Arrays.asList(timestamp,eval,uuid);
     public static void addProcessor(VariableValueProcessor variableValueProcessor){
         allProcessors.add(variableValueProcessor);
     }
     public static Object getValue(String name, HashMap<String,Object> data) {
+        if(data !=null && data.containsKey(name)) {
+            return data.get(name);
+        }
         if(name.startsWith("_")){
             if(name.equals("_this")){
                 return data.get("_this");
@@ -26,17 +32,17 @@ public class VariableValueProcessor {
                 for (VariableValueProcessor variableValueProcessor:
                      allProcessors) {
                     if(variableValueProcessor.matchable.match(name)){
-                        return variableValueProcessor.executable.execute(name);
+                        Object value=variableValueProcessor.executable.execute(name,data);
+                        String[] processorargs=name.split(">");
+                        if(processorargs.length>1){
+                            data.put(processorargs[1],value);
+                        }
+                        return value;
                     }
                 }
             }
         }
-        if(data.containsKey(name)){
-            return data.get(name);
-        } else {
-            return "${"+name+"}";
-        }
-
+        return "${"+name+"}";
     }
     private static String getVal(String pattern){
         if(pattern.equals(""))

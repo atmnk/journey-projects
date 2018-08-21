@@ -31,6 +31,14 @@ public class TextTemplateTest {
         assertThat(obj).isInstanceOf(String.class);
     }
     @Test
+    public void should_fill_expressions_having_ref() throws TemplateParseException {
+        String obj=TextTemplate.parse("${_timestamp>ref1}${ref1}").fill(new HashMap<>()).toValue();
+        assertThat(obj).isInstanceOf(String.class);
+        for (int i=0;i<(obj.length()/2);i++){
+            assertThat(obj.charAt(i)==obj.charAt(obj.length()/2+i));
+        }
+    }
+    @Test
     public void should_parse_text_template_without_variable() throws TemplateParseException {
         TextTemplate textTemplate=TextTemplate.parse("Hello");
         assertThat(textTemplate).isInstanceOf(FilledTextTemplate.class);

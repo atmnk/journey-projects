@@ -2,6 +2,7 @@ package com.atmaram.tp.json;
 
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.text.TextTemplate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

@@ -6,6 +6,8 @@ import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.model.*;
 
 import com.atmaram.tp.Variable;
+import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.json.JSONTemplate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -20,91 +22,109 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException {
+    public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
+        JSONObject jsonObject = new JSONObject();
 
-        Scanner input=new Scanner(System.in);
-
-//        if(args.length>0){
-//            for(int i=0;i<args.length;i++){
-//                System.out.println(args[i]);
-//            }
-//        }
-
-
-
-        List<String> commands=getCommands(Paths.get("config/commands"));
-        List<String> filtered_commands;
-        if(args.length==0){
-            filtered_commands=commands;
-        } else {
-            filtered_commands = commands.stream().filter(s -> {
-                for (int i = 0; i < args.length; i++) {
-                    if (!s.toLowerCase().contains(args[i].toLowerCase()))
-                        return false;
+            List<String> lEnv = new ArrayList<>();
+            List<String> lFilter = new ArrayList<>();
+            for (String arg :
+                    args) {
+                if (isEnv(arg)) {
+                    lEnv.add(arg);
+                } else {
+                    lFilter.add(arg);
                 }
-                return true;
-            }).collect(Collectors.toList());
-        }
-        int iCommand=0;
-        if(filtered_commands.size()>1){
-            System.out.println("Select command:");
-            for(int i=0;i<filtered_commands.size();i++){
-                System.out.println(i+") "+filtered_commands.get(i));
             }
-            iCommand=Integer.parseInt(input.nextLine());
-        }
-        if(filtered_commands.size()==0){
-            System.out.println("No Matching command");
-            return;
-        }
-        System.out.println("Running Command: "+filtered_commands.get(iCommand));
+
+            Scanner input = new Scanner(System.in);
+
+            List<String> commands = getCommands(Paths.get("config/commands"));
+            List<String> filtered_commands;
+            if (args.length == 0) {
+                filtered_commands = commands;
+            } else {
+                filtered_commands = commands.stream().filter(s -> {
+                    for (int i = 0; i < lFilter.size(); i++) {
+                        if (!s.toLowerCase().contains(lFilter.get(i).toLowerCase()))
+                            return false;
+                    }
+                    return true;
+                }).collect(Collectors.toList());
+            }
+            int iCommand = 0;
+            if (filtered_commands.size() > 1) {
+                System.out.println("Select command:");
+                for (int i = 0; i < filtered_commands.size(); i++) {
+                    System.out.println(i + ") " + filtered_commands.get(i));
+                }
+                iCommand = Integer.parseInt(input.nextLine());
+            }
+            if (filtered_commands.size() == 0) {
+                System.out.println("No Matching command");
+                return;
+            }
+            System.out.println("Running Command: " + filtered_commands.get(iCommand));
+            System.out.println("On Environments " + lEnv.stream().reduce((s, out) -> s + " " + out).get());
+
+            List<Environment> environments = new ArrayList<>();
+            for (int i = 0; i < lEnv.size(); i++) {
+                Path baseEnvFile = Paths.get("config/env/" + lEnv.get(i));
+                Environment environment = readEnv(baseEnvFile);
+                environments.add(environment);
+            }
+
+            Path baseCommandDir = Paths.get("config/commands/" + filtered_commands.get(iCommand));
+
+            Command command = readCommand(baseCommandDir);
+            ValueStore valueStore = new ValueStore();
+            VariableStore variableStore = new VariableStore();
+            readDats(baseCommandDir, valueStore, variableStore, lEnv);
+            command.eval(variableStore, environments);
+            List<Variable> variables = variableStore.getVariables();
 
 
-        System.out.println("Input Environment:");
-        String[] envs=input.nextLine().split(" ");
+            for (Variable variable :
+                    variables) {
+                valueStore.add(variable.getName(), readVariable(variable));
 
-        List<Environment> environments=new ArrayList<>();
-        for (int i=0;i<envs.length;i++) {
-            Path baseEnvFile = Paths.get("config/env/" + envs[i]);
-            Environment environment = readEnv(baseEnvFile);
-            environments.add(environment);
-        }
+            }
+        try
+        {
+                command.execute(environments, valueStore);
+                List<String> opVars = readOPVariables(baseCommandDir);
+                for (String var :
+                    opVars) {
 
-        Path baseCommandDir = Paths.get("config/commands/"+filtered_commands.get(iCommand));
+                    jsonObject.put(var, valueStore.getValues().get(var));
+                }
+        } catch (Exception ex){
+            List<String> opVars = readOPVariables(baseCommandDir);
+            for (String var :
+                    opVars) {
 
-        Command command=readCommand(baseCommandDir);
-        ValueStore valueStore=new ValueStore();
-        VariableStore variableStore=new VariableStore();
-        readDats(baseCommandDir,valueStore,variableStore);
-        command.eval(variableStore,environments);
-        List<Variable> variables=variableStore.getVariables();
-
-
-        for (Variable variable:
-             variables) {
-            valueStore.add(variable.getName(),readVariable(variable));
-
-        }
-
-        command.execute(environments,valueStore);
-        List<String> opVars=readOPVariables(baseCommandDir);
-        JSONObject jsonObject=new JSONObject();
-        for (String var:
-             opVars) {
-
-            jsonObject.put(var,valueStore.getValues().get(var));
+                jsonObject.put(var, valueStore.getValues().get(var));
+            }
+            System.out.println(jsonObject);
+            throw ex;
         }
 
         System.out.println(jsonObject);
 
     }
-    public static void readDat(File file,ValueStore valueStore,VariableStore variableStore) throws IOException, ParseException {
-        Scanner scanner=new Scanner(file);
-        String text = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-
-
-        JSONAware data= (JSONAware) new JSONParser().parse(text);
-        String name=file.getName().substring(0,file.getName().length()-5);
+    public static boolean isEnv(String name){
+        Path baseEnvFile = Paths.get("config/env/" + name);
+        File file=baseEnvFile.toFile();
+        if (file.exists()){
+            return true;
+        }
+        return false;
+    }
+    public static void transformJSONToVariablesAndValues(String name,JSONAware data,ValueStore valueStore,VariableStore variableStore){
+        Variable variable=transformObjectToVariable(name,data);
+        variableStore.resolve(Arrays.asList(variable));
+        valueStore.add(name,data);
+    }
+    public static Variable transformObjectToVariable(String name,Object data){
         Variable variable=new Variable();
         variable.setName(name);
         if(data instanceof JSONArray || data instanceof List){
@@ -112,22 +132,37 @@ public class Main {
             JSONObject obj=(JSONObject)((JSONArray)data).get(0);
             List<Variable> inner=new ArrayList<>();
             for (Object key:
-                 obj.keySet()) {
-                Variable variable1=new Variable();
-                variable1.setType("String");
-                variable1.setName((String)key);
+                    obj.keySet()) {
+                Variable variable1=transformObjectToVariable((String)key,obj.get(key));
                 inner.add(variable1);
             }
             variable.setInner_variables(inner);
         } else {
             variable.setType("String");
         }
-        variableStore.resolve(Arrays.asList(variable));
-        valueStore.add(name,data);
+        return variable;
     }
-    public static void readDats(Path baseCommandDir,ValueStore valueStore,VariableStore variableStore) throws IOException, ParseException {
+    public static void readDat(File file,ValueStore valueStore,VariableStore variableStore) throws IOException,TemplateParseException {
+        String text = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+        JSONTemplate template=JSONTemplate.parse(text);
+        JSONTemplate filledTemplate=template.fill(valueStore.getValues());
+
+        JSONAware data= (JSONAware) filledTemplate.toJSONCompatibleObject();
+        String name=file.getName().substring(0,file.getName().length()-5);
+        transformJSONToVariablesAndValues(name,data,valueStore,variableStore);
+    }
+    public static void readDats(Path baseCommandDir,ValueStore valueStore,VariableStore variableStore,List<String> envs) throws IOException, ParseException,TemplateParseException {
         File dir=baseCommandDir.toFile();
-        List<String> variables=new ArrayList<>();
+        File[] datFolders=dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return envs.contains(name);
+            }
+        });
+        for (File datFolder:
+             datFolders) {
+            readDats(datFolder.toPath(),valueStore,variableStore,envs);
+        }
         File[] datFiles=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -197,8 +232,10 @@ public class Main {
         }
     }
     public static Environment readEnv(Path baseEnvFile) throws FileNotFoundException {
-        Scanner fileScanner=new Scanner(baseEnvFile.toFile());
+        File file=baseEnvFile.toFile();
+        Scanner fileScanner=new Scanner(file);
         Environment environment=new Environment();
+        environment.setName(file.getName());
         environment.setVariables(new ArrayList<>());
         while (fileScanner.hasNextLine()){
             String line=fileScanner.nextLine();

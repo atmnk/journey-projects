@@ -96,9 +96,11 @@ class LoopTemplate implements JSONTemplate {
 
     @Override
     public Object toJSONCompatibleObject() {
+        JSONArray array=new JSONArray();
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("variable",variableName);
         jsonObject.put("template",innerObjectTemplate.toJSONCompatibleObject());
-        return jsonObject;
+        array.add(jsonObject);
+        return array;
     }
 }

@@ -13,6 +13,32 @@ public abstract class Unit {
     String name;
     int wait=0;
     public abstract void eval(VariableStore variableStore) throws UnitConfigurationException;
-    public abstract ValueStore execute(RestClient restClient, ValueStore valueStore);
+    public abstract ValueStore execute(RestClient restClient, ValueStore valueStore,int index);
     public abstract Unit fill(ValueStore valueStore);
+    public void printStartExecute(int index){
+        String prefix="";
+        for(int i=0;i<index;i++)
+        {
+            prefix+="\t";
+        }
+        System.out.println(prefix+"Starting Execution of Unit: "+name);
+    }
+    public void printDoneExecute(int index){
+        String prefix="";
+        for(int i=0;i<index;i++)
+        {
+            prefix+="\t";
+        }
+        System.out.println(prefix+"Done Execution of Unit: "+name);
+    }
+
+    public void print(int index,String message){
+        String prefix="";
+        for(int i=0;i<index;i++)
+        {
+            prefix+="\t";
+        }
+        System.out.println(prefix+message);
+    }
+
 }

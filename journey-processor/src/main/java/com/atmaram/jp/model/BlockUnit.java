@@ -59,6 +59,7 @@ public class BlockUnit extends Unit {
             Unit newUnit=unit.fill(valueStore);
             newUnits.add(newUnit);
         }
+        blockUnit.setName(this.getName());
         blockUnit.setUnits(newUnits);
         blockUnit.setWait(this.wait);
         blockUnit.setCounterVariable(this.counterVariable);
@@ -67,9 +68,11 @@ public class BlockUnit extends Unit {
     }
 
     @Override
-    public ValueStore execute(RestClient restClient, ValueStore valueStore){
+    public ValueStore execute(RestClient restClient, ValueStore valueStore,int index){
+        this.printStartExecute(index);
         if(valueStore.getValues().containsKey(counterVariable)) {
             List<HashMap<String,Object>> counterValues=(List<HashMap<String,Object>>)valueStore.getValues().get(counterVariable);
+            int counter=1;
             for (HashMap<String,Object> counterValue:
                  counterValues) {
                 ValueStore newValueStore=new ValueStore();
@@ -88,12 +91,15 @@ public class BlockUnit extends Unit {
                         newValueStore.add(environmentVariable.getName(), envValue);
                     }
                 }
+                this.print(index+1,"Loop "+counter);
                 for (Unit unit :
                         units) {
-                    unit.fill(newValueStore).execute(restClient, newValueStore);
+                    unit.fill(newValueStore).execute(restClient, newValueStore,index+2);
                 }
+                this.print(index+1,"Done Loop "+counter++);
             }
         }
+        this.printDoneExecute(index);
         return valueStore;
     }
 }

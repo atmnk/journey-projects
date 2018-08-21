@@ -14,6 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 @Data
@@ -72,6 +73,7 @@ public abstract class RestUnit extends Unit{
     }
 
     protected RestUnit fillObject(RestUnit restUnit,ValueStore valueStore) {
+        restUnit.setName(this.getName());
         String url = urlTemplate;
 
         try {
@@ -100,36 +102,70 @@ public abstract class RestUnit extends Unit{
     }
 
     @Override
-    public ValueStore execute(RestClient restClient, ValueStore valueStore) {
+    public ValueStore execute(RestClient restClient, ValueStore valueStore,int index) {
+        this.printStartExecute(index);
         HttpResponse<String> output=fire(restClient);
-        return processOutput(valueStore,output);
+        try {
+            ValueStore valueStore1 = processOutput(valueStore, output);
+            this.printDoneExecute(index);
+            return valueStore1;
+        } catch (RuntimeException ex){
+            this.print(index,"URL: "+this.getUrlTemplate());
+            if(this instanceof BodiedUnit){
+                this.print(index,"Body: "+((BodiedUnit)this).getRequestTemplate());
+            }
+            this.printDoneExecute(index);
+            throw ex;
+        }
+
     }
     public abstract HttpResponse<String>  fire(RestClient restClient);
     public ValueStore processOutput(ValueStore valueStore,HttpResponse<String> output){
-        if (responseHeaders != null) {
-            for (int j = 0; j < responseHeaders.size(); j++) {
-                ResponseHeader responseHeader = responseHeaders.get(j);
-                valueStore.add(responseHeader.getVariable(), output.getHeaders().getFirst(responseHeader.getName()));
+        List<Integer> validStatus= Arrays.asList(200,201,202,203,204,205,206,207,208,226);
+        if(validStatus.contains(output.getStatus())){
+            if (responseHeaders != null) {
+                for (int j = 0; j < responseHeaders.size(); j++) {
+                    ResponseHeader responseHeader = responseHeaders.get(j);
+                    valueStore.add(responseHeader.getVariable(), output.getHeaders().getFirst(responseHeader.getName()));
+                }
             }
-        }
-        if(!responseTemplate.trim().equals("")) {
-            HashMap<String, Object> extractedValues = null;
-            try {
-                extractedValues = JSONTemplate.parse(responseTemplate).extract((new JSONParser()).parse(output.getBody()));
-            } catch (TemplateParseException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if(!responseTemplate.trim().equals("")) {
+                HashMap<String, Object> extractedValues = null;
+                try {
+                    JSONTemplate rjTemplate=JSONTemplate.parse(responseTemplate);
+                    extractedValues = JSONTemplate.parse(responseTemplate).extract((new JSONParser()).parse(output.getBody()));
+                } catch (TemplateParseException e) {
+                    try {
+                        TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
+                        Variable variable=rtTemplate.getVariables().get(0);
+                        extractedValues=new HashMap<>();
+                        extractedValues.put(variable.getName(),output.getBody());
+                    } catch (TemplateParseException tex){
+                        e.printStackTrace();
+                    }
+
+                } catch (ParseException e) {
+                    try {
+                        TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
+                        Variable variable=rtTemplate.getVariables().get(0);
+                        extractedValues=new HashMap<>();
+                        extractedValues.put(variable.getName(),output.getBody());
+                    } catch (TemplateParseException tex){
+                        e.printStackTrace();
+                    }
+                }
+                valueStore.add(extractedValues);
             }
-            valueStore.add(extractedValues);
-        }
-        if(wait!=0){
-            try {
-                Thread.sleep(wait);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(wait!=0){
+                try {
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            return valueStore;
+        } else{
+            throw new RuntimeException("Invalid Response from Server got : "+output.getBody()+" for request : ");
         }
-        return valueStore;
     }
 }

@@ -103,6 +103,7 @@ public class CommandTest {
         HttpResponse<String> mockResponse=mock(HttpResponse.class);
 
         doReturn("{\"name\":\"World\"}").when(mockResponse).getBody();
+        doReturn(200).when(mockResponse).getStatus();
         doReturn(mockResponse).when(restClient).get(anyString(),any(List.class));
         doReturn(mockResponse).when(restClient).post(anyString(),any(List.class),anyString());
         ValueStore valueStore=journey.execute(new ArrayList<>(),new ValueStore());

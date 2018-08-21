@@ -7,5 +7,6 @@ import java.util.List;
 
 @Data
 public class Environment {
+    String name;
     List<EnvironmentVariable> variables;
 }
