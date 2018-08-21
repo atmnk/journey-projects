@@ -249,12 +249,11 @@ public class Main {
             }
         });
         Arrays.sort(varFiles);
-        List<String> allowedVerbs=Arrays.asList(".get",".post",".delete",".put",".patch",".block",".poll");
         File[] files=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                for(int i=0;i<allowedVerbs.size();i++){
-                    if(name.endsWith(allowedVerbs.get(i)))
+                for(int i=0;i<UnitBuilder.verbProcessors.size();i++){
+                    if(name.endsWith(UnitBuilder.verbProcessors.get(i).verb))
                         return true;
                 }
                 return false;

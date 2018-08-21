@@ -122,7 +122,7 @@ public class UnitBuilder {
         request.setWait(wait);
         return request;
     }
-    private static List<VerbProcessor> verbProcessors=Arrays.asList(get,post,delete,patch,put,block);
+    public static List<VerbProcessor> verbProcessors=Arrays.asList(get,post,delete,patch,put,block);
     public static Unit buildFromFile(File file) throws FileNotFoundException, ParseException {
         for (VerbProcessor<Unit> processor:
                 verbProcessors) {
@@ -162,7 +162,12 @@ public class UnitBuilder {
         File[] files=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(".unit");
+
+                for(int i=0;i<UnitBuilder.verbProcessors.size();i++){
+                    if(name.endsWith(UnitBuilder.verbProcessors.get(i).verb))
+                        return true;
+                }
+                return false;
             }
         });
         Arrays.sort(files,new Comparator()
