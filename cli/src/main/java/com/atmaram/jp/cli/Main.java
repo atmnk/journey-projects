@@ -43,13 +43,21 @@ public class Main {
             if (args.length == 0) {
                 filtered_commands = commands;
             } else {
-                filtered_commands = commands.stream().filter(s -> {
+                List<Integer> ranks=commands.stream().map((command)->{
+                    int rank=0;
                     for (int i = 0; i < lFilter.size(); i++) {
-                        if (!s.toLowerCase().contains(lFilter.get(i).toLowerCase()))
-                            return false;
+                        if (command.toLowerCase().contains(lFilter.get(i).toLowerCase()))
+                            rank++;
                     }
-                    return true;
+                    return rank;
                 }).collect(Collectors.toList());
+                int topRank=ranks.stream().reduce(0,(one,two)->one>two?one:two);
+                filtered_commands = new ArrayList<>();
+                for(int i=0;i<commands.size();i++){
+                    if(ranks.get(i)==topRank){
+                        filtered_commands.add(commands.get(i));
+                    }
+                }
             }
             int iCommand = 0;
             if (filtered_commands.size() > 1) {
@@ -196,20 +204,7 @@ public class Main {
         }
         return variables;
     }
-    public static List<EnvironmentVariable> getCommandVariables(File[] files) throws FileNotFoundException {
-        List<EnvironmentVariable> variables=new ArrayList<>();
-        for (File file:
-             files) {
-            Scanner scanner=new Scanner(file);
-            while (scanner.hasNextLine()){
-                String line=scanner.nextLine();
-                String[] strings=line.split("=");
-                EnvironmentVariable environmentVariable=new EnvironmentVariable(strings[0],strings[1]);
-                variables.add(environmentVariable);
-            }
-        }
-        return variables;
-    }
+
     public static List<String> getCommands(Path baseCommandsDir){
         List<String> commands=new ArrayList<>();
         File commandsDir=baseCommandsDir.toFile();
@@ -254,11 +249,15 @@ public class Main {
             }
         });
         Arrays.sort(varFiles);
-
+        List<String> allowedVerbs=Arrays.asList(".get",".post",".delete",".put",".patch",".block",".poll");
         File[] files=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(".unit");
+                for(int i=0;i<allowedVerbs.size();i++){
+                    if(name.endsWith(allowedVerbs.get(i)))
+                        return true;
+                }
+                return false;
             }
         });
         Arrays.sort(files,new Comparator()
@@ -269,150 +268,12 @@ public class Main {
         }
         });
         for(File file:files){
-            units.add(readUnit(file));
+            units.add(UnitBuilder.buildFromFile(file));
         }
         Command command=new Command();
-        command.setVariables(getCommandVariables(varFiles));
+        command.setVariables(UnitBuilder.getCommandVariables(varFiles));
         command.setName(dir.getName());
         command.setUnits(units);
         return command;
-    }
-    public static BlockUnit readBlockUnit(File dir) throws FileNotFoundException, ParseException {
-        BlockUnit blockUnit=new BlockUnit();
-        blockUnit.setName(dir.getName());
-        File[] infoFiles=dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".info");
-            }
-        });
-        Arrays.sort(infoFiles);
-        for (File file:
-                infoFiles) {
-            Scanner scanner=new Scanner(file);
-            blockUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
-            if (scanner.hasNextLine()){
-                blockUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
-            }
-        }
-        List<Unit> units=new ArrayList<>();
-        File[] varFiles=dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".var");
-            }
-        });
-        Arrays.sort(varFiles);
-
-        File[] files=dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".unit");
-            }
-        });
-        Arrays.sort(files,new Comparator()
-        {
-            @Override
-            public int compare(Object f1, Object f2) {
-            return ((File) f1).getName().compareTo(((File) f2).getName());
-        }
-        });
-        for(File file:files){
-            units.add(readUnit(file));
-        }
-        blockUnit.setUnits(units);
-        blockUnit.setVariables(getCommandVariables(varFiles));
-        return blockUnit;
-    }
-    public static Unit readUnit(File file) throws FileNotFoundException, ParseException {
-        if(file.isDirectory()){
-            return readBlockUnit(file);
-        } else {
-            Scanner scanner = new Scanner(file);
-            String method = scanner.nextLine().split("=")[1];
-            String url = scanner.nextLine();
-            String body = "";
-            if (method.equals("POST") || method.equals("PUT") || method.equals("PATCH") || method.equals("DELETE")) {
-                body = scanner.nextLine().split("=")[1];
-            }
-            String requestHeader = scanner.nextLine().split("=")[1];
-            JSONParser jsonParser = new JSONParser();
-            JSONObject rqjo = (JSONObject) jsonParser.parse(requestHeader);
-            List<RequestHeader> requestHeaders = new ArrayList<>();
-            for (Object key :
-                    rqjo.keySet()) {
-                RequestHeader rh = new RequestHeader();
-                rh.setName((String) key);
-                rh.setValueTemplate((String) rqjo.get(key));
-                requestHeaders.add(rh);
-            }
-
-            String[] response = scanner.nextLine().split("=");
-            String responseHeader = scanner.nextLine().split("=")[1];
-            JSONObject rsjo = (JSONObject) jsonParser.parse(responseHeader);
-            List<ResponseHeader> responseHeaders = new ArrayList<>();
-            for (Object key :
-                    rsjo.keySet()) {
-                ResponseHeader rh = new ResponseHeader();
-                rh.setName((String) key);
-                rh.setVariable((String) rsjo.get(key));
-                responseHeaders.add(rh);
-            }
-            int wait = 0;
-            if (scanner.hasNextLine()) {
-                wait = Integer.parseInt(scanner.nextLine().split("=")[1]);
-            }
-            if (method.equals("GET")) {
-                GetUnit getUnit = new GetUnit();
-                getUnit.setUrlTemplate(url);
-                getUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
-                getUnit.setRequestHeaders(requestHeaders);
-                getUnit.setResponseHeaders(responseHeaders);
-                getUnit.setWait(wait);
-                getUnit.setName(file.getName());
-                return getUnit;
-            } else if (method.equals("POST")) {
-                PostUnit postUnit = new PostUnit();
-                postUnit.setUrlTemplate(url);
-                postUnit.setRequestTemplate(body);
-                postUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
-                postUnit.setRequestHeaders(requestHeaders);
-                postUnit.setResponseHeaders(responseHeaders);
-                postUnit.setWait(wait);
-                postUnit.setName(file.getName());
-                return postUnit;
-            } else if(method.equals("PUT")){
-                PutUnit putUnit = new PutUnit();
-                putUnit.setUrlTemplate(url);
-                putUnit.setRequestTemplate(body);
-                putUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
-                putUnit.setRequestHeaders(requestHeaders);
-                putUnit.setResponseHeaders(responseHeaders);
-                putUnit.setWait(wait);
-                putUnit.setName(file.getName());
-                return putUnit;
-            }else if(method.equals("PATCH")){
-                PatchUnit patchUnit = new PatchUnit();
-                patchUnit.setUrlTemplate(url);
-                patchUnit.setRequestTemplate(body);
-                patchUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
-                patchUnit.setRequestHeaders(requestHeaders);
-                patchUnit.setResponseHeaders(responseHeaders);
-                patchUnit.setWait(wait);
-                patchUnit.setName(file.getName());
-                return patchUnit;
-            }else if(method.equals("DELETE")){
-                DeleteUnit deleteUnit = new DeleteUnit();
-                deleteUnit.setUrlTemplate(url);
-                deleteUnit.setRequestTemplate(body);
-                deleteUnit.setResponseTemplate(response.length > 1 ? response[1] : "");
-                deleteUnit.setRequestHeaders(requestHeaders);
-                deleteUnit.setResponseHeaders(responseHeaders);
-                deleteUnit.setWait(wait);
-                deleteUnit.setName(file.getName());
-                return deleteUnit;
-            }
-        }
-        return null;
     }
 }
