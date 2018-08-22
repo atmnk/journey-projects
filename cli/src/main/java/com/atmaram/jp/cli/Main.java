@@ -1,5 +1,6 @@
 package com.atmaram.jp.cli;
 
+import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;

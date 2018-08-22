@@ -10,10 +10,10 @@ import org.json.simple.parser.ParseException;
 
 @Data
 public abstract class Unit {
-    String name;
-    int wait=0;
+    public String name;
+    public int wait=0;
     public abstract void eval(VariableStore variableStore) throws UnitConfigurationException;
-    public abstract ValueStore execute(RestClient restClient, ValueStore valueStore,int index);
+    public abstract ValueStore execute(ValueStore valueStore,int index);
     public abstract Unit fill(ValueStore valueStore);
     public void printStartExecute(int index){
         String prefix="";

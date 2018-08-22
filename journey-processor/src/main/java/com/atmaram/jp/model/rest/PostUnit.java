@@ -1,19 +1,21 @@
-package com.atmaram.jp.model;
+package com.atmaram.jp.model.rest;
 
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
-import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.jp.model.Unit;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import lombok.Data;
 
-@Data
-public class GetUnit extends RestUnit {
+public class PostUnit extends BodiedUnit {
+    public PostUnit(RestClient restClient) {
+        super(restClient);
+    }
+
     @Override
     public HttpResponse<String> fire(RestClient restClient){
         HttpResponse<String> output = null;
         try {
-            output = restClient.get(urlTemplate, requestHeaders);
+            output = restClient.post(urlTemplate, requestHeaders, requestTemplate);
         } catch (UnirestException e) {
             e.printStackTrace();
         }
@@ -22,7 +24,6 @@ public class GetUnit extends RestUnit {
 
     @Override
     public Unit fill(ValueStore valueStore) {
-        GetUnit getUnit=new GetUnit();
-        return fillObject(getUnit,valueStore);
+        return fillObject(new PostUnit(restClient),valueStore);
     }
 }

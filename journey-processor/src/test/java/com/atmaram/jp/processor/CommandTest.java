@@ -5,6 +5,8 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.model.*;
+import com.atmaram.jp.model.rest.GetUnit;
+import com.atmaram.jp.model.rest.PostUnit;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -22,10 +24,10 @@ public class CommandTest {
         Command command=new Command();
         command.setName("Journey 1");
         List<Unit> units=new ArrayList<>();
-        GetUnit unit1=new GetUnit();
+        GetUnit unit1=new GetUnit(RestClient.get());
         unit1.setUrlTemplate("http://localhost");
         unit1.setResponseTemplate("{\"name\":\"World\"}");
-        GetUnit unit2=new GetUnit();
+        GetUnit unit2=new GetUnit(RestClient.get());
         unit2.setUrlTemplate("http://localhost");
         unit2.setResponseTemplate("{\"name\":\"World\"}");
         units.add(unit1);
@@ -41,7 +43,7 @@ public class CommandTest {
         Command command=new Command();
         command.setName("Journey 1");
         List<Unit> steps=new ArrayList<>();
-        GetUnit step1=new GetUnit();
+        GetUnit step1=new GetUnit(RestClient.get());
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
         steps.add(step1);
@@ -55,10 +57,10 @@ public class CommandTest {
         Command journey=new Command();
         journey.setName("Journey 1");
         List<Unit> steps=new ArrayList<>();
-        GetUnit step1=new GetUnit();
+        GetUnit step1=new GetUnit(RestClient.get());
         step1.setUrlTemplate("http://localhost:${Port}");
         step1.setResponseTemplate("{\"name\":\"World\"}");
-        GetUnit step2=new GetUnit();
+        GetUnit step2=new GetUnit(RestClient.get());
         step2.setUrlTemplate("http://localhost:${Port}");
         step2.setResponseTemplate("{\"name\":\"World\"}");
         steps.add(step1);
@@ -74,7 +76,7 @@ public class CommandTest {
         Command command=new Command();
         Environment environment=new Environment();
         environment.setVariables(Arrays.asList(new EnvironmentVariable("BaseURL","http://localhost:${PORT}")));
-        GetUnit getUnit=new GetUnit();
+        GetUnit getUnit=new GetUnit(RestClient.get());
         getUnit.setUrlTemplate("${BaseURL}/call1");
         getUnit.setResponseTemplate("{\"name\":${name}}");
         command.setUnits(Arrays.asList(getUnit));
@@ -87,13 +89,13 @@ public class CommandTest {
     @Test
     public void should_execute_simple_steps_without_variables() throws CommandConfigurationException, ParseException, UnirestException, TemplateParseException {
         RestClient restClient=mock(RestClient.class);
-        Command journey=new Command(restClient);
+        Command journey=new Command();
         journey.setName("Journey 1");
         List<Unit> steps=new ArrayList<>();
-        GetUnit step1=new GetUnit();
+        GetUnit step1=new GetUnit(restClient);
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
-        PostUnit step2=new PostUnit();
+        PostUnit step2=new PostUnit(restClient);
         step2.setUrlTemplate("http://localhost");
         step2.setResponseTemplate("{\"name\":\"World\"}");
         step2.setRequestTemplate("{\"place\": \"Mumbai\"}");

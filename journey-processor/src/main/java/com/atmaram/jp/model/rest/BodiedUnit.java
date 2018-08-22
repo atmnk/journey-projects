@@ -1,14 +1,13 @@
-package com.atmaram.jp.model;
+package com.atmaram.jp.model.rest;
 
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
+import com.atmaram.jp.model.Unit;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.json.JSONTemplate;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.Data;
 import org.json.simple.JSONAware;
 
@@ -18,10 +17,11 @@ import java.util.List;
 public abstract class BodiedUnit extends RestUnit {
     String requestTemplate;
 
-    public BodiedUnit() {
+    public BodiedUnit(RestClient restClient) {
+        super(restClient);
     }
 
-    public Unit fillObject(BodiedUnit bodiedUnit,ValueStore valueStore){
+    public Unit fillObject(BodiedUnit bodiedUnit, ValueStore valueStore){
         fillObject((RestUnit) bodiedUnit,valueStore);
         String body = requestTemplate;
         try {

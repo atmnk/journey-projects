@@ -5,6 +5,7 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
+import com.atmaram.jp.model.rest.RestUnit;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.text.TextTemplate;
@@ -18,13 +19,8 @@ public class Command {
     String name;
     List<Unit> units;
     List<EnvironmentVariable> variables;
-    RestClient restClient;
 
     public Command() {
-        restClient=RestClient.get();
-    }
-    public Command(RestClient restClient) {
-        this.restClient=restClient;
     }
 
     public ValueStore execute(List<Environment> environments, ValueStore valueStore){
@@ -60,7 +56,7 @@ public class Command {
         if(units!=null) {
             for (int i = 0; i < units.size(); i++) {
                 Unit currentUnit = units.get(i);
-                currentUnit.fill(valueStore).execute(restClient,valueStore,0);
+                currentUnit.fill(valueStore).execute(valueStore,0);
 
             }
         }

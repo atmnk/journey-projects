@@ -1,9 +1,12 @@
-package com.atmaram.jp.model;
+package com.atmaram.jp.model.rest;
 
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
+import com.atmaram.jp.model.RequestHeader;
+import com.atmaram.jp.model.ResponseHeader;
+import com.atmaram.jp.model.Unit;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.json.JSONTemplate;
@@ -18,11 +21,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 @Data
-public abstract class RestUnit extends Unit{
+public  abstract class RestUnit extends Unit {
     String urlTemplate;
     String responseTemplate;
     List<RequestHeader> requestHeaders;
     List<ResponseHeader> responseHeaders;
+    public RestClient restClient=null;
+
+    public RestUnit(RestClient restClient) {
+        this.restClient = restClient;
+    }
     public void eval(VariableStore variableStore) throws UnitConfigurationException {
         if (requestHeaders != null) {
             List<Variable> requestHeaderVariables = new ArrayList<>();
@@ -72,6 +80,11 @@ public abstract class RestUnit extends Unit{
         }
     }
 
+    @Override
+    public ValueStore execute(ValueStore valueStore, int index) {
+        return execute(restClient,valueStore,index);
+    }
+
     protected RestUnit fillObject(RestUnit restUnit,ValueStore valueStore) {
         restUnit.setName(this.getName());
         String url = urlTemplate;
@@ -98,10 +111,9 @@ public abstract class RestUnit extends Unit{
         restUnit.setRequestHeaders(filledRequestHeaders);
         restUnit.setResponseTemplate(responseTemplate);
         restUnit.setResponseHeaders(responseHeaders);
+        restUnit.setWait(this.wait);
         return restUnit;
     }
-
-    @Override
     public ValueStore execute(RestClient restClient, ValueStore valueStore,int index) {
         this.printStartExecute(index);
         HttpResponse<String> output=fire(restClient);
