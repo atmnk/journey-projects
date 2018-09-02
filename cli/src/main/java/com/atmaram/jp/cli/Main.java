@@ -165,7 +165,17 @@ public class Main {
         File[] datFolders=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return envs.contains(name);
+                if(!UnitBuilder.isCommand(name)){
+                    String[] names=name.split(" ");
+                    boolean retVal=true;
+                    for (String splitName:names
+                         ) {
+                        retVal=retVal && envs.contains(splitName);
+                    }
+                    return retVal;
+                } else {
+                    return false;
+                }
             }
         });
         for (File datFolder:

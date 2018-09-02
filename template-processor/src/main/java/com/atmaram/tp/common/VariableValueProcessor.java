@@ -17,7 +17,18 @@ public class VariableValueProcessor {
         return getVal(newExpr.substring(6,newExpr.length()-1));
     });
     static VariableValueProcessor uuid=new VariableValueProcessor((String expression)->expression.startsWith("_uuid"), (String expression,HashMap<String,Object> data)->UUID.randomUUID().toString());
-    static List<VariableValueProcessor> allProcessors=Arrays.asList(timestamp,eval,uuid);
+    static VariableValueProcessor concat=new VariableValueProcessor((String expression)->expression.startsWith("_+"), (String expression,HashMap<String,Object> data)->{
+        String newExpr=expression.split(">")[0];
+        return concat(newExpr.substring(3,newExpr.length()-1).split(","),data);
+    });
+    public static String concat(String[] args,HashMap<String,Object> data){
+        String res="";
+        for(int i=0;i<args.length;i++){
+            res+=getValue(args[i],data);
+        }
+        return res;
+    }
+    static List<VariableValueProcessor> allProcessors=Arrays.asList(timestamp,eval,uuid,concat);
     public static void addProcessor(VariableValueProcessor variableValueProcessor){
         allProcessors.add(variableValueProcessor);
     }

@@ -172,11 +172,7 @@ public class UnitBuilder {
             @Override
             public boolean accept(File dir, String name) {
 
-                for(int i=0;i<UnitBuilder.verbProcessors.size();i++){
-                    if(name.endsWith(UnitBuilder.verbProcessors.get(i).verb))
-                        return true;
-                }
-                return false;
+                return isCommand(name);
             }
         });
         Arrays.sort(files,new Comparator()
@@ -226,12 +222,7 @@ public class UnitBuilder {
         File[] files=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-
-                for(int i=0;i<UnitBuilder.verbProcessors.size();i++){
-                    if(name.endsWith(UnitBuilder.verbProcessors.get(i).verb))
-                        return true;
-                }
-                return false;
+                return isCommand(name);
             }
         });
         Arrays.sort(files,new Comparator()
@@ -259,5 +250,12 @@ public class UnitBuilder {
             }
         }
         return variables;
+    }
+    public static boolean isCommand(String name){
+        for(int i=0;i<UnitBuilder.verbProcessors.size();i++){
+            if(name.endsWith(UnitBuilder.verbProcessors.get(i).verb))
+                return true;
+        }
+        return false;
     }
 }
