@@ -6,8 +6,12 @@ import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.json.JSONTemplate;
 import com.atmaram.tp.text.TextTemplate;
 import lombok.Data;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +20,7 @@ import java.util.List;
 @Data
 public class BlockUnit extends Unit {
     String counterVariable;
+    String filter="{}";
     List<Unit> units;
     List<EnvironmentVariable> variables;
 
@@ -47,7 +52,14 @@ public class BlockUnit extends Unit {
                 throw new UnitConfigurationException("Unit not properly configured in block unit: "+this.getName(),this.name,ex);
             }
         }
-        variableStore.add(newVariableStore.getVariables());
+        JSONTemplate filterTemplate = null;
+        try {
+            filterTemplate = JSONTemplate.parse(filter);
+            variableStore.add(newVariableStore.getVariables());
+            variableStore.add(filterTemplate.getVariables());
+        } catch (TemplateParseException e) {
+            throw new UnitConfigurationException("Invalid Template in filter",this.name,e);
+        }
     }
     @Override
     public Unit fill(ValueStore valueStore) {
@@ -64,6 +76,13 @@ public class BlockUnit extends Unit {
         blockUnit.setCounterVariable(this.counterVariable);
         blockUnit.setVariables(variables);
         blockUnit.setWait(this.wait);
+        JSONTemplate filterTemplate = null;
+        try {
+            filterTemplate = JSONTemplate.parse(filter);
+            blockUnit.setFilter(filterTemplate.fill(valueStore.getValues()).toJSONCompatibleObject().toString());
+        } catch (TemplateParseException e) {
+            e.printStackTrace();
+        }
         return blockUnit;
     }
 
@@ -72,9 +91,24 @@ public class BlockUnit extends Unit {
         this.printStartExecute(index);
         if(valueStore.getValues().containsKey(counterVariable)) {
             List<HashMap<String,Object>> counterValues=(List<HashMap<String,Object>>)valueStore.getValues().get(counterVariable);
+            JSONObject jofilter=new JSONObject();
+            try {
+                jofilter= (JSONObject) new JSONParser().parse(filter);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             int counter=1;
             for (HashMap<String,Object> counterValue:
                  counterValues) {
+                boolean continueLoop=false;
+                for(Object key:jofilter.keySet()){
+                    if(!counterValue.get(key).equals(jofilter.get(key))){
+                        continueLoop=true;
+                        break;
+                    }
+                }
+                if(continueLoop)
+                    continue;
                 ValueStore newValueStore=new ValueStore();
                 newValueStore.setValues(counterValue);
                 if(variables!=null) {

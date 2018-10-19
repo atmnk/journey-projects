@@ -14,12 +14,19 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -75,12 +82,7 @@ public class Main {
             System.out.println("Running Command: " + filtered_commands.get(iCommand));
             System.out.println("On Environments " + lEnv.stream().reduce((s, out) -> s + " " + out).get());
 
-            List<Environment> environments = new ArrayList<>();
-            for (int i = 0; i < lEnv.size(); i++) {
-                Path baseEnvFile = Paths.get("config/env/" + lEnv.get(i));
-                Environment environment = readEnv(baseEnvFile);
-                environments.add(environment);
-            }
+            List<Environment> environments =readEnvironments(Paths.get("config/env"),lEnv);
 
             Path baseCommandDir = Paths.get("config/commands/" + filtered_commands.get(iCommand));
 
@@ -116,9 +118,16 @@ public class Main {
             System.out.println(jsonObject);
             throw ex;
         }
+        JsonWriter writer=new JsonWriter();
+        jsonObject.writeJSONString(writer);
+        System.out.println(writer.toString());
+        writeToClipboard(writer.toString(),null);
 
-        System.out.println(jsonObject);
-
+    }
+    public static void writeToClipboard(String s, ClipboardOwner owner) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable transferable = new StringSelection(s);
+        clipboard.setContents(transferable, owner);
     }
     public static boolean isEnv(String name){
         Path baseEnvFile = Paths.get("config/env/" + name);
@@ -285,5 +294,28 @@ public class Main {
         command.setName(dir.getName());
         command.setUnits(units);
         return command;
+    }
+    public static List<Environment> readEnvironments(Path baseDirPath,List<String> envPassed) throws FileNotFoundException {
+        List<Environment> environments=new ArrayList<>();
+        File baseEnvDir=baseDirPath.toFile();
+        File[] validFiles=baseEnvDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String[] names=pathname.getName().split(" ");
+                boolean retVal=true;
+                for (String name:
+                     names) {
+                    retVal=retVal&&envPassed.contains(name);
+                }
+                return retVal;
+            }
+        });
+
+        for (int i = 0; i < validFiles.length; i++) {
+            Path baseEnvFile = validFiles[i].toPath();
+            Environment environment = readEnv(baseEnvFile);
+            environments.add(environment);
+        }
+        return environments;
     }
 }

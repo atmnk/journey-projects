@@ -3,6 +3,8 @@ package com.atmaram.jp.cli;
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.*;
+import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.json.JSONTemplate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -157,6 +159,9 @@ public class UnitBuilder {
             blockUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
             if (scanner.hasNextLine()){
                 blockUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+            }
+            if (scanner.hasNextLine()){
+                blockUnit.setFilter(scanner.nextLine().split("=")[1]);
             }
         }
         List<Unit> units=new ArrayList<>();
