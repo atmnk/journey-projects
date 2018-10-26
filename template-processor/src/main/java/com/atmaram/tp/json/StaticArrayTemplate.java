@@ -27,6 +27,26 @@ class StaticArrayTemplate implements JSONTemplate {
     }
 
     @Override
+    public List<Variable> getTemplateVariables() {
+        List<Variable> variables=new ArrayList<>();
+        for (JSONTemplate memberTemplate:
+                memberTemplates) {
+            variables.addAll(memberTemplate.getTemplateVariables());
+        }
+        return variables;
+    }
+
+    @Override
+    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
+        StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
+        for (JSONTemplate memberTemplate:
+                memberTemplates) {
+            staticArrayTemplate.add(memberTemplate.fillTemplateVariables(data));
+        }
+        return staticArrayTemplate;
+    }
+
+    @Override
     public JSONTemplate fill(HashMap<String, Object> data) {
         StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
         for (JSONTemplate memberTemplate:

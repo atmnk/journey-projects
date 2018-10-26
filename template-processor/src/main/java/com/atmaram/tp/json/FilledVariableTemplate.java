@@ -21,6 +21,16 @@ class FilledVariableTemplate implements JSONTemplate {
     }
 
     @Override
+    public List<Variable> getTemplateVariables() {
+        return Arrays.asList();
+    }
+
+    @Override
+    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
+        return this;
+    }
+
+    @Override
     public JSONTemplate fill(HashMap<String, Object> data) {
         return this;
     }

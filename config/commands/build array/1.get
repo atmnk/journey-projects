@@ -1,0 +1,4 @@
+${BaseUrl}/test/one
+RequestHeader={"content-type":"application/json"}
+Response={"results":{#{key}:{"#{_eval(0#)}":${Resp}}}}
+ResponseHeader={}

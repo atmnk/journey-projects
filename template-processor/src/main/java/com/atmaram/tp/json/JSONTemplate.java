@@ -14,6 +14,8 @@ import java.util.List;
 
 public interface JSONTemplate {
     public List<Variable> getVariables();
+    public List<Variable> getTemplateVariables();
+    public JSONTemplate fillTemplateVariables(HashMap<String,Object> data);
     public JSONTemplate fill(HashMap<String,Object> data);
     public HashMap<String,Object> extract(Object from);
     public Object toJSONCompatibleObject();
@@ -46,7 +48,10 @@ public interface JSONTemplate {
         } else if(jsonTemplate instanceof String){
             if(isVariable((String)jsonTemplate)){
                 return new VariableTemplate(getVariableName((String)jsonTemplate));
-            } else {
+            } else if(isTemplateVariable((String)jsonTemplate)){
+                return new TemplateVariableTemplate(getVariableName((String)jsonTemplate));
+            }
+            else {
                 try {
                     Object parsed=new JSONParser().parse((String)jsonTemplate);
                     if(parsed instanceof JSONAware){
@@ -64,12 +69,18 @@ public interface JSONTemplate {
     public static boolean isVariable(String strValue){
         return (strValue.startsWith("${") && strValue.endsWith("}"));
     }
+    public static boolean isTemplateVariable(String strValue){
+        return (strValue.startsWith("#{") && strValue.endsWith("}"));
+    }
     public static String getVariableName(String strValue){
         return strValue.substring(2,strValue.length()-1);
     }
     public static JSONTemplate parse(String template) throws TemplateParseException {
         if(isVariable(template)){
             return new VariableTemplate(getVariableName(template));
+        }
+        if(isTemplateVariable(template)){
+            return new TemplateVariableTemplate(getVariableName(template));
         }
         JSONParser jsonParser=new JSONParser();
         template= JSONTemplateParsingUtil.replaceVariablesWithQuotedVariables(template);

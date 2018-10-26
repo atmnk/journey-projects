@@ -71,11 +71,15 @@ public  abstract class RestUnit extends Unit {
         if(!responseTemplate.trim().equals(""))
         {
             List<Variable> outputVariables = null;
+            List<Variable> inputVariables = null;
             try {
-                outputVariables = JSONTemplate.parse(responseTemplate).getVariables();
+                JSONTemplate jtResponseTemplate=JSONTemplate.parse(responseTemplate);
+                inputVariables=jtResponseTemplate.getTemplateVariables();
+                outputVariables = jtResponseTemplate.getVariables();
             } catch (TemplateParseException e) {
                 throw new UnitConfigurationException("Invalid response: Template"+responseTemplate,this.name,e);
             }
+            variableStore.add(inputVariables);
             variableStore.resolve(outputVariables);
         }
     }
@@ -109,7 +113,11 @@ public  abstract class RestUnit extends Unit {
             }
         }
         restUnit.setRequestHeaders(filledRequestHeaders);
-        restUnit.setResponseTemplate(responseTemplate);
+        try {
+            restUnit.setResponseTemplate(JSONTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toJSONCompatibleObject().toString());
+        } catch (TemplateParseException e) {
+            e.printStackTrace();
+        }
         restUnit.setResponseHeaders(responseHeaders);
         restUnit.setWait(this.wait);
         return restUnit;

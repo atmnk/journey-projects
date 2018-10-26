@@ -25,7 +25,7 @@ public class JSONTemplateTest {
 
     @Test
     public void should_fill_expressions_having_eval() throws TemplateParseException {
-        JSONArray obj=(JSONArray)JSONTemplate.parse("[${_eval(####)}]").fill(null).toJSONCompatibleObject();
+        JSONArray obj=(JSONArray)JSONTemplate.parse("[${_eval('####')}]").fill(null).toJSONCompatibleObject();
         assertThat(obj.size()).isEqualTo(1);
         assertThat(obj.get(0)).isInstanceOf(String.class);
     }

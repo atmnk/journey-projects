@@ -51,6 +51,17 @@ class LoopTemplate implements JSONTemplate {
     }
 
     @Override
+    public List<Variable> getTemplateVariables() {
+        List<Variable> inner_variables=innerObjectTemplate.getTemplateVariables();
+        return inner_variables;
+    }
+
+    @Override
+    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
+        return new LoopTemplate(variableName,innerObjectTemplate.fillTemplateVariables(data));
+    }
+
+    @Override
     public JSONTemplate fill(HashMap<String, Object> data) {
         if(data.containsKey(variableName)){
             StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();

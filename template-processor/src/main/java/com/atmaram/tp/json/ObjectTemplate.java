@@ -36,6 +36,27 @@ class ObjectTemplate implements JSONTemplate {
     }
 
     @Override
+    public List<Variable> getTemplateVariables() {
+        List<Variable> variables=new ArrayList<>();
+        for (JSONTemplate keyTemplate:
+                keyValueTemplates.keySet()) {
+            variables.addAll(keyTemplate.getTemplateVariables());
+            variables.addAll(keyValueTemplates.get(keyTemplate).getTemplateVariables());
+        }
+        return variables;
+    }
+
+    @Override
+    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
+        ObjectTemplate objectTemplate=new ObjectTemplate();
+        for (JSONTemplate keyTemplate:
+                keyValueTemplates.keySet()) {
+            objectTemplate.put(keyTemplate.fillTemplateVariables(data),keyValueTemplates.get(keyTemplate).fillTemplateVariables(data));
+        }
+        return objectTemplate;
+    }
+
+    @Override
     public JSONTemplate fill(HashMap<String, Object> data) {
         ObjectTemplate objectTemplate=new ObjectTemplate();
         for (JSONTemplate keyTemplate:

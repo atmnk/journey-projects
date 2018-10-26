@@ -21,7 +21,7 @@ public class TextTemplateTest {
 
     @Test
     public void should_fill_expressions_having_eval() throws TemplateParseException {
-        String obj=TextTemplate.parse("${_eval(####)}").fill(null).toValue();
+        String obj=TextTemplate.parse("${_eval('####')}").fill(null).toValue();
         assertThat(obj).isInstanceOf(String.class);
         assertThat(obj.length()).isEqualTo(4);
     }

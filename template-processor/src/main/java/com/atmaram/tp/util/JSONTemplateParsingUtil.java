@@ -67,6 +67,18 @@ public class JSONTemplateParsingUtil {
                 variables) {
             output = output.replace("${" + variable + "}", "\"${" + variable + "}\"");
         }
+        final Pattern pattern1 = Pattern.compile("#\\{(.+?)}");
+        final Matcher matcher1 = pattern1.matcher(template);
+        List<String> variables1 = new ArrayList<>();
+        while (matcher1.find()) {
+            String variable1=matcher1.group(1);
+            if(!variables1.contains(variable1))
+                variables1.add(variable1);
+        }
+        for (String variable1 :
+                variables1) {
+            output = output.replace("#{" + variable1 + "}", "\"#{" + variable1 + "}\"");
+        }
         return output;
     }
 
@@ -83,6 +95,18 @@ public class JSONTemplateParsingUtil {
         for (String variable :
                 variables) {
             output = output.replace("\"${" + variable + "}\"", "${" + variable + "}");
+        }
+        final Pattern pattern1 = Pattern.compile("\"#\\{(.+?)}\"");
+        final Matcher matcher1 = pattern1.matcher(template);
+        List<String> variables1 = new ArrayList<>();
+        while (matcher1.find()) {
+            String variable1=matcher1.group(1);
+            if(!variables1.contains(variable1))
+                variables1.add(variable1);
+        }
+        for (String variable1 :
+                variables1) {
+            output = output.replace("\"#{" + variable1 + "}\"", "#{" + variable1 + "}");
         }
         return output;
     }

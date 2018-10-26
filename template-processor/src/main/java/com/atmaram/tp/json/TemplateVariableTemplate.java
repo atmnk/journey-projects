@@ -4,20 +4,24 @@ import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.VariableValueProcessor;
 import org.json.simple.JSONAware;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class VariableTemplate implements JSONTemplate {
+public class TemplateVariableTemplate implements JSONTemplate{
     String variableName;
 
-    public VariableTemplate(String variableName) {
+    public TemplateVariableTemplate(String variableName) {
         this.variableName = variableName;
     }
 
     @Override
     public List<Variable> getVariables() {
+        return Arrays.asList();
+    }
+
+    @Override
+    public List<Variable> getTemplateVariables() {
         if(variableName.startsWith("_") && !variableName.equals("_this")){
             return Arrays.asList();
         } else {
@@ -29,17 +33,7 @@ class VariableTemplate implements JSONTemplate {
     }
 
     @Override
-    public List<Variable> getTemplateVariables() {
-        return Arrays.asList();
-    }
-
-    @Override
     public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
-        return this;
-    }
-
-    @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
         Object putValue=VariableValueProcessor.getValue(variableName,data);
         if(putValue instanceof String && JSONTemplate.isVariable((String)putValue)){
             return this;
@@ -51,15 +45,18 @@ class VariableTemplate implements JSONTemplate {
     }
 
     @Override
+    public JSONTemplate fill(HashMap<String, Object> data) {
+        return this;
+    }
+
+    @Override
     public HashMap<String,Object> extract(Object from) {
-        HashMap<String,Object> ret=new HashMap<>();
-        ret.put(variableName,from);
-        return ret;
+        return new HashMap<>();
     }
 
     @Override
     public Object toJSONCompatibleObject() {
-        String jsonTemplate="${"+variableName+"}";
+        String jsonTemplate="#{"+variableName+"}";
         return jsonTemplate;
     }
 }
