@@ -11,16 +11,13 @@ public interface ExtractableTemplate extends Template {
     public HashMap<String,Object> extract(Object from);
     public List<Variable> getTemplateVariables();
     public static ExtractableTemplate parse(String template) throws TemplateParseException {
-        try{
-            XMLTemplate xmlTemplate=XMLTemplate.parse(template);
+        String trimmed=template.trim();
+        if(trimmed.startsWith("<")){
+            XMLTemplate xmlTemplate=XMLTemplate.parse(trimmed);
             return xmlTemplate;
-        } catch (TemplateParseException ex){
-            try {
-                JSONTemplate jsonTemplate = JSONTemplate.parse(template);
-                return jsonTemplate;
-            } catch (TemplateParseException ex1){
-                throw new TemplateParseException("Provided template is neither valid xml or json template:"+template);
-            }
+        } else {
+            JSONTemplate jsonTemplate = JSONTemplate.parse(trimmed);
+            return jsonTemplate;
         }
     }
     public ExtractableTemplate fillTemplateVariables(HashMap<String, Object> data);
