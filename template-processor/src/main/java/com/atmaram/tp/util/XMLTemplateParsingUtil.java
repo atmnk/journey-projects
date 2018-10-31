@@ -1,6 +1,7 @@
 package com.atmaram.tp.util;
 
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.xml.LoopTemplate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -10,8 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JSONTemplateParsingUtil extends TemplateParsingUtil {
-    public static String replaceLoopsWithTransformedJSON(String template) throws TemplateParseException{
+public class XMLTemplateParsingUtil extends TemplateParsingUtil {
+    public static String replaceLoopsWithTransformedXML(String template) throws TemplateParseException{
         String output=""+template;
         final Pattern pattern = Pattern.compile("\\{\\{#(.+?)\\}\\}");
         final Matcher matcher = pattern.matcher(template);
@@ -37,21 +38,12 @@ public class JSONTemplateParsingUtil extends TemplateParsingUtil {
                 i++;
             }
             String inner=template.substring(template.indexOf(openingTag)+openingTag.length(),i-closingTag.length());
-            String innerJSON=replaceLoopsWithTransformedJSON(inner);
-            JSONParser parser=new JSONParser();
-            Object inner_object= null;
-            try {
-                inner_object = parser.parse(innerJSON);
-            } catch (ParseException e) {
-                throw new TemplateParseException("Inner template provided is not valid json: "+inner);
-            }
-            JSONObject newJSON=new JSONObject();
-            newJSON.put("variable",variable);
-            newJSON.put("template",inner_object);
-            String newString=template.substring(0,template.indexOf(openingTag))+newJSON.toJSONString()+(template.length()==i?"":template.substring(i,template.length()));
-            return replaceLoopsWithTransformedJSON(newString);
+            String innerXML=replaceLoopsWithTransformedXML(inner);
+            String openingLoopTag="<"+ LoopTemplate.LOOP_TAG+" variable=\""+variable+"\">";
+            String closingLoopTag="</"+ LoopTemplate.LOOP_TAG+">";
+            String newString=template.substring(0,template.indexOf(openingTag))+openingLoopTag+innerXML+closingLoopTag+(template.length()==i?"":template.substring(i));
+            return replaceLoopsWithTransformedXML(newString);
         }
         return template;
     }
-
 }

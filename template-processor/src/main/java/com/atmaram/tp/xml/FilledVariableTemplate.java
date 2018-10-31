@@ -1,14 +1,14 @@
-package com.atmaram.tp.json;
+package com.atmaram.tp.xml;
 
 
 import com.atmaram.tp.Variable;
-import org.json.simple.JSONAware;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class FilledVariableTemplate implements JSONTemplate {
+class FilledVariableTemplate implements XMLTemplate {
     Object variableValue;
 
     public FilledVariableTemplate(Object variableValue) {
@@ -26,12 +26,12 @@ class FilledVariableTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
+    public XMLTemplate fillTemplateVariables(HashMap<String, Object> data) {
         return this;
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public XMLTemplate fill(HashMap<String, Object> data) {
         return this;
     }
 
@@ -41,15 +41,11 @@ class FilledVariableTemplate implements JSONTemplate {
     }
 
     @Override
-    public Object toJSONCompatibleObject() {
-//        if(variableValue instanceof JSONAware || variableValue instanceof String || variableValue instanceof List || variableValue instanceof Map){
-//            return variableValue;
-//        }
+    public Object toXMLCompatibleObject() {
         return variableValue;
     }
-
     @Override
     public String toStringTemplate() {
-        return toJSONCompatibleObject().toString();
+        return toXMLCompatibleObject().toString();
     }
 }

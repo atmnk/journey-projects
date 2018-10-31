@@ -1,6 +1,4 @@
 package com.atmaram.jp.model;
-
-import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
@@ -79,9 +77,10 @@ public class BlockUnit extends Unit {
         JSONTemplate filterTemplate = null;
         try {
             filterTemplate = JSONTemplate.parse(filter);
-            blockUnit.setFilter(filterTemplate.fill(valueStore.getValues()).toJSONCompatibleObject().toString());
+            blockUnit.setFilter(((JSONTemplate)filterTemplate.fill(valueStore.getValues())).toJSONCompatibleObject().toString());
         } catch (TemplateParseException e) {
             e.printStackTrace();
+            System.out.println("Filter Template:"+filter);
         }
         return blockUnit;
     }
@@ -96,6 +95,7 @@ public class BlockUnit extends Unit {
                 jofilter= (JSONObject) new JSONParser().parse(filter);
             } catch (ParseException e) {
                 e.printStackTrace();
+                System.out.println("Template:"+filter);
             }
             int counter=1;
             for (HashMap<String,Object> counterValue:
@@ -119,9 +119,10 @@ public class BlockUnit extends Unit {
                             textTemplate = TextTemplate.parse(environmentVariable.getValueTemplate());
                         } catch (TemplateParseException e) {
                             e.printStackTrace();
+                            System.out.println("Environment Variable Template:"+environmentVariable.getValueTemplate());
                         }
                         String envValue = null;
-                        envValue = textTemplate.fill(valueStore.getValues()).fill(newValueStore.getValues()).toValue();
+                        envValue = textTemplate.fill(valueStore.getValues()).fill(newValueStore.getValues()).toStringTemplate();
                         newValueStore.add(environmentVariable.getName(), envValue);
                     }
                 }

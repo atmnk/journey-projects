@@ -7,6 +7,7 @@ import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.RequestHeader;
 import com.atmaram.jp.model.ResponseHeader;
 import com.atmaram.jp.model.Unit;
+import com.atmaram.tp.ExtractableTemplate;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.json.JSONTemplate;
@@ -73,9 +74,9 @@ public  abstract class RestUnit extends Unit {
             List<Variable> outputVariables = null;
             List<Variable> inputVariables = null;
             try {
-                JSONTemplate jtResponseTemplate=JSONTemplate.parse(responseTemplate);
-                inputVariables=jtResponseTemplate.getTemplateVariables();
-                outputVariables = jtResponseTemplate.getVariables();
+                ExtractableTemplate xtResponseTemplate= ExtractableTemplate.parse(responseTemplate);
+                inputVariables=xtResponseTemplate.getTemplateVariables();
+                outputVariables = xtResponseTemplate.getVariables();
             } catch (TemplateParseException e) {
                 throw new UnitConfigurationException("Invalid response: Template"+responseTemplate,this.name,e);
             }
@@ -94,7 +95,7 @@ public  abstract class RestUnit extends Unit {
         String url = urlTemplate;
 
         try {
-            restUnit.urlTemplate = TextTemplate.parse(url).fill(valueStore.getValues()).toValue();
+            restUnit.urlTemplate = TextTemplate.parse(url).fill(valueStore.getValues()).toStringTemplate();
         } catch (TemplateParseException e) {
             e.printStackTrace();
         }
@@ -105,7 +106,7 @@ public  abstract class RestUnit extends Unit {
                 RequestHeader filledRequestHeader=new RequestHeader();
                 filledRequestHeader.setName(requestHeader.getName());
                 try {
-                    filledRequestHeader.setValueTemplate(TextTemplate.parse(requestHeader.getValueTemplate()).fill(valueStore.getValues()).toValue());
+                    filledRequestHeader.setValueTemplate(TextTemplate.parse(requestHeader.getValueTemplate()).fill(valueStore.getValues()).toStringTemplate());
                 } catch (TemplateParseException e) {
                     e.printStackTrace();
                 }
@@ -114,7 +115,11 @@ public  abstract class RestUnit extends Unit {
         }
         restUnit.setRequestHeaders(filledRequestHeaders);
         try {
-            restUnit.setResponseTemplate(JSONTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toJSONCompatibleObject().toString());
+            if(responseTemplate!=null && !responseTemplate.trim().equals("")) {
+                restUnit.setResponseTemplate(ExtractableTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toStringTemplate());
+            } else {
+                restUnit.setResponseTemplate("");
+            }
         } catch (TemplateParseException e) {
             e.printStackTrace();
         }
@@ -152,8 +157,7 @@ public  abstract class RestUnit extends Unit {
             if(!responseTemplate.trim().equals("")) {
                 HashMap<String, Object> extractedValues = null;
                 try {
-                    JSONTemplate rjTemplate=JSONTemplate.parse(responseTemplate);
-                    extractedValues = JSONTemplate.parse(responseTemplate).extract((new JSONParser()).parse(output.getBody()));
+                    extractedValues = ExtractableTemplate.parse(responseTemplate).extract((new JSONParser()).parse(output.getBody()));
                 } catch (TemplateParseException e) {
                     try {
                         TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);

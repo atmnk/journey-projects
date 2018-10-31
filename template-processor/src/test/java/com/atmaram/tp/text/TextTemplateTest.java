@@ -15,24 +15,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TextTemplateTest {
     @Test
     public void should_fill_expressions_having_uuid() throws TemplateParseException {
-        String obj=TextTemplate.parse("${_uuid}").fill(null).toValue();
+        String obj=TextTemplate.parse("${_uuid}").fill(null).toStringTemplate();
         assertThat(obj).isInstanceOf(String.class);
     }
 
     @Test
     public void should_fill_expressions_having_eval() throws TemplateParseException {
-        String obj=TextTemplate.parse("${_eval('####')}").fill(null).toValue();
+        String obj=TextTemplate.parse("${_eval('####')}").fill(null).toStringTemplate();
         assertThat(obj).isInstanceOf(String.class);
         assertThat(obj.length()).isEqualTo(4);
     }
     @Test
     public void should_fill_expressions_having_timestamp() throws TemplateParseException {
-        String obj=TextTemplate.parse("${_timestamp}").fill(null).toValue();
+        String obj=TextTemplate.parse("${_timestamp}").fill(null).toStringTemplate();
         assertThat(obj).isInstanceOf(String.class);
     }
     @Test
     public void should_fill_expressions_having_ref() throws TemplateParseException {
-        String obj=TextTemplate.parse("${_timestamp>ref1}${ref1}").fill(new HashMap<>()).toValue();
+        String obj=TextTemplate.parse("${_timestamp>ref1}${ref1}").fill(new HashMap<>()).toStringTemplate();
         assertThat(obj).isInstanceOf(String.class);
         for (int i=0;i<(obj.length()/2);i++){
             assertThat(obj.charAt(i)==obj.charAt(obj.length()/2+i));
@@ -51,7 +51,7 @@ public class TextTemplateTest {
         assertThat(textTemplate).isInstanceOf(ArrayTextTemplate.class);
         ArrayTextTemplate arrayTextTemplate=(ArrayTextTemplate)textTemplate;
         assertThat(arrayTextTemplate.blocks.size()).isEqualTo(2);
-        assertThat(arrayTextTemplate.blocks.get(0).toValue()).isEqualTo("Hello ");
+        assertThat(arrayTextTemplate.blocks.get(0).toStringTemplate()).isEqualTo("Hello ");
         assertThat(arrayTextTemplate.blocks.get(1)).isInstanceOf(TextVariableTemplate.class);
         TextVariableTemplate textVariableTemplate=(TextVariableTemplate) arrayTextTemplate.blocks.get(1);
         assertThat(textVariableTemplate.variableName).isEqualTo("to");
@@ -62,11 +62,11 @@ public class TextTemplateTest {
         assertThat(textTemplate).isInstanceOf(ArrayTextTemplate.class);
         ArrayTextTemplate arrayTextTemplate=(ArrayTextTemplate)textTemplate;
         assertThat(arrayTextTemplate.blocks.size()).isEqualTo(4);
-        assertThat(arrayTextTemplate.blocks.get(0).toValue()).isEqualTo("Hello ");
+        assertThat(arrayTextTemplate.blocks.get(0).toStringTemplate()).isEqualTo("Hello ");
         assertThat(arrayTextTemplate.blocks.get(1)).isInstanceOf(TextVariableTemplate.class);
         TextVariableTemplate textVariable1=(TextVariableTemplate)arrayTextTemplate.blocks.get(1);
         assertThat(textVariable1.variableName).isEqualTo("to");
-        assertThat(arrayTextTemplate.blocks.get(2).toValue()).isEqualTo(" from ");
+        assertThat(arrayTextTemplate.blocks.get(2).toStringTemplate()).isEqualTo(" from ");
 
         assertThat(arrayTextTemplate.blocks.get(3)).isInstanceOf(TextVariableTemplate.class);
         TextVariableTemplate textVariable2=(TextVariableTemplate)arrayTextTemplate.blocks.get(3);
@@ -78,7 +78,7 @@ public class TextTemplateTest {
         assertThat(textTemplate).isInstanceOf(ArrayTextTemplate.class);
         ArrayTextTemplate arrayTextTemplate=(ArrayTextTemplate)textTemplate;
         assertThat(arrayTextTemplate.blocks.size()).isEqualTo(2);
-        assertThat(arrayTextTemplate.blocks.get(0).toValue()).isEqualTo("Hello ");
+        assertThat(arrayTextTemplate.blocks.get(0).toStringTemplate()).isEqualTo("Hello ");
         assertThat(arrayTextTemplate.blocks.get(1)).isInstanceOf(TextLoopTemplate.class);
         TextLoopTemplate textLoop=(TextLoopTemplate)arrayTextTemplate.blocks.get(1);
         assertThat(textLoop.variableName).isEqualTo("names");
@@ -92,7 +92,7 @@ public class TextTemplateTest {
         assertThat(textTemplate).isInstanceOf(ArrayTextTemplate.class);
         ArrayTextTemplate arrayTextTemplate=(ArrayTextTemplate)textTemplate;
         assertThat(arrayTextTemplate.blocks.size()).isEqualTo(2);
-        assertThat(arrayTextTemplate.blocks.get(0).toValue()).isEqualTo("Hello ");
+        assertThat(arrayTextTemplate.blocks.get(0).toStringTemplate()).isEqualTo("Hello ");
         assertThat(arrayTextTemplate.blocks.get(1)).isInstanceOf(TextLoopTemplate.class);
         TextLoopTemplate loopTemplate=(TextLoopTemplate)arrayTextTemplate.blocks.get(1);
         assertThat(loopTemplate.variableName).isEqualTo("places");
@@ -100,7 +100,7 @@ public class TextTemplateTest {
         TextLoopTemplate innerLoopTemplate=(TextLoopTemplate)loopTemplate.innerTemplate;
         assertThat(innerLoopTemplate.variableName).isEqualTo("names");
         assertThat(innerLoopTemplate.innerTemplate).isInstanceOf(FilledTextTemplate.class);
-        assertThat(innerLoopTemplate.innerTemplate.toValue()).isEqualTo("names");
+        assertThat(innerLoopTemplate.innerTemplate.toStringTemplate()).isEqualTo("names");
 
     }
 
@@ -108,7 +108,7 @@ public class TextTemplateTest {
     @Test
     public void should_return_same_template_when_no_variables() throws TemplateParseException {
         TextTemplate textTemplate=TextTemplate.parse("Hello");
-        String result=textTemplate.fill(null).toValue();
+        String result=textTemplate.fill(null).toStringTemplate();
         assertThat(result).isEqualTo("Hello");
     }
     @Test
@@ -116,7 +116,7 @@ public class TextTemplateTest {
         TextTemplate textTemplate=TextTemplate.parse("Hello ${to}");
         HashMap<String,Object> data=new HashMap<>();
         data.put("to","World");
-        String result=textTemplate.fill(data).toValue();
+        String result=textTemplate.fill(data).toStringTemplate();
         assertThat(result).isEqualTo("Hello World");
     }
     @Test
@@ -127,7 +127,7 @@ public class TextTemplateTest {
         names.add("Atmaram");
         names.add("Roopa");
         data.put("names",names);
-        String result=textTemplate.fill(data).toValue();
+        String result=textTemplate.fill(data).toStringTemplate();
         assertThat(result).isEqualTo("Hello");
     }
     @Test
@@ -138,7 +138,7 @@ public class TextTemplateTest {
         names.add("Atmaram");
         names.add("Roopa");
         data.put("names",names);
-        String result=textTemplate.fill(data).toValue();
+        String result=textTemplate.fill(data).toStringTemplate();
         assertThat(result).isEqualTo("Hello name name ");
     }
     @Test
@@ -149,14 +149,14 @@ public class TextTemplateTest {
         names.add("Atmaram");
         names.add("Roopa");
         data.put("names",names);
-        String result=textTemplate.fill(data).toValue();
+        String result=textTemplate.fill(data).toStringTemplate();
         assertThat(result).isEqualTo("Hello Atmaram Roopa ");
     }
     @Test
     public void should_not_fill_loop_when_no_loop_variable() throws TemplateParseException {
         TextTemplate textTemplate=TextTemplate.parse("Hello {{#names}}${name}{{/names}}");
         HashMap<String,Object> data=new HashMap<>();
-        String result=textTemplate.fill(data).toValue();
+        String result=textTemplate.fill(data).toStringTemplate();
         assertThat(result).isEqualTo("Hello {{#names}}${name}{{/names}}");
     }
 }

@@ -163,7 +163,7 @@ public class Main {
     public static void readDat(File file,ValueStore valueStore,VariableStore variableStore) throws IOException,TemplateParseException {
         String text = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
         JSONTemplate template=JSONTemplate.parse(text);
-        JSONTemplate filledTemplate=template.fill(valueStore.getValues());
+        JSONTemplate filledTemplate=(JSONTemplate)template.fill(valueStore.getValues());
 
         JSONAware data= (JSONAware) filledTemplate.toJSONCompatibleObject();
         String name=file.getName().substring(0,file.getName().length()-5);

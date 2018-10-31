@@ -24,7 +24,17 @@ class ArrayTextTemplate implements TextTemplate{
         ArrayTextTemplate ret=new ArrayTextTemplate();
         for (TextTemplate block:
              blocks) {
-            ret.add(block.fill(data));
+            ret.add((TextTemplate)block.fill(data));
+        }
+        return ret;
+    }
+
+    @Override
+    public String toStringTemplate() {
+        String ret="";
+        for (TextTemplate block:
+                blocks) {
+            ret+=block.toStringTemplate();
         }
         return ret;
     }
@@ -37,15 +47,5 @@ class ArrayTextTemplate implements TextTemplate{
             variableList.addAll(block.getVariables());
         }
         return variableList;
-    }
-
-    @Override
-    public String toValue() {
-        String ret="";
-        for (TextTemplate block:
-             blocks) {
-            ret+=block.toValue();
-        }
-        return ret;
     }
 }

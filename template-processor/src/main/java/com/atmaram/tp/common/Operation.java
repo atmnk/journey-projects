@@ -13,6 +13,16 @@ public enum Operation implements OperationEvaluator{
         }
         return result;
     }),
+    CONCAT("concat",(args,context)->{
+        List<Object> argumentValues=new ArrayList<>();
+        String result="";
+        for (int i=0;i<args.size();i++){
+            Object value=args.get(i).toValue(context);
+            argumentValues.add(value);
+            result+=value.toString();
+        }
+        return result;
+    }),
     SUBSTRACT("minus",(args,context)->{
         Integer result=(Integer) args.get(0).toValue(context);
         result-=(Integer) args.get(1).toValue(context);

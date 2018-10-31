@@ -5,6 +5,8 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.Unit;
+import com.atmaram.tp.ExtractableTemplate;
+import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.json.JSONTemplate;
@@ -25,14 +27,11 @@ public abstract class BodiedUnit extends RestUnit {
         fillObject((RestUnit) bodiedUnit,valueStore);
         String body = requestTemplate;
         try {
-            JSONTemplate rTemplate=JSONTemplate.parse(body).fill(valueStore.getValues());
-            if(rTemplate.toJSONCompatibleObject() instanceof JSONAware)
-                bodiedUnit.requestTemplate = ((JSONAware) rTemplate.toJSONCompatibleObject()).toJSONString();
-            else{
-                bodiedUnit.requestTemplate=rTemplate.toJSONCompatibleObject().toString();
-            }
+            Template rTemplate=ExtractableTemplate.parse(body).fill(valueStore.getValues());
+            bodiedUnit.requestTemplate = rTemplate.toStringTemplate();
         } catch (TemplateParseException e) {
             e.printStackTrace();
+            System.out.println(body);
         }
         return bodiedUnit;
     }
@@ -42,7 +41,7 @@ public abstract class BodiedUnit extends RestUnit {
         super.eval(variableStore);
         List<Variable> bodyVariables = null;
         try {
-            bodyVariables = JSONTemplate.parse(requestTemplate).getVariables();
+            bodyVariables = ExtractableTemplate.parse(requestTemplate).getVariables();
         } catch (TemplateParseException e) {
             throw new UnitConfigurationException("Invalid Template in request body: "+this.getName(),this.name,e);
         }

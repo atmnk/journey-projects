@@ -1,22 +1,23 @@
-package com.atmaram.tp.json;
+package com.atmaram.tp.xml;
 
 import com.atmaram.tp.Variable;
-import org.json.JSONObject;
+import com.atmaram.tp.xml.helpers.NodeFormer;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
+import org.w3c.dom.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class LoopTemplate implements JSONTemplate {
+public class LoopTemplate implements XMLTemplate {
     String variableName;
-    JSONTemplate innerObjectTemplate;
+    XMLTemplate pattern;
+    public static String LOOP_TAG="XMLLoop";
 
-    public LoopTemplate(String variableName, JSONTemplate innerObjectTemplate) {
+    public LoopTemplate(String variableName, XMLTemplate pattern) {
         this.variableName = variableName;
-        this.innerObjectTemplate = innerObjectTemplate;
+        this.pattern = pattern;
     }
 
     @Override
@@ -25,14 +26,14 @@ class LoopTemplate implements JSONTemplate {
         Variable variable=new Variable();
         variable.setName(variableName);
         variable.setType("List");
-        List<Variable> inner_variables=innerObjectTemplate.getVariables();
+        List<Variable> inner_variables=pattern.getVariables();
         Variable this_variable=new Variable();
         this_variable.setName("_this");
         this_variable.setType("String");
         List<Variable> inner_variables_excluding_this=new ArrayList<>();
         boolean found_this_variable=false;
         for (Variable inner_variable:inner_variables
-                ) {
+        ) {
             if(inner_variable.getName().equals("_this")){
                 found_this_variable=true;
             } else {
@@ -52,49 +53,49 @@ class LoopTemplate implements JSONTemplate {
 
     @Override
     public List<Variable> getTemplateVariables() {
-        List<Variable> inner_variables=innerObjectTemplate.getTemplateVariables();
+        List<Variable> inner_variables=pattern.getTemplateVariables();
         return inner_variables;
     }
 
     @Override
-    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
-        return new LoopTemplate(variableName,(JSONTemplate) innerObjectTemplate.fillTemplateVariables(data));
+    public XMLTemplate fillTemplateVariables(HashMap<String, Object> data) {
+        return new LoopTemplate(variableName,(XMLTemplate) pattern.fillTemplateVariables(data));
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public XMLTemplate fill(HashMap<String, Object> data) {
         if(data.containsKey(variableName)){
-            StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
+            NodeStaticListTemplate staticArrayTemplate=new NodeStaticListTemplate();
             HashMap<String,Object> localVariables;
             if(data.get(variableName) instanceof List){
                 List<Object> filling_list=(List<Object>)data.get(variableName);
                 for (Object list_object:
-                 filling_list) {
+                        filling_list) {
                     if(list_object instanceof HashMap) {
                         localVariables = (HashMap<String, Object>) list_object;
                     }else{
                         localVariables=new HashMap<>();
                         localVariables.put("_this",list_object);
                     }
-                    staticArrayTemplate.add((JSONTemplate)innerObjectTemplate.fill(localVariables).fill(data));
+                    staticArrayTemplate.add((XMLTemplate)pattern.fill(localVariables).fill(data));
                 }
                 return staticArrayTemplate;
             } else {
-                return new LoopTemplate(variableName,(JSONTemplate)innerObjectTemplate.fill(data));
+                return new LoopTemplate(variableName,(XMLTemplate)pattern.fill(data));
             }
         } else {
-            return new LoopTemplate(variableName,(JSONTemplate)innerObjectTemplate.fill(data));
+            return new LoopTemplate(variableName,(XMLTemplate)pattern.fill(data));
         }
     }
 
     @Override
-    public HashMap<String,Object> extract(Object from) {
+    public HashMap<String, Object> extract(Object from) {
         HashMap<String,Object> retData=new HashMap<>();
         List lst=new ArrayList();
-        JSONArray resultArray=(JSONArray)from;
-        for (Object oValue:
-                resultArray) {
-            HashMap<String,Object> memberExtractedData=innerObjectTemplate.extract(oValue);
+        NodeList resultList=(NodeList)from;
+        for(int i=0;i<resultList.getLength();i++){
+            Object oValue=resultList.item(i);
+            HashMap<String,Object> memberExtractedData=pattern.extract(oValue);
             if(memberExtractedData.containsKey("_this") && memberExtractedData.keySet().size()==1){
                 lst.add(memberExtractedData.get("_this"));
             } else {
@@ -106,17 +107,30 @@ class LoopTemplate implements JSONTemplate {
     }
 
     @Override
-    public Object toJSONCompatibleObject() {
-        JSONArray array=new JSONArray();
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("variable",variableName);
-        jsonObject.put("template",innerObjectTemplate.toJSONCompatibleObject());
-        array.add(jsonObject);
-        return array;
+    public Object toXMLCompatibleObject() {
+        Document document= NodeFormer.freshDocument();
+        Element node = NodeFormer.createNodeForTagInDocument(document,LOOP_TAG);
+        node.setAttribute("variable",variableName);
+        Object data=pattern.toXMLCompatibleObject();
+        if(data instanceof String){
+            Text textNode=document.createTextNode((String)data);
+            node.appendChild(textNode);
+        } else if(data instanceof Element){
+            Element dataE=(Element)data;
+            if(dataE.getTagName().equals("XMLStatic")){
+                NodeList staticChildNodes=dataE.getChildNodes();
+                for(int i=0;i<staticChildNodes.getLength();i++){
+                    Node newNode=document.importNode(staticChildNodes.item(i),true);
+                    node.appendChild(newNode);
+                }
+            }
+            Node newNode=document.importNode((Node)data,true);
+            node.appendChild(newNode);
+        }
+        return node;
     }
-
     @Override
     public String toStringTemplate() {
-        return ((JSONArray)toJSONCompatibleObject()).toJSONString();
+        throw new NotImplementedException();
     }
 }

@@ -53,6 +53,20 @@ public class CommandTest {
         assertThat(result.getVariables().size()).isEqualTo(0);
     }
     @Test
+    public void should_eval_responses_with_list_variables() throws CommandConfigurationException {
+        Command journey=new Command();
+        journey.setName("Journey 1");
+        List<Unit> steps=new ArrayList<>();
+        GetUnit step1=new GetUnit(RestClient.get());
+        step1.setUrlTemplate("http://localhost");
+        step1.setResponseTemplate("[{{#names}}{\"name\":${Name}}{{/names}}]");
+        steps.add(step1);
+        journey.setUnits(steps);
+        VariableStore result=journey.eval(new VariableStore(),new ArrayList<>());
+        assertThat(result.getVariables().size()).isEqualTo(0);
+    }
+
+    @Test
     public void should_eval_unresolved_url_variable() throws CommandConfigurationException {
         Command journey=new Command();
         journey.setName("Journey 1");
@@ -113,6 +127,35 @@ public class CommandTest {
         verify(restClient,times(1)).post("http://localhost",new ArrayList<>(),"{\"place\":\"Mumbai\"}");
         assertThat(valueStore.getValues().size()).isEqualTo(0);
     }
-
+//    @Test
+//    public void should_execute_responses_with_list_variables() throws UnirestException {
+//        RestClient restClient=mock(RestClient.class);
+//        Command journey=new Command();
+//        journey.setName("Journey 1");
+//        List<Unit> steps=new ArrayList<>();
+//        GetUnit step1=new GetUnit(restClient);
+//        step1.setUrlTemplate("http://localhost/1");
+//        step1.setResponseTemplate("[{{#reservations}}{\"orderId\":${orderId},\"bettyBundleId\":${bettyBundleId},\"requestedBettyBundleId\":${requestedBettyBundleId},\"pickingItem\":{\"quantity\":${quantity},\"sscc\":${sscc},\"bestBeforeDate\":${bbd},\"lotNumber\":${lotNumber}}}{{/reservations}}]");
+//        PostUnit step2=new PostUnit(restClient);
+//        step2.setUrlTemplate("http://localhost/2");
+//        step2.setResponseTemplate("{\"status\":\"success\"}");
+//        step2.setRequestTemplate("[{{#reservations}} { \"orderId\": ${orderId}, \"article\": { \"requestedBettyBundleId\": ${requestedBettyBundleId}, \"bettyBundleId\": ${bettyBundleId}, \"sscc\": ${sscc}, \"bbd\": ${bbd}, \"lotNumber\": ${lotNumber},\"quantity\":${quantity} } } {{/reservations}}]");
+//        steps.add(step1);
+//        steps.add(step2);
+//        journey.setUnits(steps);
+//        HttpResponse<String> mockResponse1=mock(HttpResponse.class);
+//        HttpResponse<String> mockResponse2=mock(HttpResponse.class);
+//
+//        doReturn("[{\"orderId\":\"284s9hv2i4ijsrduneu9fm70j\",\"article\":{\"quantity\":{\"unit\":\"None\",\"value\":6.0},\"bbd\":\"2019-10-10\",\"sscc\":\"891486732776000999\",\"lotNumber\":\"BTY-X24766700320022\",\"bettyBundleId\":\"BTY-X24766700320021\",\"requestedBettyBundleId\":\"BTY-X24766700320022\"}}]").when(mockResponse1).getBody();
+//        doReturn(200).when(mockResponse1).getStatus();
+//        doReturn("{\"status\":\"success\"}").when(mockResponse2).getBody();
+//        doReturn(200).when(mockResponse2).getStatus();
+//        doReturn(mockResponse1).when(restClient).get(anyString(),any(List.class));
+//        doReturn(mockResponse2).when(restClient).post(anyString(),any(List.class),anyString());
+//        ValueStore valueStore=journey.execute(new ArrayList<>(),new ValueStore());
+//        verify(restClient,times(1)).get("http://localhost/1",new ArrayList<>());
+//        verify(restClient,times(1)).post("http://localhost/2",new ArrayList<>(),"[{\"orderId\":\"284s9hv2i4ijsrduneu9fm70j\",\"article\":{\"quantity\":{\"unit\":\"None\",\"value\":6.0},\"bbd\":\"2019-10-10\",\"sscc\":\"891486732776000999\",\"lotNumber\":\"BTY-X24766700320022\",\"bettyBundleId\":\"BTY-X24766700320021\",\"requestedBettyBundleId\":\"BTY-X24766700320022\"}}]");
+//        assertThat(valueStore.getValues().size()).isEqualTo(0);
+//    }
 
 }

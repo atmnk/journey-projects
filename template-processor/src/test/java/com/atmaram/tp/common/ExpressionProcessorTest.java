@@ -84,5 +84,9 @@ public class ExpressionProcessorTest {
         assertThat(op).isEqualTo("CD");
 
     }
-
+    @Test
+    public void should_process_concat() {
+        String op = (String) ExpressionProcessor.process("_concat(3,_timestamp,_eval('1###'))", new HashMap<>());
+        assertThat(op.length()).isEqualTo(Integer.valueOf(18));
+    }
 }

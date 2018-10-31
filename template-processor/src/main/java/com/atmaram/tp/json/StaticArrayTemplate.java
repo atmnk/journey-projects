@@ -41,7 +41,7 @@ class StaticArrayTemplate implements JSONTemplate {
         StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
         for (JSONTemplate memberTemplate:
                 memberTemplates) {
-            staticArrayTemplate.add(memberTemplate.fillTemplateVariables(data));
+            staticArrayTemplate.add((JSONTemplate) memberTemplate.fillTemplateVariables(data));
         }
         return staticArrayTemplate;
     }
@@ -51,7 +51,7 @@ class StaticArrayTemplate implements JSONTemplate {
         StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
         for (JSONTemplate memberTemplate:
                 memberTemplates) {
-            staticArrayTemplate.add(memberTemplate.fill(data));
+            staticArrayTemplate.add((JSONTemplate) memberTemplate.fill(data));
         }
         return staticArrayTemplate;
     }
@@ -75,5 +75,10 @@ class StaticArrayTemplate implements JSONTemplate {
             jsonArray.add(memberTemplate.toJSONCompatibleObject());
         }
         return jsonArray;
+    }
+
+    @Override
+    public String toStringTemplate() {
+        return ((JSONArray)toJSONCompatibleObject()).toJSONString();
     }
 }

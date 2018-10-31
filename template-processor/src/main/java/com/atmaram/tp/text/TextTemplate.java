@@ -1,14 +1,12 @@
 package com.atmaram.tp.text;
 
+import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import java.util.HashMap;
 import java.util.List;
 
-public interface TextTemplate {
-    public TextTemplate fill(HashMap<String,Object> data);
-    public List<Variable> getVariables();
-    public String toValue();
+public interface TextTemplate extends Template {
     public static TextTemplate parse(String text) throws TemplateParseException {
         ArrayTextTemplate arrayTextTemplate=new ArrayTextTemplate();
         String strBlock="";
@@ -80,11 +78,5 @@ public interface TextTemplate {
         } else {
             return arrayTextTemplate;
         }
-    }
-    public static boolean isVariable(String strValue){
-        return (strValue.startsWith("${") && strValue.endsWith("}"));
-    }
-    public static String getVariableName(String strValue){
-        return strValue.substring(2,strValue.length()-1);
     }
 }

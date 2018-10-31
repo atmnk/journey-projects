@@ -18,13 +18,13 @@ class FilledTextTemplate implements TextTemplate {
     }
 
     @Override
-    public List<Variable> getVariables() {
-        return Arrays.asList();
+    public String toStringTemplate() {
+        return value;
     }
 
     @Override
-    public String toValue() {
-        return value;
+    public List<Variable> getVariables() {
+        return Arrays.asList();
     }
 
     public void merge(FilledTextTemplate toAdd){

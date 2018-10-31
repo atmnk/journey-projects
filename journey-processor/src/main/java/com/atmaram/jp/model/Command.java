@@ -32,8 +32,9 @@ public class Command {
                     textTemplate = TextTemplate.parse(environmentVariable.getValueTemplate());
                 } catch (TemplateParseException e) {
                     e.printStackTrace();
+                    System.out.println("Template:"+environmentVariable.getValueTemplate());
                 }
-                String envValue = textTemplate.fill(valueStore.getValues()).toValue();
+                String envValue = textTemplate.fill(valueStore.getValues()).toStringTemplate();
                 valueStore.add(environmentVariable.getName(), envValue);
             }
         }
@@ -47,8 +48,9 @@ public class Command {
                         textTemplate = TextTemplate.parse(environmentVariable.getValueTemplate());
                     } catch (TemplateParseException e) {
                         e.printStackTrace();
+                        System.out.println("Template:"+environmentVariable.getValueTemplate());
                     }
-                    String envValue = textTemplate.fill(valueStore.getValues()).toValue();
+                    String envValue = textTemplate.fill(valueStore.getValues()).toStringTemplate();
                     valueStore.add(environmentVariable.getName(), envValue);
                 }
             }

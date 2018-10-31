@@ -1,5 +1,7 @@
 package com.atmaram.tp.json;
 
+import com.atmaram.tp.ExtractableTemplate;
+import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.util.JSONTemplateParsingUtil;
@@ -12,12 +14,7 @@ import org.json.simple.parser.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
-public interface JSONTemplate {
-    public List<Variable> getVariables();
-    public List<Variable> getTemplateVariables();
-    public JSONTemplate fillTemplateVariables(HashMap<String,Object> data);
-    public JSONTemplate fill(HashMap<String,Object> data);
-    public HashMap<String,Object> extract(Object from);
+public interface JSONTemplate extends ExtractableTemplate {
     public Object toJSONCompatibleObject();
     public static JSONTemplate from(Object jsonTemplate) {
         if(jsonTemplate instanceof JSONObject){
@@ -46,10 +43,10 @@ public interface JSONTemplate {
                 return staticArrayTemplate;
             }
         } else if(jsonTemplate instanceof String){
-            if(isVariable((String)jsonTemplate)){
-                return new VariableTemplate(getVariableName((String)jsonTemplate));
-            } else if(isTemplateVariable((String)jsonTemplate)){
-                return new TemplateVariableTemplate(getVariableName((String)jsonTemplate));
+            if(Template.isVariable((String)jsonTemplate)){
+                return new VariableTemplate(Template.getVariableName((String)jsonTemplate));
+            } else if(Template.isTemplateVariable((String)jsonTemplate)){
+                return new TemplateVariableTemplate(Template.getVariableName((String)jsonTemplate));
             }
             else {
                 try {
@@ -66,21 +63,14 @@ public interface JSONTemplate {
         }
         return new FilledVariableTemplate(jsonTemplate);
     }
-    public static boolean isVariable(String strValue){
-        return (strValue.startsWith("${") && strValue.endsWith("}"));
-    }
-    public static boolean isTemplateVariable(String strValue){
-        return (strValue.startsWith("#{") && strValue.endsWith("}"));
-    }
-    public static String getVariableName(String strValue){
-        return strValue.substring(2,strValue.length()-1);
-    }
+
+
     public static JSONTemplate parse(String template) throws TemplateParseException {
-        if(isVariable(template)){
-            return new VariableTemplate(getVariableName(template));
+        if(Template.isVariable(template)){
+            return new VariableTemplate(Template.getVariableName(template));
         }
-        if(isTemplateVariable(template)){
-            return new TemplateVariableTemplate(getVariableName(template));
+        if(Template.isTemplateVariable(template)){
+            return new TemplateVariableTemplate(Template.getVariableName(template));
         }
         JSONParser jsonParser=new JSONParser();
         template= JSONTemplateParsingUtil.replaceVariablesWithQuotedVariables(template);

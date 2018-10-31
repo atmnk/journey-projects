@@ -51,7 +51,7 @@ class ObjectTemplate implements JSONTemplate {
         ObjectTemplate objectTemplate=new ObjectTemplate();
         for (JSONTemplate keyTemplate:
                 keyValueTemplates.keySet()) {
-            objectTemplate.put(keyTemplate.fillTemplateVariables(data),keyValueTemplates.get(keyTemplate).fillTemplateVariables(data));
+            objectTemplate.put((JSONTemplate) keyTemplate.fillTemplateVariables(data),(JSONTemplate) keyValueTemplates.get(keyTemplate).fillTemplateVariables(data));
         }
         return objectTemplate;
     }
@@ -61,7 +61,7 @@ class ObjectTemplate implements JSONTemplate {
         ObjectTemplate objectTemplate=new ObjectTemplate();
         for (JSONTemplate keyTemplate:
                 keyValueTemplates.keySet()) {
-            objectTemplate.put(keyTemplate.fill(data),keyValueTemplates.get(keyTemplate).fill(data));
+            objectTemplate.put((JSONTemplate)keyTemplate.fill(data),(JSONTemplate)keyValueTemplates.get(keyTemplate).fill(data));
         }
         return objectTemplate;
     }
@@ -88,5 +88,10 @@ class ObjectTemplate implements JSONTemplate {
             jsonObject.put(keyTemplate.toJSONCompatibleObject(),keyValueTemplates.get(keyTemplate).toJSONCompatibleObject());
         }
         return jsonObject;
+    }
+
+    @Override
+    public String toStringTemplate() {
+        return ((JSONObject)toJSONCompatibleObject()).toJSONString();
     }
 }

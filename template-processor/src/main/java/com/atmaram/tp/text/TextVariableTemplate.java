@@ -1,5 +1,6 @@
 package com.atmaram.tp.text;
 
+import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.VariableValueProcessor;
 
@@ -17,11 +18,16 @@ class TextVariableTemplate implements TextTemplate {
     @Override
     public TextTemplate fill(HashMap<String, Object> data) {
         String filledValue=VariableValueProcessor.getValue(variableName,data).toString();
-        if(TextTemplate.isVariable(filledValue)){
+        if(Template.isVariable(filledValue)){
             return this;
         } else {
             return new FilledTextTemplate(filledValue);
         }
+    }
+
+    @Override
+    public String toStringTemplate() {
+        return "${"+variableName+"}";
     }
 
     @Override
@@ -36,8 +42,4 @@ class TextVariableTemplate implements TextTemplate {
         }
     }
 
-    @Override
-    public String toValue() {
-        return "${"+variableName+"}";
-    }
 }

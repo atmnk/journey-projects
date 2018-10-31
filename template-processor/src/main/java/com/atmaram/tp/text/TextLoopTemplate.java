@@ -23,17 +23,24 @@ class TextLoopTemplate implements TextTemplate{
             for (Object listElement:
                     (List)loopVariable) {
                 if(listElement instanceof HashMap){
-                    arrayTextTemplate.add(innerTemplate.fill((HashMap<String, Object>) listElement));
+                    arrayTextTemplate.add((TextTemplate) innerTemplate.fill((HashMap<String, Object>) listElement));
                 } else {
                     HashMap<String,Object> listData=new HashMap<>();
                     listData.put("_this",listElement);
-                    arrayTextTemplate.add(innerTemplate.fill(listData));
+                    arrayTextTemplate.add((TextTemplate)innerTemplate.fill(listData));
                 }
             }
             return arrayTextTemplate;
         } else {
-            return new TextLoopTemplate(variableName,innerTemplate.fill(data));
+            return new TextLoopTemplate(variableName,(TextTemplate)innerTemplate.fill(data));
         }
+    }
+
+    @Override
+    public String toStringTemplate() {
+        String ret="";
+        ret+="{{#"+variableName+"}}"+innerTemplate.toStringTemplate()+"{{/"+variableName+"}}";
+        return ret;
     }
 
     @Override
@@ -61,12 +68,5 @@ class TextLoopTemplate implements TextTemplate{
             returnValue.add(variable);
         }
         return returnValue;
-    }
-
-    @Override
-    public String toValue() {
-        String ret="";
-        ret+="{{#"+variableName+"}}"+innerTemplate.toValue()+"{{/"+variableName+"}}";
-        return ret;
     }
 }

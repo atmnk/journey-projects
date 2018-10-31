@@ -1,5 +1,6 @@
 package com.atmaram.tp.json;
 
+import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.VariableValueProcessor;
 import org.json.simple.JSONAware;
@@ -41,7 +42,7 @@ class VariableTemplate implements JSONTemplate {
     @Override
     public JSONTemplate fill(HashMap<String, Object> data) {
         Object putValue=VariableValueProcessor.getValue(variableName,data);
-        if(putValue instanceof String && JSONTemplate.isVariable((String)putValue)){
+        if(putValue instanceof String && Template.isVariable((String)putValue)){
             return this;
         } else if(putValue instanceof JSONAware){
             return JSONTemplate.from(putValue);
@@ -61,5 +62,10 @@ class VariableTemplate implements JSONTemplate {
     public Object toJSONCompatibleObject() {
         String jsonTemplate="${"+variableName+"}";
         return jsonTemplate;
+    }
+
+    @Override
+    public String toStringTemplate() {
+        return (String) toJSONCompatibleObject();
     }
 }
