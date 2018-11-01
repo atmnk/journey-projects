@@ -2,7 +2,7 @@ package com.atmaram.tp.xml;
 
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.xml.helpers.NodeFormer;
-import org.json.simple.JSONArray;
+
 import org.w3c.dom.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

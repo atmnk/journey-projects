@@ -3,8 +3,6 @@ package com.atmaram.tp.text;
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.ExpressionProcessor;
-import com.atmaram.tp.common.VariableValueProcessor;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
