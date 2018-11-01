@@ -139,8 +139,8 @@ public class ExpressionProcessorTest {
     @Test
     public void should_do_composite(){
         HashMap<String,Object> data=new HashMap<>();
-        data.put("bbid","BTY-X67690200320021");
-        Object value=ExpressionProcessor.process("_first(bbid,_len(bbid)-4))",data);
-        assertThat(value).isEqualTo("BTY-X6769020032");
+        data.put("data","CDE-F67690200320021");
+        Object value=ExpressionProcessor.process("_first(data,_len(data)-4))",data);
+        assertThat(value).isEqualTo("CDE-F6769020032");
     }
 }
