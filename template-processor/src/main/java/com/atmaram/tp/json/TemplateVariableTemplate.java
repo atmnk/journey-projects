@@ -3,7 +3,6 @@ package com.atmaram.tp.json;
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.ExpressionProcessor;
-import com.atmaram.tp.common.VariableValueProcessor;
 import org.json.simple.JSONAware;
 
 import java.util.Arrays;
