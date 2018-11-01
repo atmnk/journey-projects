@@ -1,7 +1,11 @@
 package com.atmaram.tp.xml;
 
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.xml.helpers.NodeFormer;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +13,87 @@ import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class XMLTemplateTest {
+    //parse
+    @Test
+    public void should_parse_variable_as_variable_template() throws TemplateParseException {
+        XMLTemplate template=XMLTemplate.parse("${Hello}");
+        assertThat(template).isInstanceOf(VariableTemplate.class);
+    }
+    @Test
+    public void should_parse_template_variable_as_template_variable_template() throws TemplateParseException {
+        XMLTemplate template=XMLTemplate.parse("#{Hello}");
+        assertThat(template).isInstanceOf(TemplateVariableTemplate.class);
+    }
+    @Test
+    public void should_parse_xml_node_as_NodeTemplate() throws TemplateParseException {
+        XMLTemplate template=XMLTemplate.parse("<a></a>");
+        assertThat(template).isInstanceOf(NodeTemplate.class);
+    }
+
+    // from
+    @Test
+    public void should_form_NodeTemplate_From_xml_Document(){
+        Document document=NodeFormer.freshDocument();
+        document.appendChild(NodeFormer.createNodeForTagInDocument(document,"a"));
+        XMLTemplate template=XMLTemplate.from(document);
+        assertThat(template).isInstanceOf(NodeTemplate.class);
+    }
+    @Test
+    public void should_form_NodeTemplate_From_xml_Element(){
+        Document document=NodeFormer.freshDocument();
+        Element element=NodeFormer.createNodeForTagInDocument(document,"a");
+        XMLTemplate template=XMLTemplate.from(element);
+        assertThat(template).isInstanceOf(NodeTemplate.class);
+    }
+    @Test
+    public void should_form_FilledVariableTemplate_From_xml_Text(){
+        Document document=NodeFormer.freshDocument();
+        Text textNode=document.createTextNode("Hello");
+        XMLTemplate template=XMLTemplate.from(textNode);
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+    }
+    @Test
+    public void should_form_FilledVariableTemplate_From_string(){
+        XMLTemplate template=XMLTemplate.from("Hello");
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+    }
+    @Test
+    public void should_form_VariableTemplate_From_string_if_contains_variable(){
+        XMLTemplate template=XMLTemplate.from("${Hello}");
+        assertThat(template).isInstanceOf(VariableTemplate.class);
+    }
+    @Test
+    public void should_form_TemplateVariableTemplate_From_string_if_contains_variable(){
+        XMLTemplate template=XMLTemplate.from("#{Hello}");
+        assertThat(template).isInstanceOf(TemplateVariableTemplate.class);
+    }
+    @Test
+    public void should_form_VariableTemplate_From_xml_Text_if_contains_variable(){
+        Document document=NodeFormer.freshDocument();
+        Text textNode=document.createTextNode("${Hello}");
+        XMLTemplate template=XMLTemplate.from(textNode);
+        assertThat(template).isInstanceOf(VariableTemplate.class);
+    }
+    @Test
+    public void should_form_TemplateVariableTemplate_From_xml_Text_if_contains_variable(){
+        Document document=NodeFormer.freshDocument();
+        Text textNode=document.createTextNode("#{Hello}");
+        XMLTemplate template=XMLTemplate.from(textNode);
+        assertThat(template).isInstanceOf(TemplateVariableTemplate.class);
+    }
+
+    @Test
+    public void should_form_LoopTemplate_if_node_is_with_tag_for_loop(){
+        Document document=NodeFormer.freshDocument();
+        Element element=NodeFormer.createNodeForTagInDocument(document,"XMLLoop");
+        element.setAttribute("variable","var");
+        element.appendChild(document.createTextNode("Hello"));
+        XMLTemplate template=XMLTemplate.from(element);
+        assertThat(template).isInstanceOf(LoopTemplate.class);
+        LoopTemplate loopTemplate=(LoopTemplate)template;
+        assertThat(loopTemplate.variableName).isEqualTo("var");
+        assertThat(loopTemplate.pattern).isInstanceOf(FilledVariableTemplate.class);
+    }
     @Test
     public void should_parse_string_as_FilledVariableTemplate() {
         XMLTemplate template=XMLTemplate.from("Hello");

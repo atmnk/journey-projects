@@ -1,8 +1,17 @@
 package com.atmaram.tp.common;
 
+import com.atmaram.tp.Variable;
+
 import java.util.*;
 
 public class ExpressionProcessor {
+    public static List<Variable> getVariables(String expression) {
+        String[] processorargs=expression.split(">");
+        if(processorargs.length>1){
+            return toTree(processorargs[0]).getVariables();
+        }
+        return toTree(processorargs[0]).getVariables();
+    }
     public static Object process(String expression, HashMap<String,Object> context){
         String[] processorargs=expression.split(">");
         Object value;
@@ -294,5 +303,39 @@ public class ExpressionProcessor {
             }
 
         }
+    }
+        public static String getVal(String pattern){
+        if(pattern.equals(""))
+            return "";
+        if(pattern.contains("(") && pattern.contains(")")){
+            String newpat=pattern.substring(1,pattern.length()-1);
+            String start=newpat.split(",")[0];
+            String end=newpat.split(",")[1];
+            return between(start,end);
+        } else if(pattern.contains("[") && pattern.contains("]")){
+            String newpat=pattern.substring(1,pattern.length()-2);
+            return among(newpat);
+        }else {
+            String value=pattern;
+            Random random=new Random();
+            while(value.contains("#"))
+            {
+                value=value.replaceFirst("#", Integer.toString(random.nextInt(9)));
+            }
+            return value;
+        }
+    }
+    public static String between(String start,String end){
+        start=getVal(start);
+        end=getVal(end);
+        int int1=Integer.parseInt(start);
+        int int2=Integer.parseInt(end);
+        return Integer.toString(new Random().nextInt(int2-int1)+int1);
+
+    }
+    public static String among(String list){
+        String [] sList=list.split(",");
+        int index=new Random().nextInt(sList.length-1);
+        return getVal(sList[index]);
     }
 }

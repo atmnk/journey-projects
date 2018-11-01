@@ -1,6 +1,7 @@
 package com.atmaram.tp.text;
 
 import com.atmaram.tp.Variable;
+import com.atmaram.tp.common.ExpressionProcessor;
 import com.atmaram.tp.common.VariableValueProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ class TextLoopTemplate implements TextTemplate{
 
     @Override
     public TextTemplate fill(HashMap<String, Object> data) {
-        Object loopVariable=VariableValueProcessor.getValue(variableName,data);
+        Object loopVariable= ExpressionProcessor.process(variableName,data);
         if(loopVariable instanceof List){
             ArrayTextTemplate arrayTextTemplate=new ArrayTextTemplate();
             for (Object listElement:

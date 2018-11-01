@@ -2,9 +2,7 @@ package com.atmaram.tp.xml;
 
 import com.atmaram.tp.ExtractableTemplate;
 import com.atmaram.tp.Template;
-import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.util.JSONTemplateParsingUtil;
 import com.atmaram.tp.util.XMLTemplateParsingUtil;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -79,7 +77,7 @@ public interface XMLTemplate extends ExtractableTemplate {
         if(Template.isTemplateVariable(template)){
             return new TemplateVariableTemplate(Template.getVariableName(template));
         }
-        template= JSONTemplateParsingUtil.replaceVariablesWithQuotedVariables(template);
+        template= XMLTemplateParsingUtil.replaceVariablesWithQuotedVariables(template);
         template= XMLTemplateParsingUtil.replaceLoopsWithTransformedXML(template);
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

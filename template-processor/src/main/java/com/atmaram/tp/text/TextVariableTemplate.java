@@ -2,6 +2,7 @@ package com.atmaram.tp.text;
 
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
+import com.atmaram.tp.common.ExpressionProcessor;
 import com.atmaram.tp.common.VariableValueProcessor;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ class TextVariableTemplate implements TextTemplate {
 
     @Override
     public TextTemplate fill(HashMap<String, Object> data) {
-        String filledValue=VariableValueProcessor.getValue(variableName,data).toString();
+        String filledValue=ExpressionProcessor.process(variableName,data).toString();
         if(Template.isVariable(filledValue)){
             return this;
         } else {
@@ -32,14 +33,15 @@ class TextVariableTemplate implements TextTemplate {
 
     @Override
     public List<Variable> getVariables() {
-        if(variableName.startsWith("_") && !variableName.equals("_this")){
-            return Arrays.asList();
-        } else {
-            Variable variable = new Variable();
-            variable.setName(variableName);
-            variable.setType("String");
-            return Arrays.asList(variable);
-        }
+        return ExpressionProcessor.getVariables(variableName);
+//        if(variableName.startsWith("_") && !variableName.equals("_this")){
+//            return Arrays.asList();
+//        } else {
+//            Variable variable = new Variable();
+//            variable.setName(variableName);
+//            variable.setType("String");
+//            return Arrays.asList(variable);
+//        }
     }
 
 }

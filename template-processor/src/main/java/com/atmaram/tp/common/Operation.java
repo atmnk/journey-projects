@@ -32,7 +32,7 @@ public enum Operation implements OperationEvaluator{
         return new Date().getTime();
     }),
     EVAL("eval",(args,context)->{
-        return VariableValueProcessor.getVal((String)args.get(0).toValue(context));
+        return ExpressionProcessor.getVal((String)args.get(0).toValue(context));
     }),
     UUID("uuid",(args,context)->{
         return java.util.UUID.randomUUID().toString();

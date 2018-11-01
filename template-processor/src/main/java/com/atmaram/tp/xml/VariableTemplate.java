@@ -2,6 +2,7 @@ package com.atmaram.tp.xml;
 
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
+import com.atmaram.tp.common.ExpressionProcessor;
 import com.atmaram.tp.common.VariableValueProcessor;
 import org.w3c.dom.Node;
 
@@ -18,14 +19,15 @@ class VariableTemplate implements XMLTemplate {
 
     @Override
     public List<Variable> getVariables() {
-        if(variableName.startsWith("_") && !variableName.equals("_this")){
-            return Arrays.asList();
-        } else {
-            Variable variable = new Variable();
-            variable.setName(variableName);
-            variable.setType("String");
-            return Arrays.asList(variable);
-        }
+        return ExpressionProcessor.getVariables(variableName);
+//        if(variableName.startsWith("_") && !variableName.equals("_this")){
+//            return Arrays.asList();
+//        } else {
+//            Variable variable = new Variable();
+//            variable.setName(variableName);
+//            variable.setType("String");
+//            return Arrays.asList(variable);
+//        }
     }
 
     @Override
@@ -40,7 +42,7 @@ class VariableTemplate implements XMLTemplate {
 
     @Override
     public XMLTemplate fill(HashMap<String, Object> data) {
-        Object putValue=VariableValueProcessor.getValue(variableName,data);
+        Object putValue=ExpressionProcessor.process(variableName,data);
         if(putValue instanceof String && Template.isVariable((String)putValue)){
             return this;
         } else if(putValue instanceof Node){
