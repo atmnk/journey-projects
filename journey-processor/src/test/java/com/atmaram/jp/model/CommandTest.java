@@ -1,4 +1,4 @@
-package com.atmaram.jp.processor;
+package com.atmaram.jp.model;
 
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;

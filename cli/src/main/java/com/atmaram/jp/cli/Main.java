@@ -96,7 +96,7 @@ public class Main {
 
             for (Variable variable :
                     variables) {
-                valueStore.add(variable.getName(), readVariable(variable));
+                readVariable(valueStore,variable);
 
             }
         try
@@ -236,14 +236,16 @@ public class Main {
         }
         return commands;
     }
-    public static Object readVariable(Variable variable){
+    public static void readVariable(ValueStore valueStore,Variable variable){
         if(variable.getType().equals("String"))
         {
             Scanner input=new Scanner(System.in);
             System.out.println("Enter "+variable.getName()+":");
-            return input.nextLine();
-        } else {
-            return "";
+            valueStore.add(variable.getName(),input.nextLine());
+        } else if(variable.getType().equals("List")) {
+            for (Variable inner : variable.getInner_variables()) {
+                readVariable(valueStore,inner);
+            }
         }
     }
     public static Environment readEnv(Path baseEnvFile) throws FileNotFoundException {
