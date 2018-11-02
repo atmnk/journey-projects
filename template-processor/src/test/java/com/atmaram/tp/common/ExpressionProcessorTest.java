@@ -2,6 +2,8 @@ package com.atmaram.tp.common;
 
 import org.junit.Test;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -142,5 +144,24 @@ public class ExpressionProcessorTest {
         data.put("data","CDE-F67690200320021");
         Object value=ExpressionProcessor.process("_first(data,_len(data)-4))",data);
         assertThat(value).isEqualTo("CDE-F6769020032");
+    }
+    @Test
+    public void should_do_now(){
+        Object value=ExpressionProcessor.process("_now",new HashMap<>());
+        assertThat(value).isInstanceOf(Date.class);
+    }
+    @Test
+    public void should_format_date(){
+        Date date=new Date();
+        Object value=ExpressionProcessor.process("_format(_now,'dd-MM')",new HashMap<>());
+        assertThat(value).isInstanceOf(String.class);
+        assertThat(value).isEqualTo(String.format("%02d",date.getDate())+"-"+String.format("%02d",date.getMonth()+1));
+    }
+    @Test
+    public void should_add_day_to_date(){
+        Date date=new Date();
+        Object value=ExpressionProcessor.process("_format(_add_days(_now,1),'dd-MM')",new HashMap<>());
+        assertThat(value).isInstanceOf(String.class);
+        assertThat(value).isEqualTo(String.format("%02d",date.getDate()+1)+"-"+String.format("%02d",date.getMonth()+1));
     }
 }

@@ -1,5 +1,6 @@
 package com.atmaram.tp.common;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public enum Operation implements OperationEvaluator{
@@ -12,6 +13,99 @@ public enum Operation implements OperationEvaluator{
             result+=(Integer) value;
         }
         return result;
+    }),
+    DAY("day",(args,context)->{
+        Date date=new Date();
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }),
+    MONTH("month",(args,context)->{
+        Date date=new Date();
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.MONTH);
+    }),
+    YEAR("year",(args,context)->{
+        Date date=new Date();
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.YEAR);
+    }),
+    FORMAT_DATE("format",(args,context)->{
+        SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(1).toValue(context));
+        return formatter.format((Date)args.get(0).toValue(context));
+    }),
+    NOW("now",(args,context)->{
+        Date date=new Date();
+        if(args.size()==0){
+            return date;
+        }
+        SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(0).toValue(context));
+        return formatter.format(date);
+    }),
+    ADD_MONTHS("add_months",(args,context)->{
+        Date date=(Date)args.get(0).toValue(context);
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        Object oToAdd=args.get(1).toValue(context);
+        int iToAdd=0;
+        if(oToAdd instanceof String){
+            iToAdd=Integer.parseInt((String)oToAdd);
+        } else if(oToAdd instanceof Integer){
+            iToAdd=((Integer)oToAdd);
+        } else {
+            try{
+                iToAdd=(int)oToAdd;
+            }catch (Exception ex){
+
+            }
+        }
+        calendar.add(Calendar.MONTH,iToAdd);
+        Date monthAddedDate=calendar.getTime();
+        return monthAddedDate;
+    }),
+    ADD_YEAR("add_year",(args,context)->{
+        Date date=(Date)args.get(0).toValue(context);
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        Object oToAdd=args.get(1).toValue(context);
+        int iToAdd=0;
+        if(oToAdd instanceof String){
+            iToAdd=Integer.parseInt((String)oToAdd);
+        } else if(oToAdd instanceof Integer){
+            iToAdd=((Integer)oToAdd);
+        } else {
+            try{
+                iToAdd=(int)oToAdd;
+            }catch (Exception ex){
+
+            }
+        }
+        calendar.add(Calendar.YEAR,iToAdd);
+        Date monthAddedDate=calendar.getTime();
+        return monthAddedDate;
+    }),
+    ADD_DAYS("add_days",(args,context)->{
+        Date date=(Date)args.get(0).toValue(context);
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        Object oToAdd=args.get(1).toValue(context);
+        int iToAdd=0;
+        if(oToAdd instanceof String){
+            iToAdd=Integer.parseInt((String)oToAdd);
+        } else if(oToAdd instanceof Integer){
+            iToAdd=((Integer)oToAdd);
+        } else {
+            try{
+                iToAdd=(int)oToAdd;
+            }catch (Exception ex){
+
+            }
+        }
+        calendar.add(Calendar.DAY_OF_MONTH,iToAdd);
+        Date monthAddedDate=calendar.getTime();
+        return monthAddedDate;
     }),
     CONCAT("concat",(args,context)->{
         List<Object> argumentValues=new ArrayList<>();
