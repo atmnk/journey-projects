@@ -12,6 +12,10 @@ public class VariableStore {
         return finalVariables;
     }
 
+    public List<Variable> getResolvedVariables() {
+        return resolvedVariables;
+    }
+
     private List<Variable> resolvedVariables;
     public VariableStore() {
         finalVariables=new ArrayList<>();
@@ -37,7 +41,13 @@ public class VariableStore {
                             if(new_inner.size()!=0){
                                 Variable finalVar=getFinalVariableWithNameAndType(varToAdd.getName(),varToAdd.getType());
                                 if(finalVar!=null){
-                                    finalVar.setInner_variables(new_inner);
+                                    finalVar.getInner_variables().addAll(new_inner);
+                                } else {
+                                    Variable newVarToToAdd=new Variable();
+                                    newVarToToAdd.setName(varToAdd.getName());
+                                    newVarToToAdd.setType("List");
+                                    newVarToToAdd.setInner_variables(new_inner);
+                                    finalVariables.add(newVarToToAdd);
                                 }
                             }
                         }
@@ -45,7 +55,14 @@ public class VariableStore {
                     }
                 }
                 if(!found){
-                    finalVariables.add(varToAdd.clone());
+                    Variable existingFinal=getFinalVariableWithNameAndType(varToAdd.getName(),varToAdd.getType());
+                    if(existingFinal!=null){
+                        Variable newFinal=existingFinal.mergeWith(varToAdd);
+                        finalVariables.remove(existingFinal);
+                        finalVariables.add(newFinal);
+                    } else {
+                        finalVariables.add(varToAdd.clone());
+                    }
                 }
             }
         }
@@ -59,10 +76,9 @@ public class VariableStore {
                 Variable allreadyResolvedVar=getResolvedVariableWithNameAndType(varToResolve.getName(),varToResolve.getType());
                 if(allreadyResolvedVar!=null){
                     if(allreadyResolvedVar.getType().equals("List")){
-                        VariableStore newVariableStore=new VariableStore();
-                        newVariableStore.resolve(allreadyResolvedVar.getInner_variables());
-                        newVariableStore.resolve(varToResolve.getInner_variables());
-                        allreadyResolvedVar.setInner_variables(newVariableStore.resolvedVariables);
+                        Variable newResolvedVariable=allreadyResolvedVar.mergeWith(varToResolve);
+                        resolvedVariables.remove(allreadyResolvedVar);
+                        resolvedVariables.add(newResolvedVariable);
                     }
                     continue;
                 } else {
@@ -98,72 +114,6 @@ public class VariableStore {
         }
         return null;
     }
-//    public void add(List<Variable> toAdd){
-//        for (Variable variable:
-//             toAdd) {
-//            if(variables.contains(variable))
-//                continue;
-//            else
-//                variables.add(variable);
-//        }
-//        resolve(resolvedVariables);
-//    }
-//    public void resolve(List<Variable> toResolve){
-//        for(int outer=0;outer< toResolve.size();outer++){
-//            Variable variable=toResolve.get(outer);
-//            for(int i=0;i<variables.size();i++){
-//                Variable qVariable=variables.get(i);
-//                boolean resolved=false;
-//                if(variable.getName().equals(qVariable.getName()) && qVariable.getType().equals("String")){
-//                    variables.remove(qVariable);
-//                    resolved=true;
-//                    i--;
-//                } else if (variable.getName().equals(qVariable.getName()) && qVariable.getType().equals("List") && variable.getType().equals("List")){
-//                    if(variable.getInner_variables()==null && qVariable.getInner_variables()==null){
-//                        variables.remove(qVariable);
-//                        resolved=true;
-//                        i--;
-//
-//                    } else if(variable.getInner_variables()==null && qVariable.getInner_variables()!=null){
-//                        variables.addAll(qVariable.getInner_variables());
-//                        variables.remove(qVariable);
-//                        resolved=true;
-//
-//                        i--;
-//                    } else if(variable.getInner_variables()!=null && qVariable.getInner_variables()==null){
-//                        variables.remove(qVariable);
-//                        i--;
-//                    } else {
-//                        VariableStore variableStore = new VariableStore();
-//                        variableStore.add(qVariable.getInner_variables());
-//                        variableStore.resolve(variable.getInner_variables());
-//                        variableStore.resolve(resolvedVariables);
-//                        qVariable.setInner_variables(variableStore.variables);
-//                        if (qVariable.getInner_variables().size() == 0) {
-//                            variables.remove(qVariable);
-//                            resolved=true;
-//                            i--;
-//                        }
-//                    }
-//
-//                }
-//                if(qVariable.getType().equals("List") && !resolved && qVariable.getInner_variables()!=null && qVariable.getInner_variables().size()>0){
-//                    VariableStore variableStore=new VariableStore();
-//                    variableStore.add(qVariable.getInner_variables());
-//                    variableStore.resolve(resolvedVariables);
-//                    if(variableStore.variables.size()==0)
-//                    {
-//                        variables.remove(qVariable);
-//                        i--;
-//                    } else {
-//                        qVariable.setInner_variables(variableStore.getVariables());
-//                    }
-//                }
-//            }
-//            if(!resolvedVariables.contains(variable))
-//                resolvedVariables.add(variable);
-//        }
-//    }
     public Variable getResolved(String name,String type){
         for (Variable variable:
              resolvedVariables) {

@@ -54,6 +54,11 @@ public class BlockUnit extends Unit {
         try {
             filterTemplate = JSONTemplate.parse(filter);
             variableStore.add(newVariableStore.getVariables());
+            Variable variable=new Variable();
+            variable.setName(counterVariable);
+            variable.setType("List");
+            variable.setInner_variables(newVariableStore.getResolvedVariables());
+            variableStore.resolve(Arrays.asList(variable));
             variableStore.add(filterTemplate.getVariables());
         } catch (TemplateParseException e) {
             throw new UnitConfigurationException("Invalid Template in filter",this.name,e);

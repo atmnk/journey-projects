@@ -134,4 +134,162 @@ public class VariableStoreTest {
         assertThat(result.get(0).getInner_variables().get(0).getType()).isEqualTo("String");
 
     }
+    @Test
+    public void should_combine_resolved_variables_in_list(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable inner1=new Variable();
+        inner1.setName("inner1");
+        inner1.setType("String");
+        Variable resolveVariable1=new Variable();
+        resolveVariable1.setName("test");
+        resolveVariable1.setType("List");
+        resolveVariable1.setInner_variables(Arrays.asList(inner1));
+
+        Variable inner2=new Variable();
+        inner2.setName("inner2");
+        inner2.setType("String");
+        Variable resolveVariable2=new Variable();
+        resolveVariable2.setName("test");
+        resolveVariable2.setType("List");
+        resolveVariable2.setInner_variables(Arrays.asList(inner2));
+
+        variableStore.resolve(Arrays.asList(resolveVariable1));
+        variableStore.resolve(Arrays.asList(resolveVariable2));
+
+        Variable result=variableStore.getResolved("test","List");
+        assertThat(result.getInner_variables().size()).isEqualTo(2);
+
+    }
+    @Test
+    public void should_not_add_resolved_variable_again(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable variable=new Variable();
+        variable.setName("variable");
+        variable.setType("String");
+
+
+        variableStore.resolve(Arrays.asList(variable));
+        variableStore.resolve(Arrays.asList(variable));
+        List<Variable> vars=variableStore.getResolvedVariables();
+        assertThat(vars.size()).isEqualTo(1);
+
+    }
+    @Test
+    public void should_not_add_already_added_variable_again(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable variable=new Variable();
+        variable.setName("variable");
+        variable.setType("String");
+
+
+        variableStore.add(Arrays.asList(variable));
+        variableStore.add(Arrays.asList(variable));
+        List<Variable> vars=variableStore.getVariables();
+        assertThat(vars.size()).isEqualTo(1);
+
+    }
+    @Test
+    public void should_add_new_inner_variables_to_already_added_variable(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable inner1=new Variable();
+        inner1.setName("inner1");
+        inner1.setType("String");
+        Variable variable1=new Variable();
+        variable1.setName("test");
+        variable1.setType("List");
+        variable1.setInner_variables(Arrays.asList(inner1));
+
+        Variable inner2=new Variable();
+        inner2.setName("inner2");
+        inner2.setType("String");
+        Variable variable2=new Variable();
+        variable2.setName("test");
+        variable2.setType("List");
+        variable2.setInner_variables(Arrays.asList(inner2));
+
+        variableStore.add(Arrays.asList(variable1));
+        variableStore.add(Arrays.asList(variable2));
+
+        List<Variable> vars=variableStore.getVariables();
+        assertThat(vars.size()).isEqualTo(1);
+        Variable variable=variableStore.getUnResolved("test","List");
+        assertThat(variable.getInner_variables().size()).isEqualTo(2);
+
+    }
+    @Test
+    public void should_add_new_inner_variables_to_already_added_and_resolved_variable(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable inner1=new Variable();
+        inner1.setName("inner1");
+        inner1.setType("String");
+        Variable variable1=new Variable();
+        variable1.setName("test");
+        variable1.setType("List");
+        variable1.setInner_variables(Arrays.asList(inner1));
+
+        Variable inner2=new Variable();
+        inner2.setName("inner2");
+        inner2.setType("String");
+        Variable variable2=new Variable();
+        variable2.setName("test");
+        variable2.setType("List");
+        variable2.setInner_variables(Arrays.asList(inner2));
+
+        variableStore.add(Arrays.asList(variable1));
+        variableStore.resolve(Arrays.asList(variable1));
+        variableStore.add(Arrays.asList(variable2));
+
+        List<Variable> vars=variableStore.getVariables();
+        assertThat(vars.size()).isEqualTo(1);
+        Variable variable=variableStore.getUnResolved("test","List");
+        assertThat(variable.getInner_variables().size()).isEqualTo(2);
+
+    }
+    @Test
+    public void should_add_new_inner_variables_to_already_resolved_and_added_variable(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable inner1=new Variable();
+        inner1.setName("inner1");
+        inner1.setType("String");
+        Variable variable1=new Variable();
+        variable1.setName("test");
+        variable1.setType("List");
+        variable1.setInner_variables(Arrays.asList(inner1));
+
+        Variable inner2=new Variable();
+        inner2.setName("inner2");
+        inner2.setType("String");
+        Variable variable2=new Variable();
+        variable2.setName("test");
+        variable2.setType("List");
+        variable2.setInner_variables(Arrays.asList(inner2));
+
+        variableStore.resolve(Arrays.asList(variable1));
+        variableStore.add(Arrays.asList(variable1));
+        variableStore.add(Arrays.asList(variable2));
+
+        List<Variable> vars=variableStore.getVariables();
+        assertThat(vars.size()).isEqualTo(1);
+        Variable variable=variableStore.getUnResolved("test","List");
+        assertThat(variable.getInner_variables().size()).isEqualTo(1);
+
+    }
+    @Test
+    public void should_return_null_if_no_resolved_variable(){
+        VariableStore variableStore=new VariableStore();
+        assertThat(variableStore.getResolved("test","String")).isNull();
+
+    }
+    @Test
+    public void should_return_null_if_no_unresolved_variable(){
+        VariableStore variableStore=new VariableStore();
+        assertThat(variableStore.getUnResolved("test","String")).isNull();
+
+    }
 }
