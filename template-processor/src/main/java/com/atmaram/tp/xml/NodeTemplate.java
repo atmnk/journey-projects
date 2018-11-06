@@ -152,6 +152,32 @@ public class NodeTemplate implements XMLTemplate {
         }
         return retData;
     }
+    public static void processChildNodes(Document document, Element node, List<XMLTemplate> memberTemplates) {
+        for (XMLTemplate childNode:
+                memberTemplates) {
+            Object data=childNode.toXMLCompatibleObject();
+            processChildNode(document, node, data);
+        }
+    }
+
+    public static void processChildNode(Document document, Element node, Object data) {
+        if(data instanceof String){
+            Text textNode=document.createTextNode((String)data);
+            node.appendChild(textNode);
+        } else if(data instanceof Element){
+            Element dataE=(Element)data;
+            if(dataE.getTagName().equals("XMLStatic")){
+                NodeList staticChildNodes=dataE.getChildNodes();
+                for(int i=0;i<staticChildNodes.getLength();i++){
+                    Node newNode=document.importNode(staticChildNodes.item(i),true);
+                    node.appendChild(newNode);
+                }
+            } else {
+                Node newNode = document.importNode((Node) data, true);
+                node.appendChild(newNode);
+            }
+        }
+    }
 
     @Override
     public Object toXMLCompatibleObject() {
@@ -161,46 +187,12 @@ public class NodeTemplate implements XMLTemplate {
              attributes.keySet()) {
             node.setAttribute((String)key.toXMLCompatibleObject(),(String)attributes.get(key).toXMLCompatibleObject());
         }
-        for (XMLTemplate childNode:
-             childNodes) {
-            Object data=childNode.toXMLCompatibleObject();
-            if(data instanceof String){
-                Text textNode=document.createTextNode((String)data);
-                node.appendChild(textNode);
-            } else if(data instanceof Element){
-                Element dataE=(Element)data;
-                if(dataE.getTagName().equals("XMLStatic")){
-                    NodeList staticChildNodes=dataE.getChildNodes();
-                    for(int i=0;i<staticChildNodes.getLength();i++){
-                        Node newNode=document.importNode(staticChildNodes.item(i),true);
-                        node.appendChild(newNode);
-                    }
-                } else {
-                    Node newNode = document.importNode((Node) data, true);
-                    node.appendChild(newNode);
-                }
-            }
-        }
+        processChildNodes(document, node, childNodes);
         return node;
     }
     @Override
     public String toStringTemplate() {
         Node node=(Node)toXMLCompatibleObject();
-        Document document=NodeFormer.freshDocument();
-        Node newNode=document.importNode(node,true);
-        document.appendChild(newNode);
-        try {
-            StringWriter writer=new StringWriter();
-            Transformer transformer= TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty("omit-xml-declaration", "yes");
-            transformer.transform(new DOMSource(document), new StreamResult(writer));
-            return writer.toString();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (TransformerException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return NodeFormer.nodeToString(node);
     }
 }

@@ -115,25 +115,13 @@ public class LoopTemplate implements XMLTemplate {
         Element node = NodeFormer.createNodeForTagInDocument(document,LOOP_TAG);
         node.setAttribute("variable",variableName);
         Object data=pattern.toXMLCompatibleObject();
-        if(data instanceof String){
-            Text textNode=document.createTextNode((String)data);
-            node.appendChild(textNode);
-        } else if(data instanceof Element){
-            Element dataE=(Element)data;
-            if(dataE.getTagName().equals("XMLStatic")){
-                NodeList staticChildNodes=dataE.getChildNodes();
-                for(int i=0;i<staticChildNodes.getLength();i++){
-                    Node newNode=document.importNode(staticChildNodes.item(i),true);
-                    node.appendChild(newNode);
-                }
-            }
-            Node newNode=document.importNode((Node)data,true);
-            node.appendChild(newNode);
-        }
+        NodeTemplate.processChildNode(document, node, data);
         return node;
     }
+
     @Override
     public String toStringTemplate() {
-        throw new NotImplementedException();
+        Node node=(Node)toXMLCompatibleObject();
+        return NodeFormer.nodeToString(node);
     }
 }
