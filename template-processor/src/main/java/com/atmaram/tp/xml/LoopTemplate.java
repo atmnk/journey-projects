@@ -90,19 +90,22 @@ public class LoopTemplate implements XMLTemplate {
 
     @Override
     public HashMap<String, Object> extract(Object from) {
-        HashMap<String,Object> retData=new HashMap<>();
-        List lst=new ArrayList();
-        NodeList resultList=(NodeList)from;
-        for(int i=0;i<resultList.getLength();i++){
-            Object oValue=resultList.item(i);
-            HashMap<String,Object> memberExtractedData=pattern.extract(oValue);
-            if(memberExtractedData.containsKey("_this") && memberExtractedData.keySet().size()==1){
-                lst.add(memberExtractedData.get("_this"));
-            } else {
-                lst.add(memberExtractedData);
+        HashMap<String, Object> retData = new HashMap<>();
+        List lst = new ArrayList();
+        if(pattern instanceof NodeTemplate) {
+            NodeTemplate nodePattern=(NodeTemplate)pattern;
+            NodeList resultList = ((Element)from).getElementsByTagName(nodePattern.Tag);
+            for (int i = 0; i < resultList.getLength(); i++) {
+                Object oValue = resultList.item(i);
+                HashMap<String, Object> memberExtractedData = pattern.extract(oValue);
+                if (memberExtractedData.containsKey("_this") && memberExtractedData.keySet().size() == 1) {
+                    lst.add(memberExtractedData.get("_this"));
+                } else {
+                    lst.add(memberExtractedData);
+                }
             }
+            retData.put(variableName, lst);
         }
-        retData.put(variableName,lst);
         return retData;
     }
 

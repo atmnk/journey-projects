@@ -82,6 +82,13 @@ public class UnitBuilder {
             return null;
         }
     });
+    private static VerbProcessor<StaticLoopUnit> loop=new VerbProcessor<>(".loop",(File file)->{
+        if(file.isDirectory() && file.getName().endsWith(".loop")){
+            return readLoopUnit(file);
+        } else {
+            return null;
+        }
+    });
     private static VerbProcessor<PollUnit> poll=new VerbProcessor<>(".poll",(File file)->{
         if(file.isDirectory() && file.getName().endsWith(".poll")){
             return readPollUnit(file);
@@ -89,7 +96,7 @@ public class UnitBuilder {
             return null;
         }
     });
-    public static List<VerbProcessor> verbProcessors=Arrays.asList(get,post,delete,patch,put,block,poll);
+    public static List<VerbProcessor> verbProcessors=Arrays.asList(get,post,delete,patch,put,block,loop,poll);
     public static Request buildRequestFromFile(File file,boolean withBody) throws FileNotFoundException, ParseException {
         Request request=new Request();
         Scanner scanner = new Scanner(file);
@@ -193,6 +200,57 @@ public class UnitBuilder {
         blockUnit.setUnits(units);
         blockUnit.setVariables(getCommandVariables(varFiles));
         return blockUnit;
+    }
+    private static StaticLoopUnit readLoopUnit(File dir) throws FileNotFoundException, ParseException {
+        StaticLoopUnit staticLoopUnit=new StaticLoopUnit();
+        staticLoopUnit.setName(dir.getName());
+        File[] infoFiles=dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".info");
+            }
+        });
+        Arrays.sort(infoFiles);
+        for (File file:
+                infoFiles) {
+            Scanner scanner=new Scanner(file);
+            staticLoopUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
+            if (scanner.hasNextLine()){
+                staticLoopUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+            }
+            if (scanner.hasNextLine()){
+                staticLoopUnit.setTimes(Integer.parseInt(scanner.nextLine().split("=")[1]));
+            }
+        }
+        List<Unit> units=new ArrayList<>();
+        File[] varFiles=dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".var");
+            }
+        });
+        Arrays.sort(varFiles);
+
+        File[] files=dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+
+                return isCommand(name);
+            }
+        });
+        Arrays.sort(files,new Comparator()
+        {
+            @Override
+            public int compare(Object f1, Object f2) {
+                return ((File) f1).getName().compareTo(((File) f2).getName());
+            }
+        });
+        for(File file:files){
+            units.add(buildFromFile(file));
+        }
+        staticLoopUnit.setUnits(units);
+        staticLoopUnit.setVariables(getCommandVariables(varFiles));
+        return staticLoopUnit;
     }
 
     private static PollUnit readPollUnit(File dir) throws FileNotFoundException, ParseException {

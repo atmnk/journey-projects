@@ -16,11 +16,41 @@ public class ExpressionProcessor {
         String[] processorargs=expression.split(">");
         Object value;
         if(processorargs.length>1){
-            value=toTree(processorargs[0]).toValue(context);
-            context.put(processorargs[1],value);
+            value=toTree(processorargs[0]).solve(context).toExpression();
+            if(value instanceof String) {
+                if (((String) value).startsWith("'")) {
+                    String data = ((String) value).substring(1, ((String) value).length() - 1);
+                    context.put(processorargs[1], data);
+                    return data;
+                } else {
+                    try {
+                        return Integer.parseInt((String) value);
+                    } catch (Exception ex) {
+                        return "${" + value + "}";
+                    }
+
+
+                }
+            } else{
+                return value;
+            }
+
+        }
+        value= toTree(processorargs[0]).solve(context).toExpression();
+        if(value instanceof String) {
+            if (((String) value).startsWith("'")) {
+                String data = ((String) value).substring(1, ((String) value).length() - 1);
+                return data;
+            } else {
+                try {
+                    return Integer.parseInt((String) value);
+                } catch (Exception ex) {
+                    return "${" + value + "}";
+                }
+            }
+        } else {
             return value;
         }
-        return toTree(processorargs[0]).toValue(context);
     }
     public static ExpressionTree toTree(String passedExpression){
         String expression=passedExpression.trim();

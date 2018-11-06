@@ -94,4 +94,15 @@ public interface XMLTemplate extends ExtractableTemplate {
             throw new TemplateParseException("Provided template is not valid xml: "+template);
         }
     }
+
+    public static Element StringDocToElement(String strDocumnet) throws ParserConfigurationException, IOException, SAXException {
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        InputSource is=new InputSource();
+        is.setCharacterStream(new StringReader(strDocumnet));
+        Document doc=documentBuilder.parse(is);
+        return (Element) doc.getFirstChild();
+
+    }
 }

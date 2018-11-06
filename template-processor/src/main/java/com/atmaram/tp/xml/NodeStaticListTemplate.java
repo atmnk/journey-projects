@@ -61,11 +61,20 @@ public class NodeStaticListTemplate implements XMLTemplate{
 
     @Override
     public HashMap<String,Object> extract(Object from) {
-        HashMap<String,Object> retData=new HashMap<>();
-        JSONArray jsonResult=(JSONArray)from;
-        for(int i=0;i<memberTemplates.size();i++){
-            XMLTemplate oValue=memberTemplates.get(i);
-            retData.putAll(oValue.extract(jsonResult.get(i)));
+        HashMap<String, Object> retData = new HashMap<>();
+        Element parentFrom=(Element)from;
+        for (XMLTemplate memmber:
+             memberTemplates) {
+            if(memmber instanceof NodeTemplate){
+                NodeTemplate nodeMember=(NodeTemplate)memmber;
+                NodeList matching=parentFrom.getElementsByTagName(nodeMember.Tag);
+                for(int i=0;i<matching.getLength();i++) {
+                    retData.putAll(nodeMember.extract(matching.item(i)));
+                }
+            } else if(memmber instanceof LoopTemplate){
+                LoopTemplate loopMember=(LoopTemplate)memmber;
+                retData.putAll(loopMember.extract(parentFrom));
+            }
         }
         return retData;
     }

@@ -44,17 +44,47 @@ public class NodeTemplate implements XMLTemplate {
 
     @Override
     public List<Variable> getVariables() {
-        throw new NotImplementedException();
+        List<Variable> variables=new ArrayList<>();
+        for (XMLTemplate attributeKey:
+             attributes.keySet()) {
+            variables.addAll(attributeKey.getVariables());
+            variables.addAll(attributes.get(attributeKey).getVariables());
+        }
+        for (XMLTemplate childNode:childNodes){
+            variables.addAll(childNode.getVariables());
+        }
+        return variables;
     }
 
     @Override
     public List<Variable> getTemplateVariables() {
-        throw new NotImplementedException();
+        List<Variable> variables=new ArrayList<>();
+        for (XMLTemplate attributeKey:
+                attributes.keySet()) {
+            variables.addAll(attributeKey.getTemplateVariables());
+            variables.addAll(attributes.get(attributeKey).getTemplateVariables());
+        }
+        for (XMLTemplate childNode:childNodes){
+            variables.addAll(childNode.getTemplateVariables());
+        }
+        return variables;
     }
 
     @Override
     public XMLTemplate fillTemplateVariables(HashMap<String, Object> data) {
-        throw new NotImplementedException();
+        NodeTemplate resultantNodeTemplate=new NodeTemplate(this.Tag);
+        HashMap<XMLTemplate,XMLTemplate> rAttr=new HashMap<>();
+        List<XMLTemplate> rChilds=new ArrayList<>();
+        for (XMLTemplate attributeKey:
+                attributes.keySet()) {
+            rAttr.put((XMLTemplate) attributeKey.fillTemplateVariables(data),(XMLTemplate)attributes.get(attributeKey).fillTemplateVariables(data));
+        }
+        for (XMLTemplate childNode:childNodes){
+            rChilds.add((XMLTemplate)childNode.fillTemplateVariables(data));
+        }
+        resultantNodeTemplate.childNodes=rChilds;
+        resultantNodeTemplate.attributes=rAttr;
+        return resultantNodeTemplate;
     }
 
     @Override
@@ -79,7 +109,48 @@ public class NodeTemplate implements XMLTemplate {
 
     @Override
     public HashMap<String, Object> extract(Object from) {
-        throw new NotImplementedException();
+        HashMap<String,Object> retData=new HashMap<>();
+        if(from instanceof Element){
+            Element elementFrom=(Element)from;
+            if(elementFrom.getTagName().equals(this.Tag)){
+                //Extract Attributes
+                for (XMLTemplate attributeKey:
+                     attributes.keySet()) {
+                    if (attributeKey instanceof FilledVariableTemplate){
+                          XMLTemplate attributeValueTemplate=attributes.get(attributeKey);
+                          if(attributeValueTemplate instanceof VariableTemplate){
+                              retData.putAll(attributeValueTemplate.extract(elementFrom.getAttribute(attributeKey.toStringTemplate())));
+                          }
+                    }
+                }
+                //Extract Text Children
+                if(childNodes.size()==1 && childNodes.get(0) instanceof VariableTemplate){
+                    retData.putAll(childNodes.get(0).extract(elementFrom.getTextContent()));
+                    return retData;
+                }
+
+                //Extract all Children
+                for (XMLTemplate childNode:
+                     childNodes) {
+                    if(childNode instanceof NodeTemplate){
+                        NodeTemplate nChild=(NodeTemplate)childNode;
+                        NodeList list=elementFrom.getElementsByTagName(nChild.Tag);
+                        for(int i=0;i<list.getLength();i++){
+                            retData.putAll(nChild.extract(list.item(i)));
+                        }
+                    } else if(childNode instanceof LoopTemplate){
+                        LoopTemplate loopChild=(LoopTemplate) childNode;
+                        retData.putAll(loopChild.extract(elementFrom));
+                    } else if(childNode instanceof NodeStaticListTemplate){
+                        NodeStaticListTemplate slChild=(NodeStaticListTemplate) childNode;
+                        retData.putAll(slChild.extract(elementFrom));
+                    }
+                }
+
+            }
+            return retData;
+        }
+        return retData;
     }
 
     @Override

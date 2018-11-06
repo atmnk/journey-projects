@@ -3,6 +3,7 @@ package com.atmaram.tp.xml;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.xml.helpers.NodeFormer;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -29,7 +30,6 @@ public class XMLTemplateTest {
         XMLTemplate template=XMLTemplate.parse("<a></a>");
         assertThat(template).isInstanceOf(NodeTemplate.class);
     }
-
     // from
     @Test
     public void should_form_NodeTemplate_From_xml_Document(){
@@ -55,6 +55,11 @@ public class XMLTemplateTest {
     @Test
     public void should_form_FilledVariableTemplate_From_string(){
         XMLTemplate template=XMLTemplate.from("Hello");
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+    }
+    @Test
+    public void should_form_FilledVariableTemplate_From_Other_object(){
+        XMLTemplate template=XMLTemplate.from(1);
         assertThat(template).isInstanceOf(FilledVariableTemplate.class);
     }
     @Test
@@ -184,7 +189,5 @@ public class XMLTemplateTest {
         data.put("names",names);
         XMLTemplate filled=(XMLTemplate)template.fill(data);
         assertThat(filled.toStringTemplate()).isEqualTo("<a><b>ATM</b><b>ANU</b></a>");
-
-
     }
 }

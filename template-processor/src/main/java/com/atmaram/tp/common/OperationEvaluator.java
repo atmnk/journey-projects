@@ -5,5 +5,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface OperationEvaluator {
-    public Object toValue(List<ExpressionTree> args,HashMap<String, Object> context);
+    public Object toValue(List<Object> args);
 }

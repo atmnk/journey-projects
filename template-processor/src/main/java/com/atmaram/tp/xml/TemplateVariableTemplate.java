@@ -3,8 +3,7 @@ package com.atmaram.tp.xml;
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.ExpressionProcessor;
-import com.atmaram.tp.json.JSONTemplate;
-import org.json.simple.JSONAware;
+import org.w3c.dom.Node;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,22 +24,14 @@ public class TemplateVariableTemplate implements XMLTemplate{
     @Override
     public List<Variable> getTemplateVariables() {
         return ExpressionProcessor.getVariables(variableName);
-//        if(variableName.startsWith("_") && !variableName.equals("_this")){
-//            return Arrays.asList();
-//        } else {
-//            Variable variable = new Variable();
-//            variable.setName(variableName);
-//            variable.setType("String");
-//            return Arrays.asList(variable);
-//        }
     }
 
     @Override
     public XMLTemplate fillTemplateVariables(HashMap<String, Object> data) {
         Object putValue=ExpressionProcessor.process(variableName,data);
         if(putValue instanceof String && Template.isVariable((String)putValue)){
-            return this;
-        } else if(putValue instanceof JSONAware){
+            return new TemplateVariableTemplate(Template.getVariableName((String)putValue));
+        } else if(putValue instanceof Node){
             return XMLTemplate.from(putValue);
         } else {
             return new FilledVariableTemplate(putValue);

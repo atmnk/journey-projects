@@ -4,51 +4,51 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public enum Operation implements OperationEvaluator{
-    ADD("plus",(args,context)->{
+    ADD("plus",(args)->{
         List<Object> argumentValues=new ArrayList<>();
         Integer result=0;
         for (int i=0;i<args.size();i++){
-            Object value=args.get(i).toValue(context);
+            Object value=args.get(i);
             argumentValues.add(value);
             result+=(Integer) value;
         }
         return result;
     }),
-    DAY("day",(args,context)->{
+    DAY("day",(args)->{
         Date date=new Date();
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.DAY_OF_MONTH);
     }),
-    MONTH("month",(args,context)->{
+    MONTH("month",(args)->{
         Date date=new Date();
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.MONTH);
     }),
-    YEAR("year",(args,context)->{
+    YEAR("year",(args)->{
         Date date=new Date();
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.YEAR);
     }),
-    FORMAT_DATE("format",(args,context)->{
-        SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(1).toValue(context));
-        return formatter.format((Date)args.get(0).toValue(context));
+    FORMAT_DATE("format",(args)->{
+        SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(1));
+        return formatter.format((Date)args.get(0));
     }),
-    NOW("now",(args,context)->{
+    NOW("now",(args)->{
         Date date=new Date();
         if(args.size()==0){
             return date;
         }
-        SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(0).toValue(context));
+        SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(0));
         return formatter.format(date);
     }),
-    ADD_MONTHS("add_months",(args,context)->{
-        Date date=(Date)args.get(0).toValue(context);
+    ADD_MONTHS("add_months",(args)->{
+        Date date=(Date)args.get(0);
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(date);
-        Object oToAdd=args.get(1).toValue(context);
+        Object oToAdd=args.get(1);
         int iToAdd=0;
         if(oToAdd instanceof String){
             iToAdd=Integer.parseInt((String)oToAdd);
@@ -65,11 +65,11 @@ public enum Operation implements OperationEvaluator{
         Date monthAddedDate=calendar.getTime();
         return monthAddedDate;
     }),
-    ADD_YEAR("add_year",(args,context)->{
-        Date date=(Date)args.get(0).toValue(context);
+    ADD_YEAR("add_year",(args)->{
+        Date date=(Date)args.get(0);
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(date);
-        Object oToAdd=args.get(1).toValue(context);
+        Object oToAdd=args.get(1);
         int iToAdd=0;
         if(oToAdd instanceof String){
             iToAdd=Integer.parseInt((String)oToAdd);
@@ -86,11 +86,11 @@ public enum Operation implements OperationEvaluator{
         Date monthAddedDate=calendar.getTime();
         return monthAddedDate;
     }),
-    ADD_DAYS("add_days",(args,context)->{
-        Date date=(Date)args.get(0).toValue(context);
+    ADD_DAYS("add_days",(args)->{
+        Date date=(Date)args.get(0);
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(date);
-        Object oToAdd=args.get(1).toValue(context);
+        Object oToAdd=args.get(1);
         int iToAdd=0;
         if(oToAdd instanceof String){
             iToAdd=Integer.parseInt((String)oToAdd);
@@ -107,58 +107,58 @@ public enum Operation implements OperationEvaluator{
         Date monthAddedDate=calendar.getTime();
         return monthAddedDate;
     }),
-    CONCAT("concat",(args,context)->{
+    CONCAT("concat",(args)->{
         List<Object> argumentValues=new ArrayList<>();
         String result="";
         for (int i=0;i<args.size();i++){
-            Object value=args.get(i).toValue(context);
+            Object value=args.get(i);
             argumentValues.add(value);
             result+=value.toString();
         }
         return result;
     }),
-    SUBSTRACT("minus",(args,context)->{
-        Integer result=(Integer) args.get(0).toValue(context);
-        result-=(Integer) args.get(1).toValue(context);
+    SUBSTRACT("minus",(args)->{
+        Integer result=(Integer) args.get(0);
+        result-=(Integer) args.get(1);
         return result;
     }),
-    TIMESTAMP("timestamp",(args,context)->{
+    TIMESTAMP("timestamp",(args)->{
         return new Date().getTime();
     }),
-    EVAL("eval",(args,context)->{
-        return ExpressionProcessor.getVal((String)args.get(0).toValue(context));
+    EVAL("eval",(args)->{
+        return ExpressionProcessor.getVal((String)args.get(0));
     }),
-    UUID("uuid",(args,context)->{
+    UUID("uuid",(args)->{
         return java.util.UUID.randomUUID().toString();
     }),
-    FIRST("first",(args,context)->{
-        String str=(String)args.get(0).toValue(context);
-        Integer len=(Integer) args.get(1).toValue(context);
+    FIRST("first",(args)->{
+        String str=(String)args.get(0);
+        Integer len=(Integer) args.get(1);
         return str.substring(0,len);
     }),
-    LAST("last",(args,context)->{
-        String str=(String)args.get(0).toValue(context);
-        Integer len=(Integer) args.get(1).toValue(context);
+    LAST("last",(args)->{
+        String str=(String)args.get(0);
+        Integer len=(Integer) args.get(1);
         return str.substring(str.length()-len);
     }),
-    MID("mid",(args,context)->{
-        String str=(String)args.get(0).toValue(context);
-        int from=(Integer) args.get(1).toValue(context);
-        int len=(Integer) args.get(2).toValue(context);
+    MID("mid",(args)->{
+        String str=(String)args.get(0);
+        int from=(Integer) args.get(1);
+        int len=(Integer) args.get(2);
         return str.substring(from,from+len);
     }),
-    Multiply("mul",(args,context)->{
-        Integer result=(Integer) args.get(0).toValue(context);
-        result*=(Integer) args.get(1).toValue(context);
+    Multiply("mul",(args)->{
+        Integer result=(Integer) args.get(0);
+        result*=(Integer) args.get(1);
         return result;
     }),
-    Devide("divide",(args,context)->{
-        Integer result=(Integer) args.get(0).toValue(context);
-        result/=(Integer) args.get(1).toValue(context);
+    Devide("divide",(args)->{
+        Integer result=(Integer) args.get(0);
+        result/=(Integer) args.get(1);
         return result;
     }),
-    Len("len",(args,context)->{
-        String result=(String) args.get(0).toValue(context);
+    Len("len",(args)->{
+        String result=(String) args.get(0);
         return result.length();
     });
     public OperationEvaluator evaluator;
@@ -168,8 +168,8 @@ public enum Operation implements OperationEvaluator{
         this.evaluator=evaluator;
     }
     @Override
-    public Object toValue(List<ExpressionTree> args,HashMap<String,Object> context){
-        return evaluator.toValue(args,context);
+    public Object toValue(List<Object> args){
+        return evaluator.toValue(args);
     }
 
 }

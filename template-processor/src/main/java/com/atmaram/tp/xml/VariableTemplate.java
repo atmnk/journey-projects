@@ -3,6 +3,7 @@ package com.atmaram.tp.xml;
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.ExpressionProcessor;
+import com.atmaram.tp.common.ExpressionTree;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
@@ -19,14 +20,6 @@ class VariableTemplate implements XMLTemplate {
     @Override
     public List<Variable> getVariables() {
         return ExpressionProcessor.getVariables(variableName);
-//        if(variableName.startsWith("_") && !variableName.equals("_this")){
-//            return Arrays.asList();
-//        } else {
-//            Variable variable = new Variable();
-//            variable.setName(variableName);
-//            variable.setType("String");
-//            return Arrays.asList(variable);
-//        }
     }
 
     @Override
@@ -43,7 +36,7 @@ class VariableTemplate implements XMLTemplate {
     public XMLTemplate fill(HashMap<String, Object> data) {
         Object putValue=ExpressionProcessor.process(variableName,data);
         if(putValue instanceof String && Template.isVariable((String)putValue)){
-            return this;
+            return new VariableTemplate(Template.getVariableName((String)putValue));
         } else if(putValue instanceof Node){
             return XMLTemplate.from(putValue);
         } else {
@@ -54,15 +47,17 @@ class VariableTemplate implements XMLTemplate {
     @Override
     public HashMap<String,Object> extract(Object from) {
         HashMap<String,Object> ret=new HashMap<>();
-        ret.put(variableName,from);
+        ExpressionTree tree=ExpressionProcessor.toTree(variableName);
+        if(tree.getVariable()!=null){
+            ret.put(variableName,from);
+        }
         return ret;
     }
 
     @Override
     public Object toXMLCompatibleObject() {
         String xmlTemplate="${"+variableName+"}";
-        return xmlTemplate;
-    }
+        return xmlTemplate; }
 
     @Override
     public String toStringTemplate() {
