@@ -3,6 +3,7 @@ package com.atmaram.tp.json;
 import com.atmaram.tp.Template;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.ExpressionProcessor;
+import com.atmaram.tp.common.ExpressionTree;
 import org.json.simple.JSONAware;
 
 import java.util.ArrayList;
@@ -55,7 +56,10 @@ class VariableTemplate implements JSONTemplate {
     @Override
     public HashMap<String,Object> extract(Object from) {
         HashMap<String,Object> ret=new HashMap<>();
-        ret.put(variableName,from);
+        ExpressionTree tree=ExpressionProcessor.toTree(variableName);
+        if(tree.getVariable()!=null){
+            ret.put(variableName,from);
+        }
         return ret;
     }
 

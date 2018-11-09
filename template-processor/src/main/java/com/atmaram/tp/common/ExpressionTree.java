@@ -34,10 +34,6 @@ public class ExpressionTree {
         return constant;
     }
 
-    public void setConstant(Object constant) {
-        this.constant = constant;
-    }
-
     public String getVariable() {
         return variable;
     }

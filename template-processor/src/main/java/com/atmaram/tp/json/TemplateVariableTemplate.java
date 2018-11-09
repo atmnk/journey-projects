@@ -24,14 +24,6 @@ public class TemplateVariableTemplate implements JSONTemplate{
     @Override
     public List<Variable> getTemplateVariables() {
         return ExpressionProcessor.getVariables(variableName);
-//        if(variableName.startsWith("_") && !variableName.equals("_this")){
-//            return Arrays.asList();
-//        } else {
-//            Variable variable = new Variable();
-//            variable.setName(variableName);
-//            variable.setType("String");
-//            return Arrays.asList(variable);
-//        }
     }
 
     @Override

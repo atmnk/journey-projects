@@ -2,12 +2,14 @@ package com.atmaram.tp.json;
 
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.text.TextTemplate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -439,6 +441,95 @@ public class JSONTemplateTest {
         assertThat(variables.get(0).getInner_variables()).isNull();
         assertThat(variables.get(1).getType()).isEqualTo("String");
         assertThat(variables.get(1).getName()).isEqualTo("place");
+
+    }
+
+    //parse
+    @Test
+    public void should_parse_variable_as_variable_template() throws TemplateParseException {
+        JSONTemplate template=JSONTemplate.parse("${Hello}");
+        assertThat(template).isInstanceOf(VariableTemplate.class);
+    }
+    @Test
+    public void should_parse_template_variable_as_template_variable_template() throws TemplateParseException {
+        JSONTemplate template=JSONTemplate.parse("#{Hello}");
+        assertThat(template).isInstanceOf(com.atmaram.tp.json.TemplateVariableTemplate.class);
+    }
+    // from
+    @Test
+    public void should_form_ObjectTemplate_From_json_Object() throws ParseException{
+        JSONTemplate template=JSONTemplate.from(JSONTemplate.stringToJSON("{\"name\":\"Atmaram\"}"));
+        assertThat(template).isInstanceOf(ObjectTemplate.class);
+    }
+
+    @Test
+    public void should_form_FilledVariableTemplate_From_Text(){
+        JSONTemplate template=JSONTemplate.from("Hello");
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+    }
+    @Test
+    public void should_form_FilledVariableTemplate_From_string(){
+        JSONTemplate template=JSONTemplate.from("Hello");
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+    }
+    @Test
+    public void should_form_FilledVariableTemplate_From_Other_object(){
+        JSONTemplate template=JSONTemplate.from(1);
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+    }
+    @Test
+    public void should_form_VariableTemplate_From_string_if_contains_variable(){
+        JSONTemplate template=JSONTemplate.from("${Hello}");
+        assertThat(template).isInstanceOf(VariableTemplate.class);
+    }
+    @Test
+    public void should_form_TemplateVariableTemplate_From_string_if_contains_variable(){
+        JSONTemplate template=JSONTemplate.from("#{Hello}");
+        assertThat(template).isInstanceOf(com.atmaram.tp.json.TemplateVariableTemplate.class);
+    }
+    @Test
+    public void should_form_VariableTemplate_From_json_Text_if_contains_variable(){
+        JSONTemplate template=JSONTemplate.from("${Hello}");
+        assertThat(template).isInstanceOf(VariableTemplate.class);
+    }
+    @Test
+    public void should_form_TemplateVariableTemplate_From_json_Text_if_contains_variable(){
+        JSONTemplate template=JSONTemplate.from("#{Hello}");
+        assertThat(template).isInstanceOf(TemplateVariableTemplate.class);
+    }
+
+    @Test
+    public void should_form_LoopTemplate_if_array_with_object_with_keys_variable_and_template() throws ParseException {
+
+        JSONTemplate template=JSONTemplate.from(JSONTemplate.stringToJSON("[{\"variable\":\"var\",\"template\":{\"name\":\"${Name}\"}}]"));
+        assertThat(template).isInstanceOf(LoopTemplate.class);
+        LoopTemplate loopTemplate=(LoopTemplate)template;
+        assertThat(loopTemplate.variableName).isEqualTo("var");
+        assertThat(loopTemplate.innerObjectTemplate).isInstanceOf(ObjectTemplate.class);
+    }
+    @Test
+    public void should_parse_string_as_FilledVariableTemplate() {
+        JSONTemplate template=JSONTemplate.from("Hello");
+        assertThat(template).isInstanceOf(FilledVariableTemplate.class);
+
+    }
+    @Test
+    public void should_parse_json_as_ObjectTemplate() throws TemplateParseException {
+        JSONTemplate template=JSONTemplate.parse("{\"name\":\"Atmaram\"}");
+        assertThat(template).isInstanceOf(ObjectTemplate.class);
+        assertThat(template.toStringTemplate()).isEqualTo("{\"name\":\"Atmaram\"}");
+
+    }
+    @Test
+    public void should_parse_json_as_Template_with_variable_in_key() throws TemplateParseException {
+        JSONTemplate template=JSONTemplate.parse("{${Name}:\"Atmaram\"}");        assertThat(template).isInstanceOf(ObjectTemplate.class);
+        assertThat(template.toStringTemplate()).isEqualTo("{\"${Name}\":\"Atmaram\"}");
+
+    }
+    @Test
+    public void should_parse_json_as_Template_with_variable_in_value() throws TemplateParseException {
+        JSONTemplate template=JSONTemplate.parse("{\"Name\":${Name}}");        assertThat(template).isInstanceOf(ObjectTemplate.class);
+        assertThat(template.toStringTemplate()).isEqualTo("{\"Name\":\"${Name}\"}");
 
     }
 }

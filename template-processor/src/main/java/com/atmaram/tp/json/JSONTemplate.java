@@ -82,4 +82,8 @@ public interface JSONTemplate extends ExtractableTemplate {
             throw new TemplateParseException("Provided template is not valid json: "+template);
         }
     }
+    public static Object stringToJSON(String string) throws ParseException {
+        JSONParser parser=new JSONParser();
+        return parser.parse(string);
+    }
 }

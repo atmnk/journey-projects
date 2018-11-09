@@ -2,9 +2,9 @@ package com.atmaram.tp.text;
 
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 
-import com.atmaram.tp.json.JSONTemplate;
-import org.json.simple.JSONArray;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,5 +158,20 @@ public class TextTemplateTest {
         HashMap<String,Object> data=new HashMap<>();
         String result=textTemplate.fill(data).toStringTemplate();
         assertThat(result).isEqualTo("Hello {{#names}}${name}{{/names}}");
+    }
+    @Rule
+    public ExpectedException expectedException=ExpectedException.none();
+
+    @Test
+    public void should_throw_template_parse_exception_for_xml_template() throws TemplateParseException {
+        expectedException.expect(TemplateParseException.class);
+        expectedException.expectMessage("No closing Tag found for tag: {{#test}}");
+        TextTemplate.parse("{{#test}}Hello");
+    }
+    @Test
+    public void should_parse_nested_loops_with_same_variable() throws TemplateParseException {
+        TextTemplate textTemplate=TextTemplate.parse("{{#test}}{{#test}}Hello{{/test}}{{/test}}");
+        assertThat(textTemplate).isInstanceOf(TextLoopTemplate.class);
+        assertThat(((TextLoopTemplate)textTemplate).innerTemplate).isInstanceOf(TextLoopTemplate.class);
     }
 }

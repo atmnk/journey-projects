@@ -80,7 +80,11 @@ public class Main {
                 return;
             }
             System.out.println("Running Command: " + filtered_commands.get(iCommand));
-            System.out.println("On Environments " + lEnv.stream().reduce((s, out) -> s + " " + out).get());
+            if(lEnv.size()==0){
+                System.out.println("No Environments choosen");
+            } else {
+                System.out.println("On Environments " + lEnv.stream().reduce((s, out) -> s + " " + out).get());
+            }
 
             List<Environment> environments =readEnvironments(Paths.get("config/env"),lEnv);
 

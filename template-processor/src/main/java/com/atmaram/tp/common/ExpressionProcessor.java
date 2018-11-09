@@ -5,6 +5,10 @@ import com.atmaram.tp.Variable;
 import java.util.*;
 
 public class ExpressionProcessor {
+    public static HashMap<String,ExpressionTree> shortHands=new HashMap<>();
+    public static void addShortHand(String function,ExpressionTree tree){
+        shortHands.put(function,tree);
+    }
     public static List<Variable> getVariables(String expression) {
         String[] processorargs=expression.split(">");
         if(processorargs.length>1){
@@ -154,18 +158,25 @@ public class ExpressionProcessor {
                 ExpressionTree faET=new ExpressionTree();
                 faET.setVariable("_this");
                 ExpressionTree saET=null;
+                int index=5;
                 for(int i=5;i<expression.length();i++){
+                    index=i;
                     if (expression.charAt(i) == '+') {
                         tree.rootProcessor = Operation.ADD;
+                        break;
                     } else if (expression.charAt(i) == '-') {
                         tree.rootProcessor = Operation.SUBSTRACT;
+                        break;
                     } else if (expression.charAt(i) == '*') {
                         tree.rootProcessor = Operation.Multiply;
+                        break;
                     } else if (expression.charAt(i) == '/') {
                         tree.rootProcessor = Operation.Devide;
+                        break;
                     }
-                        saET = toTree(expression.substring(i+1));
                 }
+                if(index<expression.length())
+                    saET = toTree(expression.substring(index+1));
                 if(saET==null){
                     return faET;
                 } else {
@@ -175,64 +186,27 @@ public class ExpressionProcessor {
             } else {
                 ExpressionTree faET=null;
                 ExpressionTree saET=null;
-                List<ExpressionTree> args=new ArrayList<>();
                 for(int i=1;i<expression.length();i++){
 
                     if (expression.charAt(i) == '+') {
                         tree.rootProcessor = Operation.ADD;
-                        if(faET==null) {
-                            faET = new ExpressionTree();
-                            ExpressionTree finalFaET = faET;
-                            EnumSet.allOf(Operation.class).forEach(operation -> {
-                                if (expression.startsWith("_" + operation.function)) {
-                                    finalFaET.rootProcessor = operation;
-                                    finalFaET.setArgs(new ArrayList<>());
-                                }
-                            });
-                        }
+                        faET = getExpressionTree(expression, faET);
 
                         saET = toTree(expression.substring(i+1));
                         break;
                     } else if (expression.charAt(i) == '-') {
                         tree.rootProcessor = Operation.SUBSTRACT;
-                        if(faET==null) {
-                            faET = new ExpressionTree();
-                            ExpressionTree finalFaET = faET;
-                            EnumSet.allOf(Operation.class).forEach(operation -> {
-                                if (expression.startsWith("_" + operation.function)) {
-                                    finalFaET.rootProcessor = operation;
-                                    finalFaET.setArgs(new ArrayList<>());
-                                }
-                            });
-                        }
+                        faET = getExpressionTree(expression, faET);
                         saET = toTree(expression.substring(i+1));
                         break;
                     } else if (expression.charAt(i) == '*') {
                         tree.rootProcessor = Operation.Multiply;
-                        if(faET==null) {
-                            faET = new ExpressionTree();
-                            ExpressionTree finalFaET = faET;
-                            EnumSet.allOf(Operation.class).forEach(operation -> {
-                                if (expression.startsWith("_" + operation.function)) {
-                                    finalFaET.rootProcessor = operation;
-                                    finalFaET.setArgs(new ArrayList<>());
-                                }
-                            });
-                        }
+                        faET = getExpressionTree(expression, faET);
                         saET = toTree(expression.substring(i+1));
                         break;
                     } else if (expression.charAt(i) == '/') {
                         tree.rootProcessor = Operation.Devide;
-                        if(faET==null) {
-                            faET = new ExpressionTree();
-                            ExpressionTree finalFaET = faET;
-                            EnumSet.allOf(Operation.class).forEach(operation -> {
-                                if (expression.startsWith("_" + operation.function)) {
-                                    finalFaET.rootProcessor = operation;
-                                    finalFaET.setArgs(new ArrayList<>());
-                                }
-                            });
-                        }
+                        faET = getExpressionTree(expression, faET);
                         saET = toTree(expression.substring(i+1));
                         break;
                     }
@@ -267,25 +241,13 @@ public class ExpressionProcessor {
                         i=last-1;
                     }
                 }
-                if(args.size()==0) {
-                    if(faET==null) {
-                        faET = new ExpressionTree();
-                        ExpressionTree finalFaET = faET;
-                        EnumSet.allOf(Operation.class).forEach(operation -> {
-                            if (expression.startsWith("_" + operation.function)) {
-                                finalFaET.rootProcessor = operation;
-                                finalFaET.setArgs(new ArrayList<>());
-                            }
-                        });
-                    }
-                    if (saET == null) {
-                        return faET;
-                    } else {
-                        tree.setArgs(Arrays.asList(faET, saET));
-                        return tree;
-                    }
+                if(faET==null) {
+                    faET = getExpressionTree(expression, faET);
+                }
+                if (saET == null) {
+                    return faET;
                 } else {
-                    tree.setArgs(args);
+                    tree.setArgs(Arrays.asList(faET, saET));
                     return tree;
                 }
             }
@@ -293,28 +255,28 @@ public class ExpressionProcessor {
         } else {
             ExpressionTree faET=null;
             ExpressionTree saET=null;
-            for(int i=1;i<expression.length();i++) {
+            for(int i=0;i<expression.length();i++) {
                 if (expression.charAt(i) == '+') {
                     tree.rootProcessor = Operation.ADD;
-                    String firstArg = expression.substring(1, i);
+                    String firstArg = expression.substring(0, i);
                     faET = new ExpressionTree();
                     faET.variable = firstArg;
                     saET = toTree(expression.substring(i+1));
                 } else if (expression.charAt(i) == '-') {
                     tree.rootProcessor = Operation.SUBSTRACT;
-                    String firstArg = expression.substring(1, i);
+                    String firstArg = expression.substring(0, i);
                     faET = new ExpressionTree();
                     faET.variable = firstArg;
                     saET = toTree(expression.substring(i+1 ));
                 } else if (expression.charAt(i) == '*') {
                     tree.rootProcessor = Operation.Multiply;
-                    String firstArg = expression.substring(1, i);
+                    String firstArg = expression.substring(0, i);
                     faET = new ExpressionTree();
                     faET.variable = firstArg;
                     saET = toTree(expression.substring(i+1 ));
                 } else if (expression.charAt(i) == '/') {
                     tree.rootProcessor = Operation.Devide;
-                    String firstArg = expression.substring(1, i);
+                    String firstArg = expression.substring(0, i);
                     faET = new ExpressionTree();
                     faET.variable = firstArg;
                     saET = toTree(expression.substring(i +1));
@@ -334,7 +296,32 @@ public class ExpressionProcessor {
 
         }
     }
-        public static String getVal(String pattern){
+
+    private static ExpressionTree getExpressionTree(String expression, ExpressionTree faET) {
+        if(faET==null) {
+            boolean found=false;
+            for(String key:shortHands.keySet()){
+                if(expression.startsWith("_"+key)){
+                    found=true;
+                    faET=shortHands.get(key);
+                    break;
+                }
+            }
+            if(!found) {
+                faET = new ExpressionTree();
+                ExpressionTree finalFaET = faET;
+                EnumSet.allOf(Operation.class).forEach(operation -> {
+                    if (expression.startsWith("_" + operation.function)) {
+                        finalFaET.rootProcessor = operation;
+                        finalFaET.setArgs(new ArrayList<>());
+                    }
+                });
+            }
+        }
+        return faET;
+    }
+
+    public static String getVal(String pattern){
         if(pattern.equals(""))
             return "";
         if(pattern.contains("(") && pattern.contains(")")){

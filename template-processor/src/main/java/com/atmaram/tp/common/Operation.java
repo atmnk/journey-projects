@@ -5,31 +5,39 @@ import java.util.*;
 
 public enum Operation implements OperationEvaluator{
     ADD("plus",(args)->{
-        List<Object> argumentValues=new ArrayList<>();
         Integer result=0;
         for (int i=0;i<args.size();i++){
             Object value=args.get(i);
-            argumentValues.add(value);
-            result+=(Integer) value;
+            if(value instanceof Integer) {
+                result += (Integer) value;
+            } else if(value instanceof String){
+                result+=Integer.parseInt((String)value);
+            }
         }
         return result;
     }),
     DAY("day",(args)->{
-        Date date=new Date();
         Calendar calendar=Calendar.getInstance();
-        calendar.setTime(date);
+        if(args!=null && args.size()==1){
+            Date date=(Date)args.get(0);
+            calendar.setTime(date);
+        }
         return calendar.get(Calendar.DAY_OF_MONTH);
     }),
     MONTH("month",(args)->{
-        Date date=new Date();
         Calendar calendar=Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar.get(Calendar.MONTH);
+        if(args!=null && args.size()==1){
+            Date date=(Date)args.get(0);
+            calendar.setTime(date);
+        }
+        return calendar.get(Calendar.MONTH)+1;
     }),
     YEAR("year",(args)->{
-        Date date=new Date();
         Calendar calendar=Calendar.getInstance();
-        calendar.setTime(date);
+        if(args!=null && args.size()==1){
+            Date date=(Date)args.get(0);
+            calendar.setTime(date);
+        }
         return calendar.get(Calendar.YEAR);
     }),
     FORMAT_DATE("format",(args)->{
@@ -38,7 +46,7 @@ public enum Operation implements OperationEvaluator{
     }),
     NOW("now",(args)->{
         Date date=new Date();
-        if(args.size()==0){
+        if(args==null || args.size()==0){
             return date;
         }
         SimpleDateFormat formatter=new SimpleDateFormat((String)args.get(0));
@@ -54,12 +62,6 @@ public enum Operation implements OperationEvaluator{
             iToAdd=Integer.parseInt((String)oToAdd);
         } else if(oToAdd instanceof Integer){
             iToAdd=((Integer)oToAdd);
-        } else {
-            try{
-                iToAdd=(int)oToAdd;
-            }catch (Exception ex){
-
-            }
         }
         calendar.add(Calendar.MONTH,iToAdd);
         Date monthAddedDate=calendar.getTime();
@@ -75,12 +77,6 @@ public enum Operation implements OperationEvaluator{
             iToAdd=Integer.parseInt((String)oToAdd);
         } else if(oToAdd instanceof Integer){
             iToAdd=((Integer)oToAdd);
-        } else {
-            try{
-                iToAdd=(int)oToAdd;
-            }catch (Exception ex){
-
-            }
         }
         calendar.add(Calendar.YEAR,iToAdd);
         Date monthAddedDate=calendar.getTime();
@@ -96,23 +92,15 @@ public enum Operation implements OperationEvaluator{
             iToAdd=Integer.parseInt((String)oToAdd);
         } else if(oToAdd instanceof Integer){
             iToAdd=((Integer)oToAdd);
-        } else {
-            try{
-                iToAdd=(int)oToAdd;
-            }catch (Exception ex){
-
-            }
         }
-        calendar.add(Calendar.DAY_OF_MONTH,iToAdd);
+        calendar.add(Calendar.DATE,iToAdd);
         Date monthAddedDate=calendar.getTime();
         return monthAddedDate;
     }),
     CONCAT("concat",(args)->{
-        List<Object> argumentValues=new ArrayList<>();
         String result="";
         for (int i=0;i<args.size();i++){
             Object value=args.get(i);
-            argumentValues.add(value);
             result+=value.toString();
         }
         return result;
