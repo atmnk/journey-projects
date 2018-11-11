@@ -135,16 +135,15 @@ public  abstract class RestUnit extends Unit {
             this.printDoneExecute(index);
             return valueStore1;
         } catch (RuntimeException ex){
-            this.print(index,"URL: "+this.getUrlTemplate());
-            if(this instanceof BodiedUnit){
-                this.print(index,"Body: "+((BodiedUnit)this).getRequestTemplate());
-            }
-            this.printDoneExecute(index);
+            printException(index);
             throw ex;
         }
 
     }
     public abstract HttpResponse<String>  fire(RestClient restClient);
+    public void printException(int index){
+        this.print(index,"URL: "+this.getUrlTemplate());
+    }
     public ValueStore processOutput(ValueStore valueStore,HttpResponse<String> output){
         List<Integer> validStatus= Arrays.asList(200,201,202,203,204,205,206,207,208,226);
         if(validStatus.contains(output.getStatus())){
@@ -178,7 +177,9 @@ public  abstract class RestUnit extends Unit {
                         e.printStackTrace();
                     }
                 }
-                valueStore.add(extractedValues);
+                if(extractedValues!=null) {
+                    valueStore.add(extractedValues);
+                }
             }
             if(wait!=0){
                 try {
@@ -189,7 +190,7 @@ public  abstract class RestUnit extends Unit {
             }
             return valueStore;
         } else{
-            throw new RuntimeException("Invalid Response from Server got : "+output.getBody()+" for request : ");
+            throw new RuntimeException("Invalid Response from Server got : "+output.getBody());
         }
     }
 }

@@ -24,6 +24,9 @@ public interface TextTemplate extends Template {
                 while(text.charAt(i)!='}')
                 {
                     variable+=text.charAt(i++);
+                    if(i>=text.length()){
+                        throw new TemplateParseException("No closing bracket found opening variable bracket");
+                    }
                 }
                 TextVariableTemplate textVariableTemplate=new TextVariableTemplate(variable);
                 arrayTextTemplate.add(textVariableTemplate);

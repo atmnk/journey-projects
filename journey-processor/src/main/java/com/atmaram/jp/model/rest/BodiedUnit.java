@@ -23,6 +23,12 @@ public abstract class BodiedUnit extends RestUnit {
         super(restClient);
     }
 
+    @Override
+    public void printException(int index){
+        super.printException(index);
+        this.print(index,"Body: "+this.requestTemplate);
+    }
+
     public Unit fillObject(BodiedUnit bodiedUnit, ValueStore valueStore){
         fillObject((RestUnit) bodiedUnit,valueStore);
         String body = requestTemplate;
