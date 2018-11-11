@@ -15,11 +15,10 @@ public interface ExtractableTemplate extends Template {
         if(trimmed.startsWith("<")){
             XMLTemplate xmlTemplate=XMLTemplate.parse(trimmed);
             return xmlTemplate;
-        } else if (trimmed.startsWith("{")||trimmed.startsWith("[")){
+        } else {
             JSONTemplate jsonTemplate = JSONTemplate.parse(trimmed);
             return jsonTemplate;
         }
-        throw new TemplateParseException("Provided Template is not Valid Extractable Template");
     }
     public ExtractableTemplate fillTemplateVariables(HashMap<String, Object> data);
 }

@@ -71,14 +71,14 @@ public  abstract class RestUnit extends Unit {
         }
         if(!responseTemplate.trim().equals(""))
         {
-            List<Variable> outputVariables = null;
-            List<Variable> inputVariables = null;
+            List<Variable> outputVariables = new ArrayList<>();
+            List<Variable> inputVariables = new ArrayList<>();
             try {
                 ExtractableTemplate xtResponseTemplate= ExtractableTemplate.parse(responseTemplate);
                 inputVariables=xtResponseTemplate.getTemplateVariables();
                 outputVariables = xtResponseTemplate.getVariables();
             } catch (TemplateParseException e) {
-                throw new UnitConfigurationException("Invalid response: Template"+responseTemplate,this.name,e);
+                throw new UnitConfigurationException("Invalid response: Template" + responseTemplate, this.name, e);
             }
             variableStore.add(inputVariables);
             variableStore.resolve(outputVariables);

@@ -8,7 +8,6 @@ import com.atmaram.jp.model.RequestHeader;
 import com.atmaram.jp.model.ResponseHeader;
 import com.atmaram.jp.model.Unit;
 import com.atmaram.tp.Variable;
-import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.mashape.unirest.http.Headers;
 import com.mashape.unirest.http.HttpResponse;
 import org.junit.Rule;
