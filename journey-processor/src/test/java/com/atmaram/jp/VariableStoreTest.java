@@ -192,6 +192,33 @@ public class VariableStoreTest {
 
     }
     @Test
+    public void should_merge_into_already_resolved_variable(){
+        VariableStore variableStore=new VariableStore();
+
+        Variable inner1=new Variable();
+        inner1.setName("inner1");
+        inner1.setType("String");
+        Variable variable1=new Variable();
+        variable1.setName("test");
+        variable1.setType("List");
+        variable1.setInner_variables(Arrays.asList(inner1));
+
+        Variable inner2=new Variable();
+        inner2.setName("inner2");
+        inner2.setType("List");
+        Variable variable2=new Variable();
+        variable2.setName("test");
+        variable2.setType("List");
+        variable2.setInner_variables(Arrays.asList(inner1,inner2));
+
+        variableStore.resolve(Arrays.asList(variable1));
+        variableStore.resolve(Arrays.asList(variable2));
+
+        List<Variable> vars=variableStore.getResolved("test","List").getInner_variables();
+        assertThat(vars).isEqualTo(Arrays.asList(inner1,inner2));
+
+    }
+    @Test
     public void should_add_new_inner_variables_to_already_added_variable(){
         VariableStore variableStore=new VariableStore();
 

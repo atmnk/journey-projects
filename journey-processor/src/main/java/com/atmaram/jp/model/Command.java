@@ -22,8 +22,7 @@ public class Command {
 
     public Command() {
     }
-
-    public ValueStore execute(List<Environment> environments, ValueStore valueStore){
+    public ValueStore execute(List<Environment> environments, ValueStore valueStore,int index){
         if(variables!=null) {
             for (int i = 0; i < variables.size(); i++) {
                 EnvironmentVariable environmentVariable = variables.get(i);
@@ -58,11 +57,14 @@ public class Command {
         if(units!=null) {
             for (int i = 0; i < units.size(); i++) {
                 Unit currentUnit = units.get(i);
-                currentUnit.fill(valueStore).execute(valueStore,0);
+                currentUnit.fill(valueStore).execute(valueStore,index);
 
             }
         }
         return valueStore;
+    }
+    public ValueStore execute(List<Environment> environments, ValueStore valueStore){
+        return execute(environments,valueStore,0);
     }
 
     public VariableStore eval(VariableStore variableStore,List<Environment> environments) throws CommandConfigurationException {

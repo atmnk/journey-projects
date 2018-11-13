@@ -70,20 +70,16 @@ public class VariableStore {
     public void resolve(List<Variable> toResolve){
         for (int i=0;i<toResolve.size();i++){
             Variable varToResolve=toResolve.get(i);
-            if(resolvedVariables.contains(varToResolve))
-                continue;
-            else{
-                Variable allreadyResolvedVar=getResolvedVariableWithNameAndType(varToResolve.getName(),varToResolve.getType());
-                if(allreadyResolvedVar!=null){
-                    if(allreadyResolvedVar.getType().equals("List")){
-                        Variable newResolvedVariable=allreadyResolvedVar.mergeWith(varToResolve);
-                        resolvedVariables.remove(allreadyResolvedVar);
-                        resolvedVariables.add(newResolvedVariable);
-                    }
-                    continue;
-                } else {
-                    resolvedVariables.add(varToResolve.clone());
+            Variable allreadyResolvedVar=getResolvedVariableWithNameAndType(varToResolve.getName(),varToResolve.getType());
+            if(allreadyResolvedVar!=null){
+                if(allreadyResolvedVar.getType().equals("List")){
+                    Variable newResolvedVariable=allreadyResolvedVar.mergeWith(varToResolve);
+                    resolvedVariables.remove(allreadyResolvedVar);
+                    resolvedVariables.add(newResolvedVariable);
                 }
+                continue;
+            } else {
+                resolvedVariables.add(varToResolve.clone());
             }
         }
         for(int i=0;i<finalVariables.size();i++){

@@ -148,6 +148,14 @@ public enum Operation implements OperationEvaluator{
     Len("len",(args)->{
         String result=(String) args.get(0);
         return result.length();
+    }),
+    UPPER("upper",(args)->{
+        String result=(String) args.get(0);
+        return result.toUpperCase();
+    }),
+    LOWER("lower",(args)->{
+        String result=(String) args.get(0);
+        return result.toLowerCase();
     });
     public OperationEvaluator evaluator;
     public String function;

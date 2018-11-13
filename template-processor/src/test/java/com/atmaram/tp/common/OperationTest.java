@@ -157,4 +157,20 @@ public class OperationTest {
         data.add(2);
         assertThat(Operation.SUBSTRACT.toValue(data)).isEqualTo(1);
     }
+
+    //UPPER
+    @Test
+    public void should_convert_string_to_upper_case(){
+        List data=new ArrayList();
+        data.add("hello");
+        assertThat(Operation.UPPER.toValue(data)).isEqualTo("HELLO");
+    }
+
+    //LOWER
+    @Test
+    public void should_convert_string_to_lower_case(){
+        List data=new ArrayList();
+        data.add("HELLO");
+        assertThat(Operation.LOWER.toValue(data)).isEqualTo("hello");
+    }
 }

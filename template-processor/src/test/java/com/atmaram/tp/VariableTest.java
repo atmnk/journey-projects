@@ -241,4 +241,30 @@ public class VariableTest {
         assertVar.setInner_variables(Arrays.asList(inner1_inner1,inner2_inner1));
         assertThat(merged.getInner_variables()).isEqualTo(Arrays.asList(assertVar));
     }
+    @Test
+    public void should_merge_without_duplicating(){
+        Variable variable1=new Variable();
+        variable1.setName("Test");
+        variable1.setType("List");
+        Variable inner1=new Variable();
+        inner1.setName("Var1");
+        inner1.setType("String");
+        variable1.setInner_variables(Arrays.asList(inner1));
+        Variable variable2=new Variable();
+        variable2.setName("Test");
+        variable2.setType("List");
+        Variable inner2=new Variable();
+        inner2.setName("Var1");
+        inner2.setType("String");
+        Variable inner3=new Variable();
+        inner3.setName("Var2");
+        inner3.setType("List");
+        variable2.setInner_variables(Arrays.asList(inner2,inner3));
+        Variable merged=variable1.mergeWith(variable2);
+
+        assertThat(merged.getName()).isEqualTo("Test");
+        assertThat(merged.getType()).isEqualTo("List");
+
+        assertThat(merged.getInner_variables()).isEqualTo(Arrays.asList(inner1,inner3));
+    }
 }

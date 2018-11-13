@@ -21,6 +21,14 @@ public class Variable {
         }
         return variable;
     }
+    public static boolean isVariableIn(List<Variable> vars, Variable variable){
+        for (Variable toCheck:
+             vars) {
+            if(toCheck.getName().equals(variable.getName()) && toCheck.getType().equals(variable.getType()))
+                return true;
+        }
+        return false;
+    }
     public Variable mergeWith(Variable toVariable){
         if(name.equals(toVariable.name) && type.equals(toVariable.type) && type.equals("List")) {
             Variable variable=new Variable();
@@ -33,16 +41,26 @@ public class Variable {
                         inner.add(inner_variables.get(i).clone());
             }
             if(toVariable.inner_variables!=null) {
-                for (int i = 0; i <toVariable.inner_variables.size();i++)
-                    if(toVariable.inner_variables.get(i).type.equals("String"))
+                for (int i = 0; i <toVariable.inner_variables.size();i++) {
+                    Variable toAddInner = toVariable.inner_variables.get(i);
+                    if (toAddInner.type.equals("String") && !isVariableIn(inner,toAddInner)) {
                         inner.add(toVariable.inner_variables.get(i).clone());
+                    }
+                }
             }
             if(inner_variables!=null){
+                List<Variable> remaining=new ArrayList<>();
+                if(toVariable.inner_variables!=null) {
+                    for (int j = 0; j < toVariable.inner_variables.size(); j++) {
+                        Variable to = toVariable.inner_variables.get(j);
+                        if (to.type.equals("List"))
+                            remaining.add(to);
+                    }
+                }
                 for (int i=0;i<inner_variables.size();i++){
                     Variable from=inner_variables.get(i);
                     if(from.type.equals("List")) {
                         if (toVariable.getInner_variables() != null) {
-                            List<Variable> remaining=new ArrayList<>();
                             boolean found = false;
                             for (int j = 0; j < toVariable.inner_variables.size(); j++) {
                                 Variable to = toVariable.inner_variables.get(j);
@@ -52,21 +70,20 @@ public class Variable {
                                     if(remaining.contains(to)){
                                         remaining.remove(to);
                                     }
-                                } else {
-                                    if(to.type.equals("List"))
-                                        remaining.add(to);
                                 }
                             }
                             if (!found) {
                                 inner.add(from.clone());
                             }
-                            for(int j=0;j<remaining.size();j++){
-                                inner.add(remaining.get(j).clone());
-                            }
+
                         } else {
                             inner.add(from.clone());
                         }
                     }
+
+                }
+                for(int j=0;j<remaining.size();j++){
+                    inner.add(remaining.get(j).clone());
                 }
             } else {
                 if(toVariable.getInner_variables()!=null){

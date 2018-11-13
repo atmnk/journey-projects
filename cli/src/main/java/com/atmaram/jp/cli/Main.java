@@ -1,6 +1,5 @@
 package com.atmaram.jp.cli;
 
-import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
@@ -12,7 +11,6 @@ import com.atmaram.tp.json.JSONTemplate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.awt.*;
@@ -30,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Main {
+    public static List<String> commands;
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
         JSONObject jsonObject = new JSONObject();
 
@@ -46,7 +45,7 @@ public class Main {
 
             Scanner input = new Scanner(System.in);
 
-            List<String> commands = getCommands(Paths.get("config/commands"));
+            commands = getCommands(Paths.get("config/commands"));
             List<String> filtered_commands;
             if (args.length == 0) {
                 filtered_commands = commands;
@@ -89,11 +88,9 @@ public class Main {
             List<Environment> environments =readEnvironments(Paths.get("config/env"),lEnv);
 
             Path baseCommandDir = Paths.get("config/commands/" + filtered_commands.get(iCommand));
-
-            Command command = readCommand(baseCommandDir);
             ValueStore valueStore = new ValueStore();
             VariableStore variableStore = new VariableStore();
-            readDats(baseCommandDir, valueStore, variableStore, lEnv);
+            Command command = readCommand(baseCommandDir,valueStore,variableStore,lEnv);
             command.eval(variableStore, environments);
             List<Variable> variables = variableStore.getVariables();
 
@@ -155,8 +152,12 @@ public class Main {
             List<Variable> inner=new ArrayList<>();
             for (Object key:
                     obj.keySet()) {
-                Variable variable1=transformObjectToVariable((String)key,obj.get(key));
-                inner.add(variable1);
+                try {
+                    Variable variable1 = transformObjectToVariable((String) key, obj.get(key));
+                    inner.add(variable1);
+                } catch (ClassCastException ex){
+
+                }
             }
             variable.setInner_variables(inner);
         } else {
@@ -265,7 +266,7 @@ public class Main {
         }
         return environment;
     }
-    public static Command readCommand(Path baseCommandDir) throws FileNotFoundException, ParseException {
+    public static Command readCommand(Path baseCommandDir,ValueStore valueStore,VariableStore variableStore,List<String> lEnv) throws IOException, ParseException, TemplateParseException {
         File dir=baseCommandDir.toFile();
         List<Unit> units=new ArrayList<>();
         File[] varFiles=dir.listFiles(new FilenameFilter() {
@@ -293,12 +294,13 @@ public class Main {
         }
         });
         for(File file:files){
-            units.add(UnitBuilder.buildFromFile(file));
+            units.add(UnitBuilder.buildFromFile(file,valueStore,variableStore,lEnv));
         }
         Command command=new Command();
         command.setVariables(UnitBuilder.getCommandVariables(varFiles));
         command.setName(dir.getName());
         command.setUnits(units);
+        readDats(baseCommandDir, valueStore, variableStore, lEnv);
         return command;
     }
     public static List<Environment> readEnvironments(Path baseDirPath,List<String> envPassed) throws FileNotFoundException {

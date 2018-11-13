@@ -3,16 +3,6 @@ package com.atmaram.tp.xml;
 import com.atmaram.tp.Variable;
 import com.atmaram.tp.xml.helpers.NodeFormer;
 import org.w3c.dom.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

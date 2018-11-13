@@ -13,7 +13,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class GetUnitTest {
+public class PostUnitTest {
     RestClient restClient= mock(RestClient.class);
     @Rule
     public ExpectedException expectedException=ExpectedException.none();
@@ -22,31 +22,50 @@ public class GetUnitTest {
     public void should_fire_get_request_on_execute() throws UnirestException {
         doReturn(200).when(mockResponse).getStatus();
         doReturn("<a>Atmaram</a>").when(mockResponse).getBody();
-        doReturn(mockResponse).when(restClient).get(any(),anyList());
-        GetUnit getUnit=new GetUnit(restClient);
-        getUnit.urlTemplate="ABC";
-        getUnit.requestHeaders= Arrays.asList();
-        getUnit.responseHeaders=Arrays.asList();
-        getUnit.name="Unit 1";
-        getUnit.responseTemplate="<a>${Name}</a>";
-        getUnit.execute(new ValueStore(),0);
+        doReturn(mockResponse).when(restClient).post(any(),anyList(),anyString());
+        PostUnit postUnit=new PostUnit(restClient);
+        postUnit.urlTemplate="ABC";
+        postUnit.requestHeaders= Arrays.asList();
+        postUnit.responseHeaders=Arrays.asList();
+        postUnit.name="Unit 1";
+        postUnit.responseTemplate="<a>${Name}</a>";
+        postUnit.requestTemplate="<a>Hello</a>";
+        postUnit.execute(new ValueStore(),0);
 
-        verify(restClient,times(1)).get("ABC",Arrays.asList());
+        verify(restClient,times(1)).post("ABC",Arrays.asList(),"<a>Hello</a>");
     }
 
     @Test
-    public void should_not_throw_exception_when_unirest_exception() throws UnirestException {
+    public void should_throw_null_pointer_exception_when_unirest_exception() throws UnirestException {
         UnirestException ex=mock(UnirestException.class);
-        doThrow(ex).when(restClient).get(any(),anyList());
-        GetUnit getUnit=new GetUnit(restClient);
-        getUnit.urlTemplate="ABC";
-        getUnit.requestHeaders= Arrays.asList();
-        getUnit.responseHeaders=Arrays.asList();
-        getUnit.name="Unit 1";
-        getUnit.responseTemplate="<a>${Name}</a>";
+        doThrow(ex).when(restClient).post(any(),anyList(),anyString());
+        PostUnit postUnit=new PostUnit(restClient);
+        postUnit.urlTemplate="ABC";
+        postUnit.requestHeaders= Arrays.asList();
+        postUnit.responseHeaders=Arrays.asList();
+        postUnit.name="Unit 1";
+        postUnit.responseTemplate="<a>${Name}</a>";
+        postUnit.requestTemplate="<a>Hello</a>";
         expectedException.expect(NullPointerException.class);
-        getUnit.execute(new ValueStore(),0);
+        postUnit.execute(new ValueStore(),0);
 
 
+    }
+
+    @Test
+    public void should_fill_object(){
+        PostUnit postUnit=new PostUnit(restClient);
+        postUnit.urlTemplate="ABC${Var1}";
+        postUnit.requestHeaders= Arrays.asList();
+        postUnit.responseHeaders=Arrays.asList();
+        postUnit.name="Unit 1";
+        postUnit.responseTemplate="<a>${Name}</a>";
+        postUnit.requestTemplate="<a>${Var2}</a>";
+        ValueStore valueStore=new ValueStore();
+        valueStore.add("Var1","Hello");
+        valueStore.add("Var2","World");
+        PostUnit filled=(PostUnit) postUnit.fill(valueStore);
+        assertThat(filled.urlTemplate).isEqualTo("ABCHello");
+        assertThat(filled.requestTemplate).isEqualTo("<a>World</a>");
     }
 }

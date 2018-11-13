@@ -46,6 +46,13 @@ public class BlockUnit extends Unit {
              units) {
             try {
                 unit.eval(newVariableStore);
+                variableStore.add(newVariableStore.getVariables());
+                Variable variable=new Variable();
+                variable.setName(counterVariable);
+                variable.setType("List");
+                variable.setInner_variables(newVariableStore.getResolvedVariables());
+                variableStore.resolve(Arrays.asList(variable));
+
             }catch (UnitConfigurationException ex){
                 throw new UnitConfigurationException("Unit not properly configured in block unit: "+this.getName(),this.name,ex);
             }
@@ -53,12 +60,6 @@ public class BlockUnit extends Unit {
         JSONTemplate filterTemplate = null;
         try {
             filterTemplate = JSONTemplate.parse(filter);
-            variableStore.add(newVariableStore.getVariables());
-            Variable variable=new Variable();
-            variable.setName(counterVariable);
-            variable.setType("List");
-            variable.setInner_variables(newVariableStore.getResolvedVariables());
-            variableStore.resolve(Arrays.asList(variable));
             variableStore.add(filterTemplate.getVariables());
         } catch (TemplateParseException e) {
             throw new UnitConfigurationException("Invalid Template in filter",this.name,e);
