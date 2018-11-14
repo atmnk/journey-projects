@@ -106,8 +106,19 @@ public enum Operation implements OperationEvaluator{
         return result;
     }),
     SUBSTRACT("minus",(args)->{
-        Integer result=(Integer) args.get(0);
-        result-=(Integer) args.get(1);
+        Object value=args.get(0);
+        Integer result=0;
+        if(value instanceof Integer) {
+            result = (Integer) value;
+        } else if(value instanceof String){
+            result=Integer.parseInt((String)value);
+        }
+        value=args.get(1);
+        if(value instanceof Integer) {
+            result -= (Integer) value;
+        } else if(value instanceof String){
+            result-=Integer.parseInt((String)value);
+        }
         return result;
     }),
     TIMESTAMP("timestamp",(args)->{
@@ -156,6 +167,16 @@ public enum Operation implements OperationEvaluator{
     LOWER("lower",(args)->{
         String result=(String) args.get(0);
         return result.toLowerCase();
+    }),
+    RANDOM("rand",(args)->{
+        Integer lower=(Integer) args.get(0);
+        Integer upper=(Integer) args.get(1);
+        Random random=new Random();
+        if(upper==lower){
+            return lower;
+        }
+        int num=random.nextInt(upper-lower+1);
+        return num+lower;
     });
     public OperationEvaluator evaluator;
     public String function;

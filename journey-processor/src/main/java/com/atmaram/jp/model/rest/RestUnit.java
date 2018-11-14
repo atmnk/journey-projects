@@ -190,7 +190,7 @@ public  abstract class RestUnit extends Unit {
             }
             return valueStore;
         } else{
-            throw new RuntimeException("Invalid Response from Server got : "+output.getBody());
+            throw new RuntimeException("Invalid Response from Server got : "+output.getStatus()+"-"+output.getBody());
         }
     }
 }

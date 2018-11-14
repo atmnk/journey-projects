@@ -238,7 +238,7 @@ public class UnitBuilder {
                 staticLoopUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
             }
             if (scanner.hasNextLine()){
-                staticLoopUnit.setTimes(Integer.parseInt(scanner.nextLine().split("=")[1]));
+                staticLoopUnit.setTimes(scanner.nextLine().split("=")[1]);
             }
         }
         List<Unit> units=new ArrayList<>();

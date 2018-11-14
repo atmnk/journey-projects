@@ -16,7 +16,9 @@ public class ValueStore {
     public void add(String name,Object value){
         values.put(name,value);
     }
-
+    public void remove(String name){
+        values.remove(name);
+    }
     public HashMap<String, Object> getValues() {
         return values;
     }

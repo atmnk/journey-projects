@@ -15,13 +15,24 @@ import java.util.List;
 @Data
 public class StaticLoopUnit extends Unit{
     String counterVariable;
-    int times=0;
+    String times="0";
     List<Unit> units;
     List<EnvironmentVariable> variables;
 
     @Override
     public void eval(VariableStore variableStore) throws UnitConfigurationException {
         VariableStore newVariableStore=new VariableStore();
+        newVariableStore.resolve(variableStore.getResolvedVariables());
+        Variable variableCounter=new Variable();
+        variableCounter.setName(counterVariable);
+        variableCounter.setType("String");
+        newVariableStore.resolve(Arrays.asList(variableCounter));
+        try {
+            TextTemplate textTemplate=TextTemplate.parse(times);
+            newVariableStore.add(textTemplate.getVariables());
+        } catch (TemplateParseException e) {
+            throw new UnitConfigurationException("Unit not properly configured in static loop unit for times: "+this.getName(),this.name,e);
+        }
         if(variables!=null) {
             for (int i = 0; i < variables.size(); i++) {
                 EnvironmentVariable environmentVariable = variables.get(i);
@@ -43,16 +54,12 @@ public class StaticLoopUnit extends Unit{
             try {
                 unit.eval(newVariableStore);
             }catch (UnitConfigurationException ex){
-                throw new UnitConfigurationException("Unit not properly configured in block unit: "+this.getName(),this.name,ex);
+                throw new UnitConfigurationException("Unit not properly configured in static loop unit: "+this.getName(),this.name,ex);
             }
         }
 
         variableStore.add(newVariableStore.getVariables());
-        Variable variableToResolve=new Variable();
-        variableToResolve.setName(counterVariable);
-        variableToResolve.setType("List");
-        variableToResolve.setInner_variables(newVariableStore.getResolvedVariables());
-        variableStore.resolve(Arrays.asList(variableToResolve));
+        variableStore.resolve(newVariableStore.getResolvedVariables());
     }
     @Override
     public Unit fill(ValueStore valueStore) {
@@ -67,7 +74,15 @@ public class StaticLoopUnit extends Unit{
         staticLoopUnit.setUnits(newUnits);
         staticLoopUnit.setWait(this.wait);
         staticLoopUnit.setCounterVariable(this.counterVariable);
-        staticLoopUnit.setTimes(this.times);
+        String newTimes=times;
+        try {
+            TextTemplate textTemplate=TextTemplate.parse(times);
+            newTimes=textTemplate.fill(valueStore.getValues()).toStringTemplate();
+
+        } catch (TemplateParseException e) {
+            e.printStackTrace();
+        }
+        staticLoopUnit.setTimes(newTimes);
         staticLoopUnit.setVariables(variables);
         staticLoopUnit.setWait(this.wait);
         return staticLoopUnit;
@@ -75,10 +90,13 @@ public class StaticLoopUnit extends Unit{
 
     @Override
     public ValueStore execute(ValueStore valueStore,int index){
+
         this.printStartExecute(index);
-        List<HashMap<String,Object>> constructed=new ArrayList<>();
-        for (int i=0;i<times;i++) {
-            ValueStore newValueStore=new ValueStore();
+//        List<HashMap<String,Object>> constructed=new ArrayList<>();
+        int iTimes=Integer.parseInt(times);
+        for (int i=0;i<iTimes;i++) {
+//            ValueStore newValueStore=new ValueStore();
+            valueStore.add(counterVariable,i+1);
             if(variables!=null) {
                 for (int j = 0; j < variables.size(); i++) {
                     EnvironmentVariable environmentVariable = variables.get(j);
@@ -90,24 +108,25 @@ public class StaticLoopUnit extends Unit{
                         System.out.println("Environment Variable Template:"+environmentVariable.getValueTemplate());
                     }
                     String envValue = null;
-                    envValue = textTemplate.fill(valueStore.getValues()).fill(newValueStore.getValues()).toStringTemplate();
-                    newValueStore.add(environmentVariable.getName(), envValue);
+                    envValue = textTemplate.fill(valueStore.getValues()).fill(valueStore.getValues()).toStringTemplate();
+                    valueStore.add(environmentVariable.getName(), envValue);
                 }
             }
             this.print(index+1,"Loop "+i);
             for (Unit unit :
                     units) {
-                unit.fill(newValueStore).execute(newValueStore,index+2);
+                unit.fill(valueStore).execute(valueStore,index+2);
             }
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException ex){
                 ex.printStackTrace();
             }
-            constructed.add(newValueStore.getValues());
+//            constructed.add(newValueStore.getValues());
             this.print(index+1,"Done Loop "+i);
         }
-        valueStore.add(counterVariable,constructed);
+//        valueStore.add(counterVariable,constructed);
+        valueStore.remove(counterVariable);
         this.printDoneExecute(index);
         return valueStore;
     }

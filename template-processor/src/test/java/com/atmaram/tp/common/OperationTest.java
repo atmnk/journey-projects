@@ -173,4 +173,20 @@ public class OperationTest {
         data.add("HELLO");
         assertThat(Operation.LOWER.toValue(data)).isEqualTo("hello");
     }
+
+    //RANDOM
+    @Test
+    public void should_return_random_number_between_range_if_both_same(){
+        List data=new ArrayList();
+        data.add(1);
+        data.add(1);
+        assertThat(Operation.RANDOM.toValue(data)).isEqualTo(1);
+    }
+    @Test
+    public void should_return_random_number_between_range(){
+        List data=new ArrayList();
+        data.add(1);
+        data.add(2);
+        assertThat((Integer) Operation.RANDOM.toValue(data)).isBetween(1,2);
+    }
 }
