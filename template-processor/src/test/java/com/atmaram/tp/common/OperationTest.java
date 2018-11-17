@@ -1,5 +1,8 @@
 package com.atmaram.tp.common;
 
+import com.atmaram.tp.template.extractable.json.JSONTemplate;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -26,7 +29,14 @@ public class OperationTest {
         data.add("3");
         assertThat(Operation.ADD.toValue(data)).isEqualTo(5);
     }
-
+    @Test
+    public void should_add_two_numbers() throws ParseException {
+        JSONObject obj= (JSONObject) JSONTemplate.stringToJSON("{\"Var1\":3,\"Var2\":1}");
+        List data=new ArrayList();
+        data.add(obj.get("Var1"));
+        data.add(obj.get("Var2"));
+        assertThat(Operation.ADD.toValue(data)).isEqualTo(4);
+    }
     //DAY
     @Test
     public void should_get_todays_day(){
@@ -156,6 +166,15 @@ public class OperationTest {
         data.add(3);
         data.add(2);
         assertThat(Operation.SUBSTRACT.toValue(data)).isEqualTo(1);
+    }
+
+    @Test
+    public void should_substract_two_numbers() throws ParseException {
+        JSONObject obj= (JSONObject) JSONTemplate.stringToJSON("{\"Var1\":3,\"Var2\":1}");
+        List data=new ArrayList();
+        data.add(obj.get("Var1"));
+        data.add(obj.get("Var2"));
+        assertThat(Operation.SUBSTRACT.toValue(data)).isEqualTo(2);
     }
 
     //UPPER

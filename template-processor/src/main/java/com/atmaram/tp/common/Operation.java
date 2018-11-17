@@ -12,6 +12,8 @@ public enum Operation implements OperationEvaluator{
                 result += (Integer) value;
             } else if(value instanceof String){
                 result+=Integer.parseInt((String)value);
+            } else if(value instanceof Number){
+                result+=((Number)value).intValue();
             }
         }
         return result;
@@ -112,12 +114,16 @@ public enum Operation implements OperationEvaluator{
             result = (Integer) value;
         } else if(value instanceof String){
             result=Integer.parseInt((String)value);
+        } else if(value instanceof Number){
+            result=((Number)value).intValue();
         }
         value=args.get(1);
         if(value instanceof Integer) {
             result -= (Integer) value;
         } else if(value instanceof String){
             result-=Integer.parseInt((String)value);
+        }else if(value instanceof Number){
+            result-=((Number)value).intValue();
         }
         return result;
     }),
