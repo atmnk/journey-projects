@@ -5,9 +5,9 @@ import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.model.*;
 
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.json.JSONTemplate;
+import com.atmaram.tp.template.extractable.json.JSONTemplate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;

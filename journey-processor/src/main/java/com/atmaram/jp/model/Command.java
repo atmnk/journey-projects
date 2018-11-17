@@ -1,14 +1,12 @@
 package com.atmaram.jp.model;
 
-import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
-import com.atmaram.jp.model.rest.RestUnit;
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.text.TextTemplate;
+import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
 
 import java.util.Arrays;

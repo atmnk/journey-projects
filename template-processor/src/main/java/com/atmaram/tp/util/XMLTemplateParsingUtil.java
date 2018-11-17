@@ -1,13 +1,8 @@
 package com.atmaram.tp.util;
 
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.xml.LoopTemplate;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.atmaram.tp.template.extractable.xml.LoopTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

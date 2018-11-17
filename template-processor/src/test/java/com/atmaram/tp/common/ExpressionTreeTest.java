@@ -1,6 +1,6 @@
 package com.atmaram.tp.common;
 
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import org.junit.Test;
 
 import java.util.Arrays;

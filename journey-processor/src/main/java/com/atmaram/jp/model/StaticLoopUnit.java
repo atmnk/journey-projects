@@ -3,14 +3,13 @@ package com.atmaram.jp.model;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.text.TextTemplate;
+import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 @Data
 public class StaticLoopUnit extends Unit{

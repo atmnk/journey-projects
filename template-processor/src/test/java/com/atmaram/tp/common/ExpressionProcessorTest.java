@@ -1,9 +1,8 @@
 package com.atmaram.tp.common;
 
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import org.junit.Test;
 
-import javax.xml.crypto.Data;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;

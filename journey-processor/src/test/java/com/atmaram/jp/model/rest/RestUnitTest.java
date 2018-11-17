@@ -7,13 +7,14 @@ import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.RequestHeader;
 import com.atmaram.jp.model.ResponseHeader;
 import com.atmaram.jp.model.Unit;
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import com.mashape.unirest.http.Headers;
 import com.mashape.unirest.http.HttpResponse;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -360,7 +361,7 @@ public class RestUnitTest{
     }
 
     @Test
-    public void should_extract_values_from_response() throws UnitConfigurationException {
+    public void should_extract_values_from_response_if_json() throws UnitConfigurationException {
         RestUnitSub restUnitSub=new RestUnitSub(null);
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.responseHeaders=Arrays.asList();
@@ -378,6 +379,65 @@ public class RestUnitTest{
         assertThat(valueStore.getValues()).containsKeys("Var2");
         assertThat(valueStore.getValues().get("Var1")).isEqualTo("Hello");
         assertThat(valueStore.getValues().get("Var2")).isEqualTo("World");
+    }
+
+    @Test
+    public void should_extract_values_from_response_if_json_and_result_json_object() throws UnitConfigurationException {
+        RestUnitSub restUnitSub=new RestUnitSub(null);
+        restUnitSub.requestHeaders= Arrays.asList();
+        restUnitSub.responseHeaders=Arrays.asList();
+        restUnitSub.urlTemplate="ABC";
+        restUnitSub.responseTemplate="${Var1}";
+        ValueStore valueStore=new ValueStore();
+        Headers headers=new Headers();
+        doReturn(200).when(mockResponse).getStatus();
+        doReturn("{\"name\":\"Hello\",\"place\":\"World\"}").when(mockResponse).getBody();
+        doReturn(headers).when(mockResponse).getHeaders();
+
+        restUnitSub.execute(valueStore,0);
+
+        assertThat(valueStore.getValues()).containsKeys("Var1");
+        assertThat(((HashMap)valueStore.getValues().get("Var1")).get("name")).isEqualTo("Hello");
+        assertThat(((HashMap)valueStore.getValues().get("Var1")).get("place")).isEqualTo("World");
+    }
+
+    @Test
+    public void should_extract_values_from_response_if_json_and_result_json_array() throws UnitConfigurationException {
+        RestUnitSub restUnitSub=new RestUnitSub(null);
+        restUnitSub.requestHeaders= Arrays.asList();
+        restUnitSub.responseHeaders=Arrays.asList();
+        restUnitSub.urlTemplate="ABC";
+        restUnitSub.responseTemplate="${Var1}";
+        ValueStore valueStore=new ValueStore();
+        Headers headers=new Headers();
+        doReturn(200).when(mockResponse).getStatus();
+        doReturn("[\"Atmaram\",\"Roopa\"]").when(mockResponse).getBody();
+        doReturn(headers).when(mockResponse).getHeaders();
+
+        restUnitSub.execute(valueStore,0);
+
+        assertThat(valueStore.getValues()).containsKeys("Var1");
+        assertThat(((List)valueStore.getValues().get("Var1")).get(0)).isEqualTo("Atmaram");
+        assertThat(((List)valueStore.getValues().get("Var1")).get(1)).isEqualTo("Roopa");
+    }
+
+    @Test
+    public void should_extract_values_from_response_if_xml() throws UnitConfigurationException {
+        RestUnitSub restUnitSub=new RestUnitSub(null);
+        restUnitSub.requestHeaders= Arrays.asList();
+        restUnitSub.responseHeaders=Arrays.asList();
+        restUnitSub.urlTemplate="ABC";
+        restUnitSub.responseTemplate="<a>${Name}</a>";
+        ValueStore valueStore=new ValueStore();
+        Headers headers=new Headers();
+        doReturn(200).when(mockResponse).getStatus();
+        doReturn("<a>Atmaram</a>").when(mockResponse).getBody();
+        doReturn(headers).when(mockResponse).getHeaders();
+
+        restUnitSub.execute(valueStore,0);
+
+        assertThat(valueStore.getValues()).containsKeys("Name");
+        assertThat(valueStore.getValues().get("Name")).isEqualTo("Atmaram");
     }
 
     @Test

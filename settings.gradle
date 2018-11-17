@@ -2,3 +2,7 @@ include 'journey-processor'
 include 'cli'
 include 'template-processor'
 include 'sample-service'
+include 'com.atmaram.jp.intellij.plugin'
+include 'IntellijPlugin'
+findProject(':IntellijPlugin')?.name = 'com.atmaram.jp.intellij.plugin'
+

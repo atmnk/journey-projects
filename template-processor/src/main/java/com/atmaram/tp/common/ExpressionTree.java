@@ -1,6 +1,6 @@
 package com.atmaram.tp.common;
 
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

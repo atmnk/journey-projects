@@ -5,13 +5,11 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.Unit;
-import com.atmaram.tp.ExtractableTemplate;
-import com.atmaram.tp.Template;
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.extractable.ExtractableTemplate;
+import com.atmaram.tp.template.Template;
+import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.json.JSONTemplate;
 import lombok.Data;
-import org.json.simple.JSONAware;
 
 import java.util.List;
 

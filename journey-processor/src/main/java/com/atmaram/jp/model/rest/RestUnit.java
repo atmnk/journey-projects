@@ -7,16 +7,20 @@ import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.RequestHeader;
 import com.atmaram.jp.model.ResponseHeader;
 import com.atmaram.jp.model.Unit;
-import com.atmaram.tp.ExtractableTemplate;
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.extractable.ExtractableTemplate;
+import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.json.JSONTemplate;
-import com.atmaram.tp.text.TextTemplate;
+import com.atmaram.tp.template.extractable.json.JSONTemplate;
+import com.atmaram.tp.template.extractable.xml.XMLTemplate;
+import com.atmaram.tp.template.text.TextTemplate;
 import com.mashape.unirest.http.HttpResponse;
 import lombok.Data;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -156,7 +160,12 @@ public  abstract class RestUnit extends Unit {
             if(!responseTemplate.trim().equals("")) {
                 HashMap<String, Object> extractedValues = null;
                 try {
-                    extractedValues = ExtractableTemplate.parse(responseTemplate).extract((new JSONParser()).parse(output.getBody()));
+                    ExtractableTemplate extractableTemplate=ExtractableTemplate.parse(responseTemplate);
+                    if(extractableTemplate instanceof XMLTemplate){
+                        extractedValues=extractableTemplate.extract(XMLTemplate.StringDocToElement(output.getBody()));
+                    } else if(extractableTemplate instanceof JSONTemplate){
+                        extractedValues=extractableTemplate.extract((new JSONParser()).parse(output.getBody()));
+                    }
                 } catch (TemplateParseException e) {
                     try {
                         TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
@@ -168,6 +177,19 @@ public  abstract class RestUnit extends Unit {
                     }
 
                 } catch (ParseException e) {
+                    try {
+                        TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
+                        Variable variable=rtTemplate.getVariables().get(0);
+                        extractedValues=new HashMap<>();
+                        extractedValues.put(variable.getName(),output.getBody());
+                    } catch (TemplateParseException tex){
+                        e.printStackTrace();
+                    }
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
                     try {
                         TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
                         Variable variable=rtTemplate.getVariables().get(0);

@@ -5,7 +5,7 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.Unit;
-import com.atmaram.tp.Variable;
+import com.atmaram.tp.template.Variable;
 import com.mashape.unirest.http.HttpResponse;
 import org.junit.Rule;
 import org.junit.Test;

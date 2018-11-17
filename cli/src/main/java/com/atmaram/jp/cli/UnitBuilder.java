@@ -6,7 +6,6 @@ import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.*;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
-import com.atmaram.tp.json.JSONTemplate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -102,7 +101,7 @@ public class UnitBuilder {
         }
     });
     private static VerbProcessor<CommandUnit> command=new VerbProcessor<>(".journey",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
-        if(file.isDirectory() && file.getName().endsWith(".journey")){
+        if(file.isFile() && file.getName().endsWith(".journey")){
             try {
                 return readCommandUnit(file,valueStore,variableStore,lEnv);
             } catch (IOException e) {
@@ -235,10 +234,10 @@ public class UnitBuilder {
             Scanner scanner=new Scanner(file);
             staticLoopUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
             if (scanner.hasNextLine()){
-                staticLoopUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+                staticLoopUnit.setTimes(scanner.nextLine().split("=")[1]);
             }
             if (scanner.hasNextLine()){
-                staticLoopUnit.setTimes(scanner.nextLine().split("=")[1]);
+                staticLoopUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
             }
         }
         List<Unit> units=new ArrayList<>();
@@ -319,25 +318,15 @@ public class UnitBuilder {
         }
         return pollUnit;
     }
-    private static CommandUnit readCommandUnit(File dir,ValueStore valueStore,VariableStore variableStore,List<String> lEnv) throws IOException, ParseException, TemplateParseException {
+    private static CommandUnit readCommandUnit(File file,ValueStore valueStore,VariableStore variableStore,List<String> lEnv) throws IOException, ParseException, TemplateParseException {
         CommandUnit commandUnit=new CommandUnit();
-        commandUnit.setName(dir.getName());
-        File[] infoFiles=dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".info");
-            }
-        });
-        Arrays.sort(infoFiles);
-        for (File file:
-                infoFiles) {
-            Scanner scanner=new Scanner(file);
-            String[] commandArgs=scanner.nextLine().split("=");
-            String commandDir=commandArgs[1];
-            Path baseCommandDir = Paths.get("config/commands/"+commandDir.trim());
-            Command command=Main.readCommand(baseCommandDir,valueStore,variableStore,lEnv);
-            commandUnit.setCommand(command);
-        }
+        Scanner scanner = new Scanner(file);
+        commandUnit.setName(file.getName());
+        String[] commandArgs=scanner.nextLine().split("=");
+        String commandDir=commandArgs[1];
+        Path baseCommandDir = Paths.get("config/commands/"+commandDir.trim());
+        Command command=Main.readCommand(baseCommandDir,valueStore,variableStore,lEnv);
+        commandUnit.setCommand(command);
         return commandUnit;
     }
     public static List<EnvironmentVariable> getCommandVariables(File[] files) throws FileNotFoundException {
