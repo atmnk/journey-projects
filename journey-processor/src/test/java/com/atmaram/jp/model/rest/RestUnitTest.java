@@ -7,6 +7,7 @@ import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.RequestHeader;
 import com.atmaram.jp.model.ResponseHeader;
 import com.atmaram.jp.model.Unit;
+import com.atmaram.tp.template.TemplateType;
 import com.atmaram.tp.template.Variable;
 import com.mashape.unirest.http.Headers;
 import com.mashape.unirest.http.HttpResponse;
@@ -59,6 +60,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList(requestHeader1,requestHeader2);
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType= TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         restUnitSub.eval(variableStore);
         Variable variable1=new Variable();
@@ -94,6 +96,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC${Var1}PQR${Var2}";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType= TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         restUnitSub.eval(variableStore);
         Variable variable1=new Variable();
@@ -133,6 +136,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList(responseHeader1,responseHeader2);
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType= TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         restUnitSub.eval(variableStore);
         Variable variable1=new Variable();
@@ -155,6 +159,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="{#{Var1}:${Var2}}";
+        restUnitSub.responseTemplateType= TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         restUnitSub.eval(variableStore);
         Variable variable1=new Variable();
@@ -170,6 +175,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC$";
         restUnitSub.responseTemplate="{\"name\":${Var1},\"place\":${Var2}}";
+        restUnitSub.responseTemplateType= TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         restUnitSub.eval(variableStore);
         Variable variable1=new Variable();
@@ -190,6 +196,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="{\"name\":\"${ATM\"}";
+        restUnitSub.responseTemplateType= TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         expectedException.expect(UnitConfigurationException.class);
         expectedException.expectMessage("Unit Unit 1 is not properly configured Invalid response: Template{\"name\":\"${ATM\"}");
@@ -203,6 +210,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC${Var1}";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         RestUnit filled=restUnitSub.fillObject(restUnitSub,valueStore);
@@ -214,6 +222,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC${Var1";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         RestUnit filled=restUnitSub.fillObject(restUnitSub,valueStore);
@@ -232,6 +241,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList(requestHeader1,requestHeader2);
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
@@ -249,6 +259,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList(requestHeader1);
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
@@ -262,6 +273,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="{#{Var1}:${Var2}}";
+        restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
@@ -274,6 +286,7 @@ public class RestUnitTest{
         restUnitSub.requestHeaders= Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="{#{Var1:${Var2}}";
+        restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
@@ -344,6 +357,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList(responseHeader1,responseHeader2);
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="[\"ABC\"]";
+        restUnitSub.responseTemplateType=TemplateType.Json;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         headers.put("Header1",Arrays.asList("Hello"));
@@ -367,6 +381,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="{\"name\":${Var1},\"place\":${Var2}}";
+        restUnitSub.responseTemplateType=TemplateType.Json;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         doReturn(200).when(mockResponse).getStatus();
@@ -388,6 +403,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="${Var1}";
+        restUnitSub.responseTemplateType=TemplateType.Json;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         doReturn(200).when(mockResponse).getStatus();
@@ -413,7 +429,7 @@ public class RestUnitTest{
         doReturn(200).when(mockResponse).getStatus();
         doReturn("[\"Atmaram\",\"Roopa\"]").when(mockResponse).getBody();
         doReturn(headers).when(mockResponse).getHeaders();
-
+        restUnitSub.responseTemplateType=TemplateType.Json;
         restUnitSub.execute(valueStore,0);
 
         assertThat(valueStore.getValues()).containsKeys("Var1");
@@ -428,6 +444,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="<a>${Name}</a>";
+        restUnitSub.responseTemplateType=TemplateType.XML;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         doReturn(200).when(mockResponse).getStatus();
@@ -447,6 +464,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="${Var1}";
+        restUnitSub.responseTemplateType=TemplateType.SingleVariableText;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         doReturn(200).when(mockResponse).getStatus();
@@ -466,6 +484,7 @@ public class RestUnitTest{
         restUnitSub.responseHeaders=Arrays.asList();
         restUnitSub.urlTemplate="ABC";
         restUnitSub.responseTemplate="${Var1";
+        restUnitSub.responseTemplateType=TemplateType.Text;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         doReturn(200).when(mockResponse).getStatus();
@@ -482,6 +501,7 @@ public class RestUnitTest{
         restUnitSub.urlTemplate="ABC";
         restUnitSub.wait=1;
         restUnitSub.responseTemplate="{\"Hello\":${Var1}}";
+        restUnitSub.responseTemplateType=TemplateType.Json;
         ValueStore valueStore=new ValueStore();
         Headers headers=new Headers();
         doReturn(200).when(mockResponse).getStatus();
@@ -490,8 +510,7 @@ public class RestUnitTest{
 
         restUnitSub.execute(valueStore,0);
 
-        assertThat(valueStore.getValues()).containsKeys("Var1");
-        assertThat(valueStore.getValues().get("Var1")).isEqualTo("{Hello:atmaram}");
+        assertThat(valueStore.getValues()).doesNotContainKeys("Var1");
     }
 
     public static int get_invalid_status(){

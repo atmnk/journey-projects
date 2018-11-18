@@ -5,6 +5,7 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.Unit;
+import com.atmaram.tp.template.TemplateType;
 import com.atmaram.tp.template.Variable;
 import com.mashape.unirest.http.HttpResponse;
 import org.junit.Rule;
@@ -76,6 +77,8 @@ public class BodiedUnitTest {
         withBodyUnit.urlTemplate="ABC";
         withBodyUnit.requestTemplate="{\"name\":${Var1}}";
         withBodyUnit.responseTemplate="[\"ABC\"]";
+        withBodyUnit.responseTemplateType= TemplateType.Json;
+        withBodyUnit.requestTemplateType=TemplateType.Json;
         VariableStore variableStore=new VariableStore();
         withBodyUnit.eval(variableStore);
         Variable variable1=new Variable();
@@ -91,6 +94,8 @@ public class BodiedUnitTest {
         withBodyUnit.responseHeaders=Arrays.asList();
         withBodyUnit.urlTemplate="ABC";
         withBodyUnit.requestTemplate="{\"name\":${Var1}";
+        withBodyUnit.responseTemplateType= TemplateType.Json;
+        withBodyUnit.requestTemplateType=TemplateType.Json;
         withBodyUnit.responseTemplate="[\"ABC\"]";
         expectedException.expect(UnitConfigurationException.class);
         expectedException.expectMessage("Unit Unit 1 is not properly configured Invalid Template in request body: Unit 1");

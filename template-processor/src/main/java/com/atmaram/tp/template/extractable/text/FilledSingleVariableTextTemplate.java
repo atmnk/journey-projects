@@ -1,16 +1,18 @@
-package com.atmaram.tp.template.extractable.json;
+package com.atmaram.tp.template.extractable.text;
 
 
 import com.atmaram.tp.template.Variable;
+import com.atmaram.tp.template.extractable.ExtractableTemplate;
+import com.atmaram.tp.template.extractable.json.JSONTemplate;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class FilledVariableTemplate implements JSONTemplate {
+class FilledSingleVariableTextTemplate implements SingleVariableTemplate {
     Object variableValue;
 
-    public FilledVariableTemplate(Object variableValue) {
+    public FilledSingleVariableTextTemplate(Object variableValue) {
         this.variableValue = variableValue;
     }
 
@@ -25,12 +27,12 @@ class FilledVariableTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fillTemplateVariables(HashMap<String, Object> data) {
+    public ExtractableTemplate fillTemplateVariables(HashMap<String, Object> data) {
         return this;
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public ExtractableTemplate fill(HashMap<String, Object> data) {
         return this;
     }
 
@@ -39,13 +41,9 @@ class FilledVariableTemplate implements JSONTemplate {
         return new HashMap<>();
     }
 
-    @Override
-    public Object toJSONCompatibleObject() {
-        return variableValue;
-    }
 
     @Override
     public String toStringTemplate() {
-        return toJSONCompatibleObject().toString();
+        return variableValue.toString();
     }
 }

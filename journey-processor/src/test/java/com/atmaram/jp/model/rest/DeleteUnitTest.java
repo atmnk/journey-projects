@@ -2,6 +2,7 @@ package com.atmaram.jp.model.rest;
 
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
+import com.atmaram.tp.template.TemplateType;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Rule;

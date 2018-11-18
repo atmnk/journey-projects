@@ -8,6 +8,7 @@ import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.GetUnit;
 import com.atmaram.jp.model.rest.PostUnit;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.template.TemplateType;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.parser.ParseException;
@@ -27,9 +28,11 @@ public class CommandTest {
         GetUnit unit1=new GetUnit(RestClient.get());
         unit1.setUrlTemplate("http://localhost");
         unit1.setResponseTemplate("{\"name\":\"World\"}");
+        unit1.setResponseTemplateType(TemplateType.Extractable);
         GetUnit unit2=new GetUnit(RestClient.get());
         unit2.setUrlTemplate("http://localhost");
         unit2.setResponseTemplate("{\"name\":\"World\"}");
+        unit2.setResponseTemplateType(TemplateType.Extractable);
         units.add(unit1);
         units.add(unit2);
         command.setUnits(units);
@@ -46,6 +49,7 @@ public class CommandTest {
         GetUnit step1=new GetUnit(RestClient.get());
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
+        step1.setResponseTemplateType(TemplateType.Extractable);
         steps.add(step1);
         command.setUnits(steps);
 
@@ -60,6 +64,7 @@ public class CommandTest {
         GetUnit step1=new GetUnit(RestClient.get());
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("[{{#names}}{\"name\":${Name}}{{/names}}]");
+        step1.setResponseTemplateType(TemplateType.Extractable);
         steps.add(step1);
         journey.setUnits(steps);
         VariableStore result=journey.eval(new VariableStore(),new ArrayList<>());
@@ -74,9 +79,11 @@ public class CommandTest {
         GetUnit step1=new GetUnit(RestClient.get());
         step1.setUrlTemplate("http://localhost:${Port}");
         step1.setResponseTemplate("{\"name\":\"World\"}");
+        step1.setResponseTemplateType(TemplateType.Extractable);
         GetUnit step2=new GetUnit(RestClient.get());
         step2.setUrlTemplate("http://localhost:${Port}");
         step2.setResponseTemplate("{\"name\":\"World\"}");
+        step2.setResponseTemplateType(TemplateType.Extractable);
         steps.add(step1);
         steps.add(step2);
         journey.setUnits(steps);
@@ -93,6 +100,7 @@ public class CommandTest {
         GetUnit getUnit=new GetUnit(RestClient.get());
         getUnit.setUrlTemplate("${BaseURL}/call1");
         getUnit.setResponseTemplate("{\"name\":${name}}");
+        getUnit.setResponseTemplateType(TemplateType.Extractable);
         command.setUnits(Arrays.asList(getUnit));
         VariableStore variableStore=command.eval(new VariableStore(),Arrays.asList(environment));
         assertThat(variableStore.getVariables().size()).isEqualTo(1);
@@ -109,10 +117,13 @@ public class CommandTest {
         GetUnit step1=new GetUnit(restClient);
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
+        step1.setResponseTemplateType(TemplateType.Extractable);
         PostUnit step2=new PostUnit(restClient);
         step2.setUrlTemplate("http://localhost");
         step2.setResponseTemplate("{\"name\":\"World\"}");
         step2.setRequestTemplate("{\"place\": \"Mumbai\"}");
+        step2.setResponseTemplateType(TemplateType.Extractable);
+        step2.setRequestTemplateType(TemplateType.Extractable);
         steps.add(step1);
         steps.add(step2);
         journey.setUnits(steps);

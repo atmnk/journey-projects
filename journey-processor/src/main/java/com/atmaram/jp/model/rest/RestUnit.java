@@ -7,10 +7,12 @@ import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.RequestHeader;
 import com.atmaram.jp.model.ResponseHeader;
 import com.atmaram.jp.model.Unit;
+import com.atmaram.tp.template.TemplateType;
 import com.atmaram.tp.template.extractable.ExtractableTemplate;
 import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.extractable.json.JSONTemplate;
+import com.atmaram.tp.template.extractable.text.SingleVariableTemplate;
 import com.atmaram.tp.template.extractable.xml.XMLTemplate;
 import com.atmaram.tp.template.text.TextTemplate;
 import com.mashape.unirest.http.HttpResponse;
@@ -28,7 +30,8 @@ import java.util.List;
 @Data
 public  abstract class RestUnit extends Unit {
     String urlTemplate;
-    String responseTemplate;
+    String responseTemplate="";
+    TemplateType responseTemplateType=TemplateType.Extractable;
     List<RequestHeader> requestHeaders;
     List<ResponseHeader> responseHeaders;
     public RestClient restClient=null;
@@ -77,12 +80,38 @@ public  abstract class RestUnit extends Unit {
         {
             List<Variable> outputVariables = new ArrayList<>();
             List<Variable> inputVariables = new ArrayList<>();
-            try {
-                ExtractableTemplate xtResponseTemplate= ExtractableTemplate.parse(responseTemplate);
-                inputVariables=xtResponseTemplate.getTemplateVariables();
-                outputVariables = xtResponseTemplate.getVariables();
-            } catch (TemplateParseException e) {
-                throw new UnitConfigurationException("Invalid response: Template" + responseTemplate, this.name, e);
+            if(responseTemplateType.equals(TemplateType.Extractable)) {
+                try {
+                    ExtractableTemplate xtResponseTemplate = ExtractableTemplate.parse(responseTemplate);
+                    inputVariables = xtResponseTemplate.getTemplateVariables();
+                    outputVariables = xtResponseTemplate.getVariables();
+                } catch (TemplateParseException e) {
+                    throw new UnitConfigurationException("Invalid response: Template" + responseTemplate, this.name, e);
+                }
+            } else if(responseTemplateType.equals(TemplateType.Json)){
+                try {
+                    JSONTemplate xtResponseTemplate = JSONTemplate.parse(responseTemplate);
+                    inputVariables = xtResponseTemplate.getTemplateVariables();
+                    outputVariables = xtResponseTemplate.getVariables();
+                } catch (TemplateParseException e) {
+                    throw new UnitConfigurationException("Invalid response: Template" + responseTemplate, this.name, e);
+                }
+            } else if(responseTemplateType.equals(TemplateType.XML)){
+                try {
+                    XMLTemplate xtResponseTemplate = XMLTemplate.parse(responseTemplate);
+                    inputVariables = xtResponseTemplate.getTemplateVariables();
+                    outputVariables = xtResponseTemplate.getVariables();
+                } catch (TemplateParseException e) {
+                    throw new UnitConfigurationException("Invalid response: Template" + responseTemplate, this.name, e);
+                }
+            } else if(responseTemplateType.equals(TemplateType.SingleVariableText)){
+                try {
+                    SingleVariableTemplate xtResponseTemplate = SingleVariableTemplate.parse(responseTemplate);
+                    inputVariables = xtResponseTemplate.getTemplateVariables();
+                    outputVariables = xtResponseTemplate.getVariables();
+                } catch (TemplateParseException e) {
+                    throw new UnitConfigurationException("Invalid response: Template" + responseTemplate, this.name, e);
+                }
             }
             variableStore.add(inputVariables);
             variableStore.resolve(outputVariables);
@@ -120,10 +149,19 @@ public  abstract class RestUnit extends Unit {
         restUnit.setRequestHeaders(filledRequestHeaders);
         try {
             if(responseTemplate!=null && !responseTemplate.trim().equals("")) {
-                restUnit.setResponseTemplate(ExtractableTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toStringTemplate());
+                if (responseTemplateType.equals(TemplateType.Extractable)){
+                    restUnit.setResponseTemplate(ExtractableTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toStringTemplate());
+                } else if(responseTemplateType.equals(TemplateType.Json)){
+                    restUnit.setResponseTemplate(JSONTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toStringTemplate());
+                } else if(responseTemplateType.equals(TemplateType.XML)){
+                    restUnit.setResponseTemplate(XMLTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toStringTemplate());
+                } else if(responseTemplateType.equals(TemplateType.SingleVariableText)){
+                    restUnit.setResponseTemplate(SingleVariableTemplate.parse(responseTemplate).fillTemplateVariables(valueStore.getValues()).toStringTemplate());
+                }
             } else {
                 restUnit.setResponseTemplate("");
             }
+            restUnit.setResponseTemplateType(responseTemplateType);
         } catch (TemplateParseException e) {
             e.printStackTrace();
         }
@@ -160,44 +198,33 @@ public  abstract class RestUnit extends Unit {
             if(!responseTemplate.trim().equals("")) {
                 HashMap<String, Object> extractedValues = null;
                 try {
-                    ExtractableTemplate extractableTemplate=ExtractableTemplate.parse(responseTemplate);
-                    if(extractableTemplate instanceof XMLTemplate){
+                    if (responseTemplateType.equals(TemplateType.Extractable)){
+                        ExtractableTemplate extractableTemplate=ExtractableTemplate.parse(responseTemplate);
+                        if(extractableTemplate instanceof XMLTemplate){
+                            extractedValues=extractableTemplate.extract(XMLTemplate.StringDocToElement(output.getBody()));
+                        } else if(extractableTemplate instanceof JSONTemplate){
+                            extractedValues=extractableTemplate.extract((new JSONParser()).parse(output.getBody()));
+                        }
+                    } else if(responseTemplateType.equals(TemplateType.XML)){
+                        XMLTemplate extractableTemplate=XMLTemplate.parse(responseTemplate);
                         extractedValues=extractableTemplate.extract(XMLTemplate.StringDocToElement(output.getBody()));
-                    } else if(extractableTemplate instanceof JSONTemplate){
-                        extractedValues=extractableTemplate.extract((new JSONParser()).parse(output.getBody()));
+                    } else if(responseTemplateType.equals(TemplateType.SingleVariableText)){
+                        SingleVariableTemplate extractableTemplate=SingleVariableTemplate.parse(responseTemplate);
+                        extractedValues=extractableTemplate.extract(output.getBody());
+                    } else if(responseTemplateType.equals(TemplateType.Json)){
+                        JSONTemplate extractableTemplate=JSONTemplate.parse(responseTemplate);
+                        extractedValues=extractableTemplate.extract(JSONTemplate.stringToJSON(output.getBody()));
                     }
                 } catch (TemplateParseException e) {
-                    try {
-                        TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
-                        Variable variable=rtTemplate.getVariables().get(0);
-                        extractedValues=new HashMap<>();
-                        extractedValues.put(variable.getName(),output.getBody());
-                    } catch (TemplateParseException tex){
-                        e.printStackTrace();
-                    }
-
+                    e.printStackTrace();
                 } catch (ParseException e) {
-                    try {
-                        TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
-                        Variable variable=rtTemplate.getVariables().get(0);
-                        extractedValues=new HashMap<>();
-                        extractedValues.put(variable.getName(),output.getBody());
-                    } catch (TemplateParseException tex){
-                        e.printStackTrace();
-                    }
+                    e.printStackTrace();
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (SAXException e) {
-                    try {
-                        TextTemplate rtTemplate=TextTemplate.parse(responseTemplate);
-                        Variable variable=rtTemplate.getVariables().get(0);
-                        extractedValues=new HashMap<>();
-                        extractedValues.put(variable.getName(),output.getBody());
-                    } catch (TemplateParseException tex){
-                        e.printStackTrace();
-                    }
+                    e.printStackTrace();
                 }
                 if(extractedValues!=null) {
                     valueStore.add(extractedValues);

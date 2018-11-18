@@ -6,6 +6,7 @@ import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.*;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.template.TemplateType;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -29,6 +30,7 @@ public class UnitBuilder {
         getUnit.setResponseHeaders(request.getResponseHeaders());
         getUnit.setWait(request.getWait());
         getUnit.setName(file.getName());
+        getUnit.setResponseTemplateType(request.responseType);
         return getUnit;
     });
     private static VerbProcessor<PostUnit> post=new VerbProcessor<>(".post",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
@@ -41,6 +43,8 @@ public class UnitBuilder {
         postUnit.setResponseHeaders(request.responseHeaders);
         postUnit.setWait(request.wait);
         postUnit.setName(file.getName());
+        postUnit.setResponseTemplateType(request.responseType);
+        postUnit.setRequestTemplateType(request.bodyType);
         return postUnit;
     });
     private static VerbProcessor<PutUnit> put=new VerbProcessor<>(".put",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
@@ -53,6 +57,8 @@ public class UnitBuilder {
         putUnit.setResponseHeaders(request.responseHeaders);
         putUnit.setWait(request.wait);
         putUnit.setName(file.getName());
+        putUnit.setResponseTemplateType(request.responseType);
+        putUnit.setRequestTemplateType(request.bodyType);
         return putUnit;
     });
     private static VerbProcessor<PatchUnit> patch=new VerbProcessor<>(".patch",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
@@ -65,6 +71,8 @@ public class UnitBuilder {
         patchUnit.setResponseHeaders(request.responseHeaders);
         patchUnit.setWait(request.wait);
         patchUnit.setName(file.getName());
+        patchUnit.setResponseTemplateType(request.responseType);
+        patchUnit.setRequestTemplateType(request.bodyType);
         return patchUnit;
     });
     private static VerbProcessor<DeleteUnit> delete=new VerbProcessor<>(".delete",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
@@ -77,6 +85,8 @@ public class UnitBuilder {
         deleteUnit.setResponseHeaders(request.responseHeaders);
         deleteUnit.setWait(request.wait);
         deleteUnit.setName(file.getName());
+        deleteUnit.setResponseTemplateType(request.responseType);
+        deleteUnit.setRequestTemplateType(request.bodyType);
         return deleteUnit;
     });
     private static VerbProcessor<BlockUnit> block=new VerbProcessor<>(".block",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
@@ -120,12 +130,23 @@ public class UnitBuilder {
         Scanner scanner = new Scanner(file);
         request.setUrl(scanner.nextLine());
         String body = "";
+        TemplateType requestTemplateType=TemplateType.Text;
+        TemplateType responseTemplateType=TemplateType.Extractable;
         if (withBody) {
             String[] bodyData=scanner.nextLine().split("=");
-            if(bodyData.length>1){
+            if(bodyData.length==3){
+                requestTemplateType=TemplateType.fromString(bodyData[1]);
+                body=bodyData[2];
+            } else if(bodyData.length==2) {
+                requestTemplateType=TemplateType.Extractable;
                 body=bodyData[1];
+            } else {
+                if(!bodyData[0].trim().equalsIgnoreCase("request")) {
+                    body = bodyData[0];
+                }
             }
         }
+        request.setBodyType(requestTemplateType);
         request.setBody(body);
         String requestHeader = scanner.nextLine().split("=")[1];
         JSONParser jsonParser = new JSONParser();
@@ -139,8 +160,23 @@ public class UnitBuilder {
             requestHeaders.add(rh);
         }
         request.setRequestHeaders(requestHeaders);
-        String[] response = scanner.nextLine().split("=");
-        request.setResponse(response.length > 1 ? response[1] : "");
+        String[] responseData=scanner.nextLine().split("=");
+        String response="";
+        if(responseData.length==3){
+            responseTemplateType=TemplateType.fromString(responseData[1]);
+            response=responseData[2];
+        } else if(responseData.length==2) {
+            responseTemplateType=TemplateType.Extractable;
+            response=responseData[1];
+        } else {
+            responseTemplateType=TemplateType.Extractable;
+            if(!responseData[0].trim().equalsIgnoreCase("response")) {
+                response = responseData[0];
+            }
+        }
+        request.setResponseType(responseTemplateType);
+        request.setResponse(response);
+
         String responseHeader = scanner.nextLine().split("=")[1];
         JSONObject rsjo = (JSONObject) jsonParser.parse(responseHeader);
         List<ResponseHeader> responseHeaders = new ArrayList<>();
