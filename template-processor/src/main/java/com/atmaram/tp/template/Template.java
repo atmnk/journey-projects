@@ -1,5 +1,7 @@
 package com.atmaram.tp.template;
 
+import com.atmaram.tp.util.TemplateParsingUtil;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,6 +20,9 @@ public interface Template {
         return ((strValue.startsWith("#{") && strValue.endsWith("}"))||(strValue.startsWith("\"#{") && strValue.endsWith("}\"")));
     }
     public String toStringTemplate();
+    default public String toValue(){
+        return TemplateParsingUtil.replaceVariablesWithNulls(toStringTemplate());
+    }
     public List<Variable> getVariables();
     public Template fill(HashMap<String, Object> data);
 }

@@ -3,6 +3,7 @@ package com.atmaram.jp.model.rest;
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.model.Unit;
+import com.atmaram.tp.util.TemplateParsingUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -15,7 +16,7 @@ public class PutUnit extends BodiedUnit {
     public HttpResponse<String> fire(RestClient restClient){
         HttpResponse<String> output = null;
         try {
-            output = restClient.put(urlTemplate, requestHeaders, requestTemplate);
+            output = restClient.put(urlTemplate, requestHeaders, TemplateParsingUtil.replaceVariablesWithNulls(requestTemplate));
         } catch (UnirestException e) {
             e.printStackTrace();
         }

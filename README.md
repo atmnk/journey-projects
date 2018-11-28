@@ -60,9 +60,18 @@
         5. Your should leave this line with empty json object `{}` in case you dont have any Request headers
     3. Third Line
         1. This line is all about response that you want to process and capture data from.
-        2. It should start with `Response=` and proceed with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+        2. It should start with `Response=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
         3. e.g.
             1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
     4. Forth Line
         1. This line is all about data to be captured from Response Headers
         2. It should start with `ResponseHeader=` and proceed with json object represented in one line
@@ -86,9 +95,20 @@
             1. This line can look like `${BaseUrl}/posts`
     3. Second Line
         1. This line is all about Request that you want to send
-        2. It should start with `Body=` and proceed with any valid `Template` refer `Defining Template` for more details
+        2. It should start with `Body=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
+            5. Or with `Text=` and any valid `TextTemplate` refer `Defining TextTemplate` for more details
         3. e.g.
-            1. This line can look like `Body={"name":${Name},"age":${Age}}`
+            1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
+            5. Or This line can look like `Response=Text=Hello ${Result} World`
         4. You should leave `Body=` in case you dont have anu body to be passed 
     2. Third Line
         1. This line is all about Headers That you want to send with Request
@@ -99,9 +119,18 @@
         5. Your should leave This line with empty json object `{}` in case you dont have any Request headers
     3. Fourth Line
         1. This line is all about response that you want to process and capture data from.
-        2. It should start with `Response=` and process with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+        2. It should start with `Response=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
         3. e.g.
             1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
     4. Fifth Line
         1. This line is all about data to be captured from Response Headers
         2. It should start with `ResponseHeader=` and proceed with json object represented in one line
@@ -125,9 +154,20 @@
             1. This line can look like `${BaseUrl}/posts`
     3. Second Line
         1. This line is all about Request that you want to send
-        2. It should start with `Body=` and proceed with any valid `Template` refer `Defining Template` for more details
+        2. It should start with `Body=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
+            5. Or with `Text=` and any valid `TextTemplate` refer `Defining TextTemplate` for more details
         3. e.g.
-            1. This line can look like `Body={"name":${Name},"age":${Age}}`
+            1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
+            5. Or This line can look like `Response=Text=Hello ${Result} World`
         4. You should leave `Body=` in case you dont have anu body to be passed
     2. Third Line
         1. This line is all about Headers That you want to send with Request
@@ -138,9 +178,18 @@
         5. Your should leave This line with empty json object `{}` in case you dont have any Request headers
     3. Fourth Line
         1. This line is all about response that you want to process and capture data from.
-        2. It should start with `Response=` and process with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+        2. It should start with `Response=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
         3. e.g.
             1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
     4. Fifth Line
         1. This line is all about data to be captured from Response Headers
         2. It should start with `ResponseHeader=` and proceed with json object represented in one line
@@ -164,9 +213,20 @@
             1. This line can look like `${BaseUrl}/posts`
     3. Second Line
         1. This line is all about Request that you want to send
-        2. It should start with `Body=` and proceed with any valid `Template` refer `Defining Template` for more details
+        2. It should start with `Body=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
+            5. Or with `Text=` and any valid `TextTemplate` refer `Defining TextTemplate` for more details
         3. e.g.
-            1. This line can look like `Body={"name":${Name},"age":${Age}}`
+            1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
+            5. Or This line can look like `Response=Text=Hello ${Result} World`
         4. You should leave `Body=` in case you dont have anu body to be passed
     2. Third Line
         1. This line is all about Headers That you want to send with Request
@@ -177,9 +237,18 @@
         5. Your should leave This line with empty json object `{}` in case you dont have any Request headers
     3. Fourth Line
         1. This line is all about response that you want to process and capture data from.
-        2. It should start with `Response=` and process with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+        2. It should start with `Response=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
         3. e.g.
             1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
     4. Fifth Line
         1. This line is all about data to be captured from Response Headers
         2. It should start with `ResponseHeader=` and proceed with json object represented in one line
@@ -203,9 +272,20 @@
             1. This line can look like `${BaseUrl}/posts`
     3. Second Line
         1. This line is all about Request that you want to send
-        2. It should start with `Body=` and proceed with any valid `Template` refer `Defining Template` for more details
+        2. It should start with `Body=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
+            5. Or with `Text=` and any valid `TextTemplate` refer `Defining TextTemplate` for more details
         3. e.g.
-            1. This line can look like `Body={"name":${Name},"age":${Age}}`
+            1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
+            5. Or This line can look like `Response=Text=Hello ${Result} World`
         4. You should leave `Body=` in case you dont have anu body to be passed
     2. Third Line
         1. This line is all about Headers That you want to send with Request
@@ -216,9 +296,18 @@
         5. Your should leave This line with empty json object `{}` in case you dont have any Request headers
     3. Fourth Line
         1. This line is all about response that you want to process and capture data from.
-        2. It should start with `Response=` and process with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+        2. It should start with `Response=` and proceed 
+            1. directly with any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            2. Or with `SingleText=` and any valid `SingleVariableTextTemplate` refer `Defining SingleVariableTextTemplate` for more details
+            3. Or with `Exgractable=` and any valid `ExtractableTemplate` refer `Defining ExtractableTemplate` for more details
+            4. Or with `Json=` and any valid `JsonTemplate` refer `Defining JsonTemplate` for more details
+            5. Or with `Xml=` and any valid `XMLTemplate` refer `Defining XMLTemplate` for more details
         3. e.g.
             1. This line can look like `Response={"result":${Result}}`
+            2. Or This line can look like `Response=SingleText=${Result}`
+            3. Or This line can look like `Response=Extractable={"result":${Result}}`
+            4. Or This line can look like `Response=Json={"result":${Result}}`
+            5. Or This line can look like `Response=Xml=<A>${Result}</A>`
     4. Fifth Line
         1. This line is all about data to be captured from Response Headers
         2. It should start with `ResponseHeader=` and proceed with json object represented in one line
@@ -251,45 +340,28 @@
        2. It should start with `Wait=` and proceed with any integer
 4. Create any steps within this file same way you create step in Command, all this steps will be executed sequentially per iteration
 ### Defining Block Unit
-1. By This step you can loop over group of steps specific number of times 
-2. Create Folder whose name ends with `.loop`
+1. By This step you can loop over group of steps specific until there are values in counter array variable 
+2. Create Folder whose name ends with `.block`
 3. Inside This Folder create plain text file `.info` contents of the `.info` file should be as follow
     1. This file is all about information for loop unit all its Lines should be as follow
     2. First Line
-        1. This line is all about counter variable value
-        2. It should start with `Counter=` and proceed with name of the variable in which you want to store counter value
+        1. This line is all about counter array variable that you want to iterate over
+        2. It should start with `Variable=` and proceed with name of the variable on which you want to iterate
         3. e.g.
-            1. This line can look like `Counter=counter`
-            2. by this variable named counter will be saving the value of current loop count
-    3. Second Line
-        1. This line is all about number of times you want to execute contents of the loop
-        2. It should start with `Times=` and proceed with any `TextTemplate` that results in integer see `Defining TextTemplate` for more details
-        3. e.g
-            1. This line can look like `Times=${Value-2}`
-    4. Third Line (optional)
+            1. This line can look like `Variable=data`
+    3. Second Line (optional)
        1. This line is optional and represents wait time in milliseconds that journey processor should wait before executing next Step.
        2. It should start with `Wait=` and proceed with any integer
+    3. Third Line (optional)
+       1. This line is optional and represents filter criteria for iteration
+       2. It should start with `Filter=` and proceed with valid json object with key value pairs
+       3. e.g.
+            1. This line can look like `Filter={"name":"Hello"}
+            2. By placing above line we will filter all values that match name property of inner looped object exactly as `Hello` 
 4. Create any steps within this file same way you create step in Command, all this steps will be executed sequentially per iteration
+TO DO
 ### Defining Poll Unit
-1. By This step you can loop over group of steps specific number of times 
-2. Create Folder whose name ends with `.loop`
-3. Inside This Folder create plain text file `.info` contents of the `.info` file should be as follow
-    1. This file is all about information for loop unit all its Lines should be as follow
-    2. First Line
-        1. This line is all about counter variable value
-        2. It should start with `Counter=` and proceed with name of the variable in which you want to store counter value
-        3. e.g.
-            1. This line can look like `Counter=counter`
-            2. by this variable named counter will be saving the value of current loop count
-    3. Second Line
-        1. This line is all about number of times you want to execute contents of the loop
-        2. It should start with `Times=` and proceed with any `TextTemplate` that results in integer see `Defining TextTemplate` for more details
-        3. e.g
-            1. This line can look like `Times=${Value-2}`
-    4. Third Line (optional)
-       1. This line is optional and represents wait time in milliseconds that journey processor should wait before executing next Step.
-       2. It should start with `Wait=` and proceed with any integer
-4. Create any steps within this file same way you create step in Command, all this steps will be executed sequentially per iteration
+TO DO
 ### Defining Journey Unit
-        
+TO DO        
             

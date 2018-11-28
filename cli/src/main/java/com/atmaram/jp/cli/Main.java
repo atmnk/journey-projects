@@ -192,6 +192,18 @@ public class Main {
                 }
             }
         });
+        Arrays.sort(datFolders, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                if(o1.getName().split(" ").length>o2.getName().split(" ").length){
+                    return 1;
+                } else if(o1.getName().split(" ").length==o2.getName().split(" ").length){
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
+        });
         for (File datFolder:
              datFolders) {
             readDats(datFolder.toPath(),valueStore,variableStore,envs);

@@ -25,7 +25,12 @@ public class BlockUnit extends Unit {
     @Override
     public void eval(VariableStore variableStore) throws UnitConfigurationException {
         VariableStore newVariableStore=new VariableStore();
-        newVariableStore.resolve(variableStore.getResolved(counterVariable,"List").getInner_variables());
+        Variable resolvedLoopVariable=variableStore.getResolved(counterVariable,"List");
+        if(resolvedLoopVariable!=null) {
+            newVariableStore.resolve(resolvedLoopVariable.getInner_variables());
+        } else {
+            throw new UnitConfigurationException("Counter variable "+counterVariable+" for block unit cant be resolved",this.name,null);
+        }
         if(variables!=null) {
             for (int i = 0; i < variables.size(); i++) {
                 EnvironmentVariable environmentVariable = variables.get(i);
