@@ -321,7 +321,7 @@ public class Main {
         File[] validFiles=baseEnvDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                String[] names=pathname.getName().split(" ");
+                String[] names=pathname.getName().split("[ _]");
                 boolean retVal=true;
                 for (String name:
                      names) {
