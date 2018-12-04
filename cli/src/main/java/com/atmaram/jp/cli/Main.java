@@ -1,5 +1,6 @@
 package com.atmaram.jp.cli;
 
+import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
@@ -26,10 +27,10 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-
 public class Main {
     public static List<String> commands;
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
+        boolean verbose=false;
         JSONObject jsonObject = new JSONObject();
 
             List<String> lEnv = new ArrayList<>();
@@ -38,6 +39,8 @@ public class Main {
                     args) {
                 if (isEnv(arg)) {
                     lEnv.add(arg);
+                } else if(arg.startsWith("-")){
+                    verbose=true;
                 } else {
                     lFilter.add(arg);
                 }
@@ -102,6 +105,7 @@ public class Main {
             }
         try
         {
+                Runtime.verbose=verbose;
                 command.execute(environments, valueStore);
                 List<String> opVars = readOPVariables(baseCommandDir);
                 for (String var :
@@ -121,6 +125,12 @@ public class Main {
         }
         JsonWriter writer=new JsonWriter();
         jsonObject.writeJSONString(writer);
+        JsonWriter logWritter=new JsonWriter();
+        Runtime.currentLogObject.writeJSONString(logWritter);
+        PrintWriter out=new PrintWriter("log/log.json");
+        out.print(logWritter.toString());
+        out.flush();
+        out.close();
         System.out.println(writer.toString());
         writeToClipboard(writer.toString(),null);
 
@@ -148,18 +158,20 @@ public class Main {
         variable.setName(name);
         if(data instanceof JSONArray || data instanceof List){
             variable.setType("List");
-            JSONObject obj=(JSONObject)((JSONArray)data).get(0);
-            List<Variable> inner=new ArrayList<>();
-            for (Object key:
-                    obj.keySet()) {
-                try {
-                    Variable variable1 = transformObjectToVariable((String) key, obj.get(key));
-                    inner.add(variable1);
-                } catch (ClassCastException ex){
+            if(((JSONArray)data).size()!=0) {
+                JSONObject obj = (JSONObject) ((JSONArray) data).get(0);
+                List<Variable> inner = new ArrayList<>();
+                for (Object key :
+                        obj.keySet()) {
+                    try {
+                        Variable variable1 = transformObjectToVariable((String) key, obj.get(key));
+                        inner.add(variable1);
+                    } catch (ClassCastException ex) {
 
+                    }
                 }
+                variable.setInner_variables(inner);
             }
-            variable.setInner_variables(inner);
         } else {
             variable.setType("String");
         }
@@ -254,14 +266,15 @@ public class Main {
         return commands;
     }
     public static void readVariable(ValueStore valueStore,Variable variable){
-        if(variable.getType().equals("String"))
-        {
-            Scanner input=new Scanner(System.in);
-            System.out.println("Enter "+variable.getName()+":");
-            valueStore.add(variable.getName(),input.nextLine());
-        } else if(variable.getType().equals("List")) {
-            for (Variable inner : variable.getInner_variables()) {
-                readVariable(valueStore,inner);
+        if(!variable.getName().trim().startsWith(".")) {
+            if (variable.getType().equals("String")) {
+                Scanner input = new Scanner(System.in);
+                System.out.println("Enter " + variable.getName() + ":");
+                valueStore.add(variable.getName(), input.nextLine());
+            } else if (variable.getType().equals("List")) {
+                for (Variable inner : variable.getInner_variables()) {
+                    readVariable(valueStore, inner);
+                }
             }
         }
     }

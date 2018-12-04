@@ -1,5 +1,6 @@
 package com.atmaram.jp.model;
 
+import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
@@ -7,12 +8,14 @@ import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
+import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 @Data
 public class StaticLoopUnit extends Unit{
+    JSONArray stepLogObject=new JSONArray();
     String counterVariable;
     String times="0";
     List<Unit> units;
@@ -89,7 +92,11 @@ public class StaticLoopUnit extends Unit{
 
     @Override
     public ValueStore execute(ValueStore valueStore,int index){
-
+        JSONArray prevLogObject=Runtime.currentLogObject;
+        prevLogObject.add(logObject);
+        logObject.put("iterations",stepLogObject);
+        logObject.put("type","loop");
+        Runtime.currentLogObject=stepLogObject;
         this.printStartExecute(index);
 //        List<HashMap<String,Object>> constructed=new ArrayList<>();
         int iTimes=Integer.parseInt(times);
@@ -111,9 +118,12 @@ public class StaticLoopUnit extends Unit{
                     valueStore.add(environmentVariable.getName(), envValue);
                 }
             }
+            JSONArray loopLogObject=new JSONArray();
+            stepLogObject.add(loopLogObject);
             this.print(index+1,"Loop "+i);
             for (Unit unit :
                     units) {
+                Runtime.currentLogObject=loopLogObject;
                 unit.fill(valueStore).execute(valueStore,index+2);
             }
             try {
@@ -127,6 +137,7 @@ public class StaticLoopUnit extends Unit{
 //        valueStore.add(counterVariable,constructed);
         valueStore.remove(counterVariable);
         this.printDoneExecute(index);
+        Runtime.currentLogObject=prevLogObject;
         return valueStore;
     }
 }

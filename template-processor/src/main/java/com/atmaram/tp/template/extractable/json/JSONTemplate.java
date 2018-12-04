@@ -17,6 +17,9 @@ public interface JSONTemplate extends ExtractableTemplate {
            return new ObjectTemplate((JSONObject)jsonTemplate);
         } else if(jsonTemplate instanceof JSONArray){
             JSONArray array=(JSONArray) jsonTemplate;
+            if(array.size()==0){
+                return new StaticArrayTemplate();
+            }
             Object inner_object=array.get(0);
             if(inner_object instanceof JSONObject){
                 JSONObject inner_joobject_template = (JSONObject) inner_object;

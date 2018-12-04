@@ -6,16 +6,19 @@ import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import lombok.Data;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 @Data
 public abstract class Unit {
+    public JSONObject logObject=new JSONObject();
     public String name;
     public int wait=0;
     public abstract void eval(VariableStore variableStore) throws UnitConfigurationException;
     public abstract ValueStore execute(ValueStore valueStore,int index);
     public abstract Unit fill(ValueStore valueStore);
     public void printStartExecute(int index){
+        logObject.put("name",this.name);
         String prefix="";
         for(int i=0;i<index;i++)
         {

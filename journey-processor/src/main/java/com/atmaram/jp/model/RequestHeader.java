@@ -6,4 +6,8 @@ import lombok.Data;
 public class RequestHeader {
     String name;
     String valueTemplate;
+    @Override
+    public String toString(){
+        return name+":"+valueTemplate;
+    }
 }

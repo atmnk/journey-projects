@@ -343,7 +343,7 @@
 1. By This step you can loop over group of steps specific until there are values in counter array variable 
 2. Create Folder whose name ends with `.block`
 3. Inside This Folder create plain text file `.info` contents of the `.info` file should be as follow
-    1. This file is all about information for loop unit all its Lines should be as follow
+    1. This file is all about information for block unit all its Lines should be as follow
     2. First Line
         1. This line is all about counter array variable that you want to iterate over
         2. It should start with `Variable=` and proceed with name of the variable on which you want to iterate
@@ -359,9 +359,20 @@
             1. This line can look like `Filter={"name":"Hello"}
             2. By placing above line we will filter all values that match name property of inner looped object exactly as `Hello` 
 4. Create any steps within this file same way you create step in Command, all this steps will be executed sequentially per iteration
-TO DO
 ### Defining Poll Unit
-TO DO
+1. By This step you can poll untill perticular variable has desired value 
+2. Create Folder whose name ends with `.poll`
+3. Inside This Folder create plain text file `.info` contents of the `.info` file should be as follow
+    1. This file is all about information for poll unit all its Lines should be as follow
+    2. First Line
+        1. This line is all about variable for which you want to poll for desired vaue
+        2. It should start with name of the variable for which you want to poll for proceed by `=` and proceed with value till which you want to poll for
+        3. e.g.
+            1. This line can look like `Status=Processed`
+    3. Second Line (optional)
+       1. This line is optional and represents wait time in milliseconds that journey processor should wait before executing next Step.
+       2. It should start with `Wait=` and proceed with any integer
+    reate any steps within this file same way you create step in Command, all this steps will be executed sequentially per iteration
 ### Defining Journey Unit
-TO DO        
+        
             

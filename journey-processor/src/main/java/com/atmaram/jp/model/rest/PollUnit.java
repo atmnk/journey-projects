@@ -1,14 +1,17 @@
 package com.atmaram.jp.model.rest;
 
 import com.atmaram.jp.RestClient;
+import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.jp.model.Unit;
 import lombok.Data;
+import org.json.simple.JSONArray;
 
 @Data
 public class PollUnit extends Unit {
+    JSONArray stepLogObject=new JSONArray();
     public Unit pollThis;
     public String pollVariableName;
     public Object pollVariableValue;
@@ -20,9 +23,14 @@ public class PollUnit extends Unit {
 
     @Override
     public ValueStore execute(ValueStore valueStore, int index) {
+        JSONArray prevLogObject= Runtime.currentLogObject;
+        prevLogObject.add(logObject);
+        logObject.put("iterations",stepLogObject);
+        logObject.put("type","poll");
         this.printStartExecute(index);
         int count=1;
         while(!valueStore.getValues().containsKey(pollVariableName) || !valueStore.getValues().get(pollVariableName).equals(pollVariableValue)){
+            Runtime.currentLogObject=stepLogObject;
             this.print(index+1,"Polling "+count);
             pollThis.execute(valueStore,index+2);
             this.print(index+1,"Polling Done "+count++);
@@ -33,6 +41,7 @@ public class PollUnit extends Unit {
             e.printStackTrace();
         }
         this.printDoneExecute(index);
+        Runtime.currentLogObject=prevLogObject;
         return valueStore;
     }
 

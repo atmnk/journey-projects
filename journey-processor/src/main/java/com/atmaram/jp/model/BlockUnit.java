@@ -1,4 +1,5 @@
 package com.atmaram.jp.model;
+import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
@@ -7,6 +8,7 @@ import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.extractable.json.JSONTemplate;
 import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 @Data
 public class BlockUnit extends Unit {
+    JSONArray stepLogObject=new JSONArray();
     String counterVariable;
     String filter="{}";
     List<Unit> units;
@@ -28,46 +31,45 @@ public class BlockUnit extends Unit {
         Variable resolvedLoopVariable=variableStore.getResolved(counterVariable,"List");
         if(resolvedLoopVariable!=null) {
             newVariableStore.resolve(resolvedLoopVariable.getInner_variables());
-        } else {
-            throw new UnitConfigurationException("Counter variable "+counterVariable+" for block unit cant be resolved",this.name,null);
-        }
-        if(variables!=null) {
-            for (int i = 0; i < variables.size(); i++) {
-                EnvironmentVariable environmentVariable = variables.get(i);
-                TextTemplate textTemplate = null;
-                try {
-                    textTemplate = TextTemplate.parse(environmentVariable.getValueTemplate());
-                } catch (TemplateParseException e) {
-                    throw new UnitConfigurationException("Invalid Template in variable: "+environmentVariable.getName(),this.name,e);
-                }
-                newVariableStore.add(textTemplate.getVariables());
-                Variable variable = new Variable();
-                variable.setName(environmentVariable.getName());
-                variable.setType("String");
-                newVariableStore.resolve(Arrays.asList(variable));
-            }
-        }
-        for (Unit unit:
-             units) {
-            try {
-                unit.eval(newVariableStore);
-                variableStore.add(newVariableStore.getVariables());
-                Variable variable=new Variable();
-                variable.setName(counterVariable);
-                variable.setType("List");
-                variable.setInner_variables(newVariableStore.getResolvedVariables());
-                variableStore.resolve(Arrays.asList(variable));
 
-            }catch (UnitConfigurationException ex){
-                throw new UnitConfigurationException("Unit not properly configured in block unit: "+this.getName(),this.name,ex);
+            if(variables!=null) {
+                for (int i = 0; i < variables.size(); i++) {
+                    EnvironmentVariable environmentVariable = variables.get(i);
+                    TextTemplate textTemplate = null;
+                    try {
+                        textTemplate = TextTemplate.parse(environmentVariable.getValueTemplate());
+                    } catch (TemplateParseException e) {
+                        throw new UnitConfigurationException("Invalid Template in variable: "+environmentVariable.getName(),this.name,e);
+                    }
+                    newVariableStore.add(textTemplate.getVariables());
+                    Variable variable = new Variable();
+                    variable.setName(environmentVariable.getName());
+                    variable.setType("String");
+                    newVariableStore.resolve(Arrays.asList(variable));
+                }
             }
-        }
-        JSONTemplate filterTemplate = null;
-        try {
-            filterTemplate = JSONTemplate.parse(filter);
-            variableStore.add(filterTemplate.getVariables());
-        } catch (TemplateParseException e) {
-            throw new UnitConfigurationException("Invalid Template in filter",this.name,e);
+            for (Unit unit:
+                 units) {
+                try {
+                    unit.eval(newVariableStore);
+                    variableStore.add(newVariableStore.getVariables());
+                    Variable variable=new Variable();
+                    variable.setName(counterVariable);
+                    variable.setType("List");
+                    variable.setInner_variables(newVariableStore.getResolvedVariables());
+                    variableStore.resolve(Arrays.asList(variable));
+
+                }catch (UnitConfigurationException ex){
+                    throw new UnitConfigurationException("Unit not properly configured in block unit: "+this.getName(),this.name,ex);
+                }
+            }
+            JSONTemplate filterTemplate = null;
+            try {
+                filterTemplate = JSONTemplate.parse(filter);
+                variableStore.add(filterTemplate.getVariables());
+            } catch (TemplateParseException e) {
+                throw new UnitConfigurationException("Invalid Template in filter",this.name,e);
+            }
         }
     }
     @Override
@@ -98,6 +100,11 @@ public class BlockUnit extends Unit {
 
     @Override
     public ValueStore execute(ValueStore valueStore,int index){
+        JSONArray prevLogObject=Runtime.currentLogObject;
+        prevLogObject.add(logObject);
+        logObject.put("iterations",stepLogObject);
+        logObject.put("type","block");
+        Runtime.currentLogObject=stepLogObject;
         this.printStartExecute(index);
         if(valueStore.getValues().containsKey(counterVariable)) {
             List<HashMap<String,Object>> counterValues=(List<HashMap<String,Object>>)valueStore.getValues().get(counterVariable);
@@ -138,8 +145,11 @@ public class BlockUnit extends Unit {
                     }
                 }
                 this.print(index+1,"Loop "+counter);
+                JSONArray loopLogObject=new JSONArray();
+                stepLogObject.add(loopLogObject);
                 for (Unit unit :
                         units) {
+                    Runtime.currentLogObject=loopLogObject;
                     unit.fill(newValueStore).execute(newValueStore,index+2);
                 }
                 try {
@@ -151,6 +161,7 @@ public class BlockUnit extends Unit {
             }
         }
         this.printDoneExecute(index);
+        Runtime.currentLogObject=prevLogObject;
         return valueStore;
     }
 }

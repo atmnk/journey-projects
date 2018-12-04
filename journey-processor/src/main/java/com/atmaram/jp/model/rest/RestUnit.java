@@ -1,6 +1,7 @@
 package com.atmaram.jp.model.rest;
 
 import com.atmaram.jp.RestClient;
+import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
@@ -17,6 +18,7 @@ import com.atmaram.tp.template.extractable.xml.XMLTemplate;
 import com.atmaram.tp.template.text.TextTemplate;
 import com.mashape.unirest.http.HttpResponse;
 import lombok.Data;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
@@ -171,7 +173,12 @@ public  abstract class RestUnit extends Unit {
     }
     public ValueStore execute(RestClient restClient, ValueStore valueStore,int index) {
         this.printStartExecute(index);
+        Runtime.currentLogObject.add(logObject);
         HttpResponse<String> output=fire(restClient);
+        if(Runtime.verbose){
+            System.out.println("Response:Status:"+output.getStatus());
+            System.out.println("Response:Response:"+output.getBody());
+        }
         try {
             ValueStore valueStore1 = processOutput(valueStore, output);
             this.printDoneExecute(index);
