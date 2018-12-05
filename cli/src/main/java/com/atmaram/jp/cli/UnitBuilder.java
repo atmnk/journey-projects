@@ -159,6 +159,7 @@ public class UnitBuilder {
             rh.setValueTemplate((String) rqjo.get(key));
             requestHeaders.add(rh);
         }
+        requestHeaders.addAll(Main.globalHeaders);
         request.setRequestHeaders(requestHeaders);
         String[] responseData=scanner.nextLine().split("=");
         String response="";

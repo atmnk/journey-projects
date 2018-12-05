@@ -5,7 +5,6 @@ import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.model.*;
-
 import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.extractable.json.JSONTemplate;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 public class Main {
     public static List<String> commands;
+    public static List<RequestHeader> globalHeaders;
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
         boolean verbose=false;
         JSONObject jsonObject = new JSONObject();
@@ -47,7 +47,7 @@ public class Main {
             }
 
             Scanner input = new Scanner(System.in);
-
+            globalHeaders=getGlobalHeaders(Paths.get("config/tool/rest"));
             commands = getCommands(Paths.get("config/commands"));
             List<String> filtered_commands;
             if (args.length == 0) {
@@ -265,6 +265,30 @@ public class Main {
         }
         return commands;
     }
+    public static List<RequestHeader> getGlobalHeaders(Path baseCommandsDir) throws FileNotFoundException {
+        List<RequestHeader> headers=new ArrayList<>();
+        File commandsDir=baseCommandsDir.toFile();
+        File[] headerFiles=commandsDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".headers");
+            }
+        });
+        for (File file:
+                headerFiles) {
+            Scanner scanner=new Scanner(file);
+            while (scanner.hasNextLine()){
+                String line=scanner.nextLine();
+                String[] strings=line.split("=");
+                RequestHeader header=new RequestHeader();
+                header.setName(strings[0]);
+                header.setValueTemplate(strings[1]);
+                headers.add(header);
+            }
+        }
+        return headers;
+    }
+
     public static void readVariable(ValueStore valueStore,Variable variable){
         if(!variable.getName().trim().startsWith(".")) {
             if (variable.getType().equals("String")) {
