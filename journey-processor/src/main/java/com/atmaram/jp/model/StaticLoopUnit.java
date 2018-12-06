@@ -64,12 +64,12 @@ public class StaticLoopUnit extends Unit{
         variableStore.resolve(newVariableStore.getResolvedVariables());
     }
     @Override
-    public Unit fill(ValueStore valueStore) {
+    public Unit fill(ValueStore valueStore,boolean lazy) {
         StaticLoopUnit staticLoopUnit=new StaticLoopUnit();
         List<Unit> newUnits=new ArrayList<>();
         for (Unit unit:
                 units) {
-            Unit newUnit=unit.fill(valueStore);
+            Unit newUnit=unit.fill(valueStore,true);
             newUnits.add(newUnit);
         }
         staticLoopUnit.setName(this.getName());
@@ -124,7 +124,7 @@ public class StaticLoopUnit extends Unit{
             for (Unit unit :
                     units) {
                 Runtime.currentLogObject=loopLogObject;
-                unit.fill(valueStore).execute(valueStore,index+2);
+                unit.fill(valueStore,false).execute(valueStore,index+2);
             }
             try {
                 Thread.sleep(wait);

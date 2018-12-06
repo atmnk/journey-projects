@@ -3,12 +3,15 @@ package com.atmaram.tp.template.extractable.json;
 import com.atmaram.tp.template.extractable.ExtractableTemplate;
 import com.atmaram.tp.template.Template;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.template.extractable.xml.XMLTemplate;
 import com.atmaram.tp.util.JSONTemplateParsingUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.util.HashMap;
 
 public interface JSONTemplate extends ExtractableTemplate {
     public Object toJSONCompatibleObject();
@@ -62,8 +65,11 @@ public interface JSONTemplate extends ExtractableTemplate {
         }
         return new FilledVariableTemplate(jsonTemplate);
     }
-
-
+    @Override
+    public JSONTemplate fill(HashMap<String, Object> data, boolean lazy);
+    public default JSONTemplate fill(HashMap<String, Object> data){
+        return fill(data,false);
+    }
     public static JSONTemplate parse(String template) throws TemplateParseException {
         if(Template.isVariable(template)){
             return new VariableTemplate(Template.getVariableName(template));

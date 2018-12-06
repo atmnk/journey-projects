@@ -16,23 +16,23 @@ class TextLoopTemplate implements TextTemplate{
     }
 
     @Override
-    public TextTemplate fill(HashMap<String, Object> data) {
+    public TextTemplate fill(HashMap<String, Object> data,boolean lazy) {
         Object loopVariable= ExpressionProcessor.process(variableName,data);
         if(loopVariable instanceof List){
             ArrayTextTemplate arrayTextTemplate=new ArrayTextTemplate();
             for (Object listElement:
                     (List)loopVariable) {
                 if(listElement instanceof HashMap){
-                    arrayTextTemplate.add((TextTemplate) innerTemplate.fill((HashMap<String, Object>) listElement));
+                    arrayTextTemplate.add((TextTemplate) innerTemplate.fill((HashMap<String, Object>) listElement,lazy));
                 } else {
                     HashMap<String,Object> listData=new HashMap<>();
                     listData.put("_this",listElement);
-                    arrayTextTemplate.add((TextTemplate)innerTemplate.fill(listData));
+                    arrayTextTemplate.add((TextTemplate)innerTemplate.fill(listData,lazy));
                 }
             }
             return arrayTextTemplate;
         } else {
-            return new TextLoopTemplate(variableName,(TextTemplate)innerTemplate.fill(data));
+            return new TextLoopTemplate(variableName,(TextTemplate)innerTemplate.fill(data,lazy));
         }
     }
 

@@ -45,7 +45,7 @@ public class PatchUnit extends BodiedUnit {
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
-        return fillObject(new PatchUnit(restClient),valueStore);
+    public Unit fill(ValueStore valueStore,boolean lazy) {
+        return fillObject(new PatchUnit(restClient),valueStore,lazy);
     }
 }

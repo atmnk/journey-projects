@@ -8,6 +8,7 @@ import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
+import org.json.simple.JSONArray;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +56,7 @@ public class Command {
         if(units!=null) {
             for (int i = 0; i < units.size(); i++) {
                 Unit currentUnit = units.get(i);
-                currentUnit.fill(valueStore).execute(valueStore,index);
+                currentUnit.fill(valueStore,false).execute(valueStore,index);
 
             }
         }

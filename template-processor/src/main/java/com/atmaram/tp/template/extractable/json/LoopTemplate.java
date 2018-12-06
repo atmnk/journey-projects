@@ -60,7 +60,7 @@ class LoopTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public JSONTemplate fill(HashMap<String, Object> data,boolean lazy) {
         if(data.containsKey(variableName)){
             StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
             HashMap<String,Object> localVariables;
@@ -74,14 +74,14 @@ class LoopTemplate implements JSONTemplate {
                         localVariables=new HashMap<>();
                         localVariables.put("_this",list_object);
                     }
-                    staticArrayTemplate.add((JSONTemplate)innerObjectTemplate.fill(localVariables).fill(data));
+                    staticArrayTemplate.add((JSONTemplate)innerObjectTemplate.fill(localVariables,lazy).fill(data,lazy));
                 }
                 return staticArrayTemplate;
             } else {
-                return new LoopTemplate(variableName,(JSONTemplate)innerObjectTemplate.fill(data));
+                return new LoopTemplate(variableName,(JSONTemplate)innerObjectTemplate.fill(data,lazy));
             }
         } else {
-            return new LoopTemplate(variableName,(JSONTemplate)innerObjectTemplate.fill(data));
+            return new LoopTemplate(variableName,(JSONTemplate)innerObjectTemplate.fill(data,lazy));
         }
     }
 

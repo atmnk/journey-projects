@@ -43,8 +43,8 @@ public class GetUnit extends RestUnit {
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
+    public Unit fill(ValueStore valueStore,boolean lazy) {
         GetUnit getUnit=new GetUnit(restClient);
-        return fillObject(getUnit,valueStore);
+        return fillObject(getUnit,valueStore,lazy);
     }
 }

@@ -33,8 +33,8 @@ class VariableTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
-        Object putValue=ExpressionProcessor.process(variableName,data);
+    public JSONTemplate fill(HashMap<String, Object> data,boolean lazy) {
+        Object putValue=ExpressionProcessor.process(variableName,data,lazy);
         if(putValue instanceof String && Template.isVariable((String)putValue)){
             return this;
         } else if(putValue instanceof JSONAware){

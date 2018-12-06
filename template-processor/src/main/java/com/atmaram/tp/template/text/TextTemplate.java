@@ -2,6 +2,9 @@ package com.atmaram.tp.template.text;
 
 import com.atmaram.tp.template.Template;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.template.extractable.xml.XMLTemplate;
+
+import java.util.HashMap;
 
 public interface TextTemplate extends Template {
     public static TextTemplate parse(String text) throws TemplateParseException {
@@ -78,5 +81,10 @@ public interface TextTemplate extends Template {
         } else {
             return arrayTextTemplate;
         }
+    }
+    @Override
+    public TextTemplate fill(HashMap<String, Object> data, boolean lazy);
+    public default TextTemplate fill(HashMap<String, Object> data){
+        return fill(data,false);
     }
 }

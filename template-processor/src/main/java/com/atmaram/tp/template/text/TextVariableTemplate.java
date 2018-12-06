@@ -15,8 +15,8 @@ class TextVariableTemplate implements TextTemplate {
     }
 
     @Override
-    public TextTemplate fill(HashMap<String, Object> data) {
-        String filledValue=ExpressionProcessor.process(variableName,data).toString();
+    public TextTemplate fill(HashMap<String, Object> data,boolean lazy) {
+        String filledValue=ExpressionProcessor.process(variableName,data,lazy).toString();
         if(Template.isVariable(filledValue)){
             return this;
         } else {

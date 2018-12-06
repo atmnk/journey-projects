@@ -125,12 +125,12 @@ public  abstract class RestUnit extends Unit {
         return execute(restClient,valueStore,index);
     }
 
-    protected RestUnit fillObject(RestUnit restUnit,ValueStore valueStore) {
+    protected RestUnit fillObject(RestUnit restUnit,ValueStore valueStore,boolean lazy) {
         restUnit.setName(this.getName());
         String url = urlTemplate;
 
         try {
-            restUnit.urlTemplate = TextTemplate.parse(url).fill(valueStore.getValues()).toStringTemplate();
+            restUnit.urlTemplate = TextTemplate.parse(url).fill(valueStore.getValues(),lazy).toStringTemplate();
         } catch (TemplateParseException e) {
             e.printStackTrace();
         }
@@ -141,7 +141,7 @@ public  abstract class RestUnit extends Unit {
                 RequestHeader filledRequestHeader=new RequestHeader();
                 filledRequestHeader.setName(requestHeader.getName());
                 try {
-                    filledRequestHeader.setValueTemplate(TextTemplate.parse(requestHeader.getValueTemplate()).fill(valueStore.getValues()).toStringTemplate());
+                    filledRequestHeader.setValueTemplate(TextTemplate.parse(requestHeader.getValueTemplate()).fill(valueStore.getValues(),lazy).toStringTemplate());
                 } catch (TemplateParseException e) {
                     e.printStackTrace();
                 }

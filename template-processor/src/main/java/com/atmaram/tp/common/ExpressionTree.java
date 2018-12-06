@@ -49,8 +49,10 @@ public class ExpressionTree {
     public void setArgs(List<ExpressionTree> args) {
         this.args = args;
     }
-
     public ExpressionTree solve(HashMap<String,Object> context){
+        return solve(context,false);
+    }
+    public ExpressionTree solve(HashMap<String,Object> context,boolean lazy){
         if(constant!=null){
             return this;
         }
@@ -67,7 +69,7 @@ public class ExpressionTree {
         List<Object> newObjArgs=new ArrayList<>();
         boolean unsolved=false;
         for (int i=0;i<args.size();i++) {
-            ExpressionTree newArg=args.get(i).solve(context);
+            ExpressionTree newArg=args.get(i).solve(context,lazy);
             newArgs.add(newArg);
             if(newArg.constant==null) {
                 unsolved = true;
@@ -82,7 +84,12 @@ public class ExpressionTree {
             return expressionTree;
         } else {
             ExpressionTree expressionTree=new ExpressionTree();
-            expressionTree.constant= rootProcessor.toValue(newObjArgs);
+            if(lazy){
+                expressionTree.rootProcessor=rootProcessor;
+                expressionTree.args=newArgs;
+            } else {
+                expressionTree.constant = rootProcessor.toValue(newObjArgs);
+            }
             return expressionTree;
         }
     }

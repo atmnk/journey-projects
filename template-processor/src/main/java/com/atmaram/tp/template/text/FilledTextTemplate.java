@@ -13,7 +13,7 @@ class FilledTextTemplate implements TextTemplate {
     }
 
     @Override
-    public TextTemplate fill(HashMap<String, Object> data) {
+    public TextTemplate fill(HashMap<String, Object> data,boolean lazy) {
         return this;
     }
 

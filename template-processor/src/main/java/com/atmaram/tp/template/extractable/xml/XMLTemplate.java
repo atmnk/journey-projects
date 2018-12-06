@@ -3,6 +3,7 @@ package com.atmaram.tp.template.extractable.xml;
 import com.atmaram.tp.template.extractable.ExtractableTemplate;
 import com.atmaram.tp.template.Template;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
+import com.atmaram.tp.template.text.TextTemplate;
 import com.atmaram.tp.util.XMLTemplateParsingUtil;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -94,7 +95,11 @@ public interface XMLTemplate extends ExtractableTemplate {
             throw new TemplateParseException("Provided template is not valid xml: "+template);
         }
     }
-
+    @Override
+    public XMLTemplate fill(HashMap<String, Object> data,boolean lazy);
+    public default XMLTemplate fill(HashMap<String, Object> data){
+        return fill(data,false);
+    }
     public static Element StringDocToElement(String strDocumnet) throws ParserConfigurationException, IOException, SAXException {
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

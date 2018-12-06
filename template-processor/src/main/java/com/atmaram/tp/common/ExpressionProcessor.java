@@ -17,10 +17,14 @@ public class ExpressionProcessor {
         return toTree(processorargs[0]).getVariables();
     }
     public static Object process(String expression, HashMap<String,Object> context){
+        return process(expression,context,false);
+    }
+
+    public static Object process(String expression, HashMap<String,Object> context,boolean lazy){
         String[] processorargs=expression.split(">");
         Object value;
         if(processorargs.length>1){
-            value=toTree(processorargs[0]).solve(context).toExpression();
+            value=toTree(processorargs[0]).solve(context,lazy).toExpression();
             if(value instanceof String) {
                 if (((String) value).startsWith("'")) {
                     String data = ((String) value).substring(1, ((String) value).length() - 1);
@@ -40,7 +44,7 @@ public class ExpressionProcessor {
             }
 
         }
-        value= toTree(processorargs[0]).solve(context).toExpression();
+        value= toTree(processorargs[0]).solve(context,lazy).toExpression();
         if(value instanceof String) {
             if (((String) value).startsWith("'")) {
                 String data = ((String) value).substring(1, ((String) value).length() - 1);

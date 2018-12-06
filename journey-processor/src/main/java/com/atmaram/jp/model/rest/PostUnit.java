@@ -44,7 +44,7 @@ public class PostUnit extends BodiedUnit {
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
-        return fillObject(new PostUnit(restClient),valueStore);
+    public Unit fill(ValueStore valueStore,boolean lazy) {
+        return fillObject(new PostUnit(restClient),valueStore,lazy);
     }
 }

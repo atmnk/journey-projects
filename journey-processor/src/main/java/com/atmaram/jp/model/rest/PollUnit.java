@@ -32,7 +32,7 @@ public class PollUnit extends Unit {
         while(!valueStore.getValues().containsKey(pollVariableName) || !valueStore.getValues().get(pollVariableName).equals(pollVariableValue)){
             Runtime.currentLogObject=stepLogObject;
             this.print(index+1,"Polling "+count);
-            pollThis.execute(valueStore,index+2);
+            pollThis.fill(valueStore,false).execute(valueStore,index+2);
             this.print(index+1,"Polling Done "+count++);
         }
         try {
@@ -46,11 +46,11 @@ public class PollUnit extends Unit {
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
+    public Unit fill(ValueStore valueStore,boolean lazy) {
         PollUnit pollUnit=new PollUnit();
         pollUnit.setPollVariableName(pollVariableName);
         pollUnit.setPollVariableValue(pollVariableValue);
-        pollUnit.setPollThis(pollThis.fill(valueStore));
+        pollUnit.setPollThis(pollThis.fill(valueStore,true));
         pollUnit.setName(this.name);
         pollUnit.setWait(this.wait);
         return pollUnit;

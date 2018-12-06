@@ -24,5 +24,8 @@ public interface Template {
         return TemplateParsingUtil.replaceVariablesWithNulls(toStringTemplate());
     }
     public List<Variable> getVariables();
-    public Template fill(HashMap<String, Object> data);
+    public Template fill(HashMap<String, Object> data,boolean lazy);
+    public default Template fill(HashMap<String, Object> data){
+        return fill(data,false);
+    }
 }

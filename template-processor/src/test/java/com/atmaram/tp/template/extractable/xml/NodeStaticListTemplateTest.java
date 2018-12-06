@@ -65,7 +65,7 @@ public class NodeStaticListTemplateTest {
         nodeStaticListTemplate.add(XMLTemplate.parse("<a>${Place}</a>"));
         nodeTemplate.setChildNodes(Arrays.asList(nodeStaticListTemplate));
         nodeTemplate.setAttributes(new HashMap<>());
-        XMLTemplate filled=nodeTemplate.fill(data);
+        XMLTemplate filled=nodeTemplate.fill(data,false);
         assertThat(filled.toStringTemplate()).isEqualTo("<Base><a>Atmaram</a><a>Pune</a></Base>");
 
     }

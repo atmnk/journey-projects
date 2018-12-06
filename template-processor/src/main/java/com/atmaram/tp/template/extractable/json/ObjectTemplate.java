@@ -57,11 +57,11 @@ class ObjectTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public JSONTemplate fill(HashMap<String, Object> data,boolean lazy) {
         ObjectTemplate objectTemplate=new ObjectTemplate();
         for (JSONTemplate keyTemplate:
                 keyValueTemplates.keySet()) {
-            objectTemplate.put((JSONTemplate)keyTemplate.fill(data),(JSONTemplate)keyValueTemplates.get(keyTemplate).fill(data));
+            objectTemplate.put((JSONTemplate)keyTemplate.fill(data,lazy),(JSONTemplate)keyValueTemplates.get(keyTemplate).fill(data,lazy));
         }
         return objectTemplate;
     }

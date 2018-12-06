@@ -49,7 +49,7 @@ public class SingleVariableStringTemplate implements SingleVariableTemplate {
     }
 
     @Override
-    public Template fill(HashMap<String, Object> data) {
+    public Template fill(HashMap<String, Object> data,boolean lazy) {
         if(data.containsKey(variableName)){
             return new FilledSingleVariableTextTemplate(data.get(variableName));
         }

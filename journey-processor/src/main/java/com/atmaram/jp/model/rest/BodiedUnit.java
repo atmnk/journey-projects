@@ -33,24 +33,24 @@ public abstract class BodiedUnit extends RestUnit {
         this.print(index,"Body: "+this.requestTemplate);
     }
 
-    public Unit fillObject(BodiedUnit bodiedUnit, ValueStore valueStore) {
-        fillObject((RestUnit) bodiedUnit, valueStore);
+    public Unit fillObject(BodiedUnit bodiedUnit, ValueStore valueStore,boolean lazy) {
+        fillObject((RestUnit) bodiedUnit, valueStore,lazy);
         String body = requestTemplate;
         try {
             if (requestTemplateType.equals(TemplateType.Extractable)){
-                ExtractableTemplate rTemplate = (ExtractableTemplate) ExtractableTemplate.parse(body).fill(valueStore.getValues());
+                ExtractableTemplate rTemplate = (ExtractableTemplate) ExtractableTemplate.parse(body).fill(valueStore.getValues(),lazy);
                 bodiedUnit.requestTemplate = rTemplate.toStringTemplate();
             } else if(requestTemplateType.equals(TemplateType.Json)){
-                JSONTemplate rTemplate = (JSONTemplate) JSONTemplate.parse(body).fill(valueStore.getValues());
+                JSONTemplate rTemplate = (JSONTemplate) JSONTemplate.parse(body).fill(valueStore.getValues(),lazy);
                 bodiedUnit.requestTemplate = rTemplate.toStringTemplate();
             } else if(requestTemplateType.equals(TemplateType.XML)){
                 XMLTemplate rTemplate = (XMLTemplate) XMLTemplate.parse(body).fill(valueStore.getValues());
                 bodiedUnit.requestTemplate = rTemplate.toStringTemplate();
             } else if(requestTemplateType.equals(TemplateType.SingleVariableText)){
-                SingleVariableTemplate rTemplate = (SingleVariableTemplate) SingleVariableTemplate.parse(body).fill(valueStore.getValues());
+                SingleVariableTemplate rTemplate = (SingleVariableTemplate) SingleVariableTemplate.parse(body).fill(valueStore.getValues(),lazy);
                 bodiedUnit.requestTemplate = rTemplate.toStringTemplate();
             } else if(requestTemplateType.equals(TemplateType.Text)){
-                TextTemplate rTemplate = (TextTemplate) TextTemplate.parse(body).fill(valueStore.getValues());
+                TextTemplate rTemplate = (TextTemplate) TextTemplate.parse(body).fill(valueStore.getValues(),lazy);
                 bodiedUnit.requestTemplate = rTemplate.toStringTemplate();
             }
             bodiedUnit.requestTemplateType=requestTemplateType;

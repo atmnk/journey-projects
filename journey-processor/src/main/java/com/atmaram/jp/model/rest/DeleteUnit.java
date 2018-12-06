@@ -44,7 +44,7 @@ public class DeleteUnit extends BodiedUnit {
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
-        return fillObject(new DeleteUnit(restClient),valueStore);
+    public Unit fill(ValueStore valueStore,boolean lazy) {
+        return fillObject(new DeleteUnit(restClient),valueStore,lazy);
     }
 }

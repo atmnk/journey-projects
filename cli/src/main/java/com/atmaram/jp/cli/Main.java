@@ -30,6 +30,7 @@ public class Main {
     public static List<String> commands;
     public static List<RequestHeader> globalHeaders;
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
+        JSONArray logObj=Runtime.currentLogObject;
         boolean verbose=false;
         JSONObject jsonObject = new JSONObject();
 
@@ -113,6 +114,7 @@ public class Main {
 
                     jsonObject.put(var, valueStore.getValues().get(var));
                 }
+            LogHelper.writelogs(logObj, jsonObject);
         } catch (Exception ex){
             List<String> opVars = readOPVariables(baseCommandDir);
             for (String var :
@@ -120,25 +122,10 @@ public class Main {
 
                 jsonObject.put(var, valueStore.getValues().get(var));
             }
-            System.out.println(jsonObject);
+            LogHelper.writelogs(logObj, jsonObject);
             throw ex;
         }
-        JsonWriter writer=new JsonWriter();
-        jsonObject.writeJSONString(writer);
-        JsonWriter logWritter=new JsonWriter();
-        Runtime.currentLogObject.writeJSONString(logWritter);
-        PrintWriter out=new PrintWriter("log/log.json");
-        out.print(logWritter.toString());
-        out.flush();
-        out.close();
-        System.out.println(writer.toString());
-        writeToClipboard(writer.toString(),null);
 
-    }
-    public static void writeToClipboard(String s, ClipboardOwner owner) {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        Transferable transferable = new StringSelection(s);
-        clipboard.setContents(transferable, owner);
     }
     public static boolean isEnv(String name){
         Path baseEnvFile = Paths.get("config/env/" + name);

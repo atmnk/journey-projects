@@ -41,7 +41,7 @@ public class RestUnitTest{
         }
 
         @Override
-        public Unit fill(ValueStore valueStore) {
+        public Unit fill(ValueStore valueStore,boolean lazy) {
             return null;
         }
     }
@@ -213,7 +213,7 @@ public class RestUnitTest{
         restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
-        RestUnit filled=restUnitSub.fillObject(restUnitSub,valueStore);
+        RestUnit filled=restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(filled.urlTemplate).isEqualTo("ABCHello");
     }
     @Test
@@ -225,7 +225,7 @@ public class RestUnitTest{
         restUnitSub.responseTemplateType=TemplateType.Extractable;
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
-        RestUnit filled=restUnitSub.fillObject(restUnitSub,valueStore);
+        RestUnit filled=restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(filled.urlTemplate).isEqualTo("ABC${Var1");
     }
 
@@ -245,7 +245,7 @@ public class RestUnitTest{
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
-        restUnitSub.fillObject(restUnitSub,valueStore);
+        restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(restUnitSub.requestHeaders.get(0).getValueTemplate()).isEqualTo("ABCHello");
         assertThat(restUnitSub.requestHeaders.get(1).getValueTemplate()).isEqualTo("ABCWorld");
     }
@@ -263,7 +263,7 @@ public class RestUnitTest{
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
-        restUnitSub.fillObject(restUnitSub,valueStore);
+        restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(restUnitSub.requestHeaders.get(0).getValueTemplate()).isEqualTo(null);
     }
 
@@ -277,7 +277,7 @@ public class RestUnitTest{
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
-        restUnitSub.fillObject(restUnitSub,valueStore);
+        restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(restUnitSub.responseTemplate).isEqualTo("{\"Hello\":\"${Var2}\"}");
     }
     @Test
@@ -290,7 +290,7 @@ public class RestUnitTest{
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
-        restUnitSub.fillObject(restUnitSub,valueStore);
+        restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(restUnitSub.responseTemplate).isEqualTo("{#{Var1:${Var2}}");
     }
     @Test
@@ -302,7 +302,7 @@ public class RestUnitTest{
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
         valueStore.add("Var2","World");
-        restUnitSub.fillObject(restUnitSub,valueStore);
+        restUnitSub.fillObject(restUnitSub,valueStore,false);
         assertThat(restUnitSub.responseTemplate).isEqualTo("");
     }
     //Execute - Process Output

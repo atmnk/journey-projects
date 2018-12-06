@@ -30,7 +30,7 @@ class FilledVariableTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public JSONTemplate fill(HashMap<String, Object> data,boolean lazy) {
         return this;
     }
 

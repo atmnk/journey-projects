@@ -61,7 +61,7 @@ public class LoopTemplate implements XMLTemplate {
     }
 
     @Override
-    public XMLTemplate fill(HashMap<String, Object> data) {
+    public XMLTemplate fill(HashMap<String, Object> data,boolean lazy) {
         if(data.containsKey(variableName)){
             NodeStaticListTemplate staticArrayTemplate=new NodeStaticListTemplate();
             HashMap<String,Object> localVariables;
@@ -75,14 +75,14 @@ public class LoopTemplate implements XMLTemplate {
                         localVariables=new HashMap<>();
                         localVariables.put("_this",list_object);
                     }
-                    staticArrayTemplate.add((XMLTemplate)pattern.fill(localVariables).fill(data));
+                    staticArrayTemplate.add((XMLTemplate)pattern.fill(localVariables,lazy).fill(data,lazy));
                 }
                 return staticArrayTemplate;
             } else {
-                return new LoopTemplate(variableName,(XMLTemplate)pattern.fill(data));
+                return new LoopTemplate(variableName,(XMLTemplate)pattern.fill(data,lazy));
             }
         } else {
-            return new LoopTemplate(variableName,(XMLTemplate)pattern.fill(data));
+            return new LoopTemplate(variableName,(XMLTemplate)pattern.fill(data,lazy));
         }
     }
 

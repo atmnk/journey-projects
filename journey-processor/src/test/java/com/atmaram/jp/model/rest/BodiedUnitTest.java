@@ -36,7 +36,7 @@ public class BodiedUnitTest {
         }
 
         @Override
-        public Unit fill(ValueStore valueStore) {
+        public Unit fill(ValueStore valueStore,boolean lazy) {
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class BodiedUnitTest {
         withBodyUnit.responseTemplate="[\"ABC\"]";
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
-        withBodyUnit.fillObject(withBodyUnit,valueStore);
+        withBodyUnit.fillObject(withBodyUnit,valueStore,false);
         assertThat(withBodyUnit.requestTemplate).isEqualTo("{\"name\":\"Hello\"}");
     }
     @Test
@@ -64,7 +64,7 @@ public class BodiedUnitTest {
         withBodyUnit.responseTemplate="[\"ABC\"]";
         ValueStore valueStore=new ValueStore();
         valueStore.add("Var1","Hello");
-        withBodyUnit.fillObject(withBodyUnit,valueStore);
+        withBodyUnit.fillObject(withBodyUnit,valueStore,false);
         assertThat(withBodyUnit.requestTemplate).isEqualTo("{\"name\":${Var1}");
     }
 

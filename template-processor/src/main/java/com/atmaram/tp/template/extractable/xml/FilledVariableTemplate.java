@@ -29,7 +29,7 @@ class FilledVariableTemplate implements XMLTemplate {
     }
 
     @Override
-    public XMLTemplate fill(HashMap<String, Object> data) {
+    public XMLTemplate fill(HashMap<String, Object> data,boolean lazy) {
         return this;
     }
 

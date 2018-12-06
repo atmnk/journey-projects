@@ -33,8 +33,8 @@ class VariableTemplate implements XMLTemplate {
     }
 
     @Override
-    public XMLTemplate fill(HashMap<String, Object> data) {
-        Object putValue=ExpressionProcessor.process(variableName,data);
+    public XMLTemplate fill(HashMap<String, Object> data,boolean lazy) {
+        Object putValue=ExpressionProcessor.process(variableName,data,lazy);
         if(putValue instanceof String && Template.isVariable((String)putValue)){
             return new VariableTemplate(Template.getVariableName((String)putValue));
         } else if(putValue instanceof Node){

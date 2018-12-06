@@ -32,7 +32,7 @@ class FilledSingleVariableTextTemplate implements SingleVariableTemplate {
     }
 
     @Override
-    public ExtractableTemplate fill(HashMap<String, Object> data) {
+    public ExtractableTemplate fill(HashMap<String, Object> data,boolean lazy) {
         return this;
     }
 

@@ -73,12 +73,12 @@ public class BlockUnit extends Unit {
         }
     }
     @Override
-    public Unit fill(ValueStore valueStore) {
+    public Unit fill(ValueStore valueStore,boolean lazy) {
         BlockUnit blockUnit=new BlockUnit();
         List<Unit> newUnits=new ArrayList<>();
         for (Unit unit:
                 units) {
-            Unit newUnit=unit.fill(valueStore);
+            Unit newUnit=unit.fill(valueStore,true);
             newUnits.add(newUnit);
         }
         blockUnit.setName(this.getName());
@@ -150,7 +150,7 @@ public class BlockUnit extends Unit {
                 for (Unit unit :
                         units) {
                     Runtime.currentLogObject=loopLogObject;
-                    unit.fill(newValueStore).execute(newValueStore,index+2);
+                    unit.fill(newValueStore,false).execute(newValueStore,index+2);
                 }
                 try {
                     Thread.sleep(wait);

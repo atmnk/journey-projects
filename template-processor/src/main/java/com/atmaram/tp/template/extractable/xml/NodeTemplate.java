@@ -78,19 +78,19 @@ public class NodeTemplate implements XMLTemplate {
     }
 
     @Override
-    public XMLTemplate fill(HashMap<String, Object> data) {
+    public XMLTemplate fill(HashMap<String, Object> data,boolean lazy) {
         NodeTemplate newNodeTemplate=new NodeTemplate(Tag);
         HashMap<XMLTemplate,XMLTemplate> newAttributes=new HashMap<>();
         for (XMLTemplate key:
              attributes.keySet()) {
-            XMLTemplate newKey=(XMLTemplate) key.fill(data);
-            XMLTemplate newValue=(XMLTemplate)attributes.get(key).fill(data);
+            XMLTemplate newKey=(XMLTemplate) key.fill(data,lazy);
+            XMLTemplate newValue=(XMLTemplate)attributes.get(key).fill(data,lazy);
             newAttributes.put(newKey,newValue);
         }
         List<XMLTemplate> newChildNodes=new ArrayList<>();
         for (XMLTemplate child:
              childNodes) {
-            newChildNodes.add((XMLTemplate)child.fill(data));
+            newChildNodes.add((XMLTemplate)child.fill(data,lazy));
         }
         newNodeTemplate.setChildNodes(newChildNodes);
         newNodeTemplate.setAttributes(newAttributes);

@@ -27,7 +27,7 @@ public class UnitTest extends Unit{
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
+    public Unit fill(ValueStore valueStore,boolean lazy) {
         return null;
     }
     @Before

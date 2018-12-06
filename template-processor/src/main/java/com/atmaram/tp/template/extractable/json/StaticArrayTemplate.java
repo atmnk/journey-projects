@@ -47,11 +47,11 @@ class StaticArrayTemplate implements JSONTemplate {
     }
 
     @Override
-    public JSONTemplate fill(HashMap<String, Object> data) {
+    public JSONTemplate fill(HashMap<String, Object> data,boolean lazy) {
         StaticArrayTemplate staticArrayTemplate=new StaticArrayTemplate();
         for (JSONTemplate memberTemplate:
                 memberTemplates) {
-            staticArrayTemplate.add((JSONTemplate) memberTemplate.fill(data));
+            staticArrayTemplate.add((JSONTemplate) memberTemplate.fill(data,lazy));
         }
         return staticArrayTemplate;
     }

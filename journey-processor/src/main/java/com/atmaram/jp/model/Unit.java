@@ -16,7 +16,10 @@ public abstract class Unit {
     public int wait=0;
     public abstract void eval(VariableStore variableStore) throws UnitConfigurationException;
     public abstract ValueStore execute(ValueStore valueStore,int index);
-    public abstract Unit fill(ValueStore valueStore);
+    public abstract Unit fill(ValueStore valueStore,boolean lazy);
+    public Unit fill(ValueStore valueStore){
+        return fill(valueStore,false);
+    }
     public void printStartExecute(int index){
         logObject.put("name",this.name);
         String prefix="";

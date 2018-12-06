@@ -44,7 +44,7 @@ public class PutUnit extends BodiedUnit {
     }
 
     @Override
-    public Unit fill(ValueStore valueStore) {
-        return fillObject(new PutUnit(restClient),valueStore);
+    public Unit fill(ValueStore valueStore,boolean lazy) {
+        return fillObject(new PutUnit(restClient),valueStore,lazy);
     }
 }

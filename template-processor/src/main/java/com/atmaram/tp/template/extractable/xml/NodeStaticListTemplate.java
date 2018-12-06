@@ -48,11 +48,11 @@ public class NodeStaticListTemplate implements XMLTemplate{
     }
 
     @Override
-    public XMLTemplate fill(HashMap<String, Object> data) {
+    public XMLTemplate fill(HashMap<String, Object> data,boolean lazy) {
         NodeStaticListTemplate staticArrayTemplate=new NodeStaticListTemplate();
         for (XMLTemplate memberTemplate:
                 memberTemplates) {
-            staticArrayTemplate.add((XMLTemplate)memberTemplate.fill(data));
+            staticArrayTemplate.add((XMLTemplate)memberTemplate.fill(data,lazy));
         }
         return staticArrayTemplate;
     }
