@@ -167,7 +167,7 @@ public class LogHelper {
         html.close();
         out.close();
         System.out.println(writer.toString());
-        writeToClipboard(writer.toString(),null);
+//        writeToClipboard(writer.toString(),null);
     }
     public static void writeToClipboard(String s, ClipboardOwner owner) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
