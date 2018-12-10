@@ -3,6 +3,7 @@ package com.atmaram.jp.cli;
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
+import com.atmaram.jp.command.Command;
 import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.*;
 import com.atmaram.tp.common.exceptions.TemplateParseException;

@@ -169,11 +169,11 @@ public  abstract class RestUnit extends Unit {
         }
         restUnit.setResponseHeaders(responseHeaders);
         restUnit.setWait(this.wait);
+        restUnit.parentLogObject=this.parentLogObject;
         return restUnit;
     }
     public ValueStore execute(RestClient restClient, ValueStore valueStore,int index) {
         this.printStartExecute(index);
-        Runtime.currentLogObject.add(logObject);
         HttpResponse<String> output=fire(restClient);
         if(Runtime.verbose){
             System.out.println("Response:Status:"+output.getStatus());

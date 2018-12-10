@@ -87,21 +87,17 @@ public class StaticLoopUnit extends Unit{
         staticLoopUnit.setTimes(newTimes);
         staticLoopUnit.setVariables(variables);
         staticLoopUnit.setWait(this.wait);
+        staticLoopUnit.parentLogObject=this.parentLogObject;
         return staticLoopUnit;
     }
 
     @Override
     public ValueStore execute(ValueStore valueStore,int index){
-        JSONArray prevLogObject=Runtime.currentLogObject;
-        prevLogObject.add(logObject);
         logObject.put("iterations",stepLogObject);
         logObject.put("type","loop");
-        Runtime.currentLogObject=stepLogObject;
         this.printStartExecute(index);
-//        List<HashMap<String,Object>> constructed=new ArrayList<>();
         int iTimes=Integer.parseInt(times);
         for (int i=0;i<iTimes;i++) {
-//            ValueStore newValueStore=new ValueStore();
             valueStore.add(counterVariable,i+1);
             if(variables!=null) {
                 for (int j = 0; j < variables.size(); i++) {
@@ -123,21 +119,19 @@ public class StaticLoopUnit extends Unit{
             this.print(index+1,"Loop "+i);
             for (Unit unit :
                     units) {
-                Runtime.currentLogObject=loopLogObject;
-                unit.fill(valueStore,false).execute(valueStore,index+2);
+                Unit filledUnit=unit.fill(valueStore,false);
+                filledUnit.parentLogObject=loopLogObject;
+                filledUnit.execute(valueStore,index+2);
             }
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException ex){
                 ex.printStackTrace();
             }
-//            constructed.add(newValueStore.getValues());
             this.print(index+1,"Done Loop "+i);
         }
-//        valueStore.add(counterVariable,constructed);
         valueStore.remove(counterVariable);
         this.printDoneExecute(index);
-        Runtime.currentLogObject=prevLogObject;
         return valueStore;
     }
 }

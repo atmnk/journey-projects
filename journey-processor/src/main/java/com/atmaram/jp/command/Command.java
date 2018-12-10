@@ -1,27 +1,51 @@
-package com.atmaram.jp.model;
+package com.atmaram.jp.command;
 
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
+import com.atmaram.jp.model.Environment;
+import com.atmaram.jp.model.EnvironmentVariable;
+import com.atmaram.jp.model.Unit;
 import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.simple.JSONArray;
 
 import java.util.Arrays;
 import java.util.List;
-
 @Data
 public class Command {
+    JSONArray logObject;
     String name;
     List<Unit> units;
-    List<EnvironmentVariable> variables;
 
-    public Command() {
+    public void setLogObject(JSONArray logObject) {
+        this.logObject = logObject;
+        for (Unit unit:
+                this.units) {
+            unit.parentLogObject=this.logObject;
+        }
     }
-    public ValueStore execute(List<Environment> environments, ValueStore valueStore,int index){
+
+    public void setUnits(List<Unit> units) {
+        this.units = units;
+        for (Unit unit:
+             this.units) {
+            unit.parentLogObject=this.logObject;
+        }
+    }
+    List<EnvironmentVariable> variables;
+    public Command() {
+        this.logObject=new JSONArray();
+    }
+    public Command(JSONArray logObject){
+        this.logObject=logObject;
+    }
+    public ValueStore execute(List<Environment> environments, ValueStore valueStore, int index){
         if(variables!=null) {
             for (int i = 0; i < variables.size(); i++) {
                 EnvironmentVariable environmentVariable = variables.get(i);
@@ -56,7 +80,9 @@ public class Command {
         if(units!=null) {
             for (int i = 0; i < units.size(); i++) {
                 Unit currentUnit = units.get(i);
-                currentUnit.fill(valueStore,false).execute(valueStore,index);
+                Unit filledUnit= currentUnit.fill(valueStore,false);
+                filledUnit.parentLogObject=this.logObject;
+                filledUnit.execute(valueStore,index);
 
             }
         }

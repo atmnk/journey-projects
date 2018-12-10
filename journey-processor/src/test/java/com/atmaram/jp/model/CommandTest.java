@@ -3,20 +3,20 @@ package com.atmaram.jp.model;
 import com.atmaram.jp.RestClient;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
+import com.atmaram.jp.command.Command;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
-import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.GetUnit;
 import com.atmaram.jp.model.rest.PostUnit;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.TemplateType;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -112,14 +112,16 @@ public class CommandTest {
     @Test
     public void should_execute_simple_steps_without_variables() throws CommandConfigurationException, ParseException, UnirestException, TemplateParseException {
         RestClient restClient=mock(RestClient.class);
-        Command journey=new Command();
+        Command journey=new Command(new JSONArray());
         journey.setName("Journey 1");
         List<Unit> steps=new ArrayList<>();
         GetUnit step1=new GetUnit(restClient);
+        step1.name="Step 1";
         step1.setUrlTemplate("http://localhost");
         step1.setResponseTemplate("{\"name\":\"World\"}");
         step1.setResponseTemplateType(TemplateType.Extractable);
         PostUnit step2=new PostUnit(restClient);
+        step2.name="Step 2";
         step2.setUrlTemplate("http://localhost");
         step2.setResponseTemplate("{\"name\":\"World\"}");
         step2.setRequestTemplate("{\"place\": \"Mumbai\"}");

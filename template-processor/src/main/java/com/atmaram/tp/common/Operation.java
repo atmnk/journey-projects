@@ -183,6 +183,10 @@ public enum Operation implements OperationEvaluator{
         }
         int num=random.nextInt(upper-lower+1);
         return num+lower;
+    }),
+    size("size",(args)->{
+        List result=(List) args.get(0);
+        return result.size();
     });
     public OperationEvaluator evaluator;
     public String function;

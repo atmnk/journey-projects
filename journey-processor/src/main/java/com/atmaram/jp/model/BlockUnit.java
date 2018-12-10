@@ -95,16 +95,13 @@ public class BlockUnit extends Unit {
             e.printStackTrace();
             System.out.println("Filter Template:"+filter);
         }
+        blockUnit.parentLogObject=this.parentLogObject;
         return blockUnit;
     }
-
     @Override
     public ValueStore execute(ValueStore valueStore,int index){
-        JSONArray prevLogObject=Runtime.currentLogObject;
-        prevLogObject.add(logObject);
         logObject.put("iterations",stepLogObject);
         logObject.put("type","block");
-        Runtime.currentLogObject=stepLogObject;
         this.printStartExecute(index);
         if(valueStore.getValues().containsKey(counterVariable)) {
             List<HashMap<String,Object>> counterValues=(List<HashMap<String,Object>>)valueStore.getValues().get(counterVariable);
@@ -149,8 +146,10 @@ public class BlockUnit extends Unit {
                 stepLogObject.add(loopLogObject);
                 for (Unit unit :
                         units) {
-                    Runtime.currentLogObject=loopLogObject;
-                    unit.fill(newValueStore,false).execute(newValueStore,index+2);
+                    Unit filledUnit=
+                    unit.fill(newValueStore,false);
+                    filledUnit.parentLogObject=loopLogObject;
+                    filledUnit.execute(newValueStore,index+2);
                 }
                 try {
                     Thread.sleep(wait);
@@ -161,7 +160,6 @@ public class BlockUnit extends Unit {
             }
         }
         this.printDoneExecute(index);
-        Runtime.currentLogObject=prevLogObject;
         return valueStore;
     }
 }

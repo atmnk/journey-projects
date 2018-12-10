@@ -23,16 +23,15 @@ public class PollUnit extends Unit {
 
     @Override
     public ValueStore execute(ValueStore valueStore, int index) {
-        JSONArray prevLogObject= Runtime.currentLogObject;
-        prevLogObject.add(logObject);
         logObject.put("iterations",stepLogObject);
         logObject.put("type","poll");
         this.printStartExecute(index);
         int count=1;
         while(!valueStore.getValues().containsKey(pollVariableName) || !valueStore.getValues().get(pollVariableName).equals(pollVariableValue)){
-            Runtime.currentLogObject=stepLogObject;
             this.print(index+1,"Polling "+count);
-            pollThis.fill(valueStore,false).execute(valueStore,index+2);
+            Unit filledUnit=pollThis.fill(valueStore,false);
+            filledUnit.parentLogObject=stepLogObject;
+            filledUnit.execute(valueStore,index+2);
             this.print(index+1,"Polling Done "+count++);
         }
         try {
@@ -41,18 +40,20 @@ public class PollUnit extends Unit {
             e.printStackTrace();
         }
         this.printDoneExecute(index);
-        Runtime.currentLogObject=prevLogObject;
         return valueStore;
     }
 
     @Override
     public Unit fill(ValueStore valueStore,boolean lazy) {
         PollUnit pollUnit=new PollUnit();
+        Unit filledThisPollUnit=pollThis.fill(valueStore,true);
+        filledThisPollUnit.setParentLogObject(this.parentLogObject);
         pollUnit.setPollVariableName(pollVariableName);
         pollUnit.setPollVariableValue(pollVariableValue);
-        pollUnit.setPollThis(pollThis.fill(valueStore,true));
+        pollUnit.setPollThis(filledThisPollUnit);
         pollUnit.setName(this.name);
         pollUnit.setWait(this.wait);
+        pollUnit.parentLogObject=this.parentLogObject;
         return pollUnit;
     }
 }

@@ -3,6 +3,7 @@ package com.atmaram.jp.cli;
 import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
+import com.atmaram.jp.command.Command;
 import com.atmaram.jp.exceptions.CommandConfigurationException;
 import com.atmaram.jp.model.*;
 import com.atmaram.tp.template.Variable;
@@ -13,11 +14,6 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -30,7 +26,7 @@ public class Main {
     public static List<String> commands;
     public static List<RequestHeader> globalHeaders;
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
-        JSONArray logObj=Runtime.currentLogObject;
+        JSONArray logObj=new JSONArray();
         boolean verbose=false;
         JSONObject jsonObject = new JSONObject();
 
@@ -107,6 +103,7 @@ public class Main {
         try
         {
                 Runtime.verbose=verbose;
+                command.setLogObject(logObj);
                 command.execute(environments, valueStore);
                 List<String> opVars = readOPVariables(baseCommandDir);
                 for (String var :

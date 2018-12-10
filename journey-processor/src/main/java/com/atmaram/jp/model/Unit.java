@@ -6,11 +6,13 @@ import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import lombok.Data;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 @Data
 public abstract class Unit {
+    public JSONArray parentLogObject=new JSONArray();
     public JSONObject logObject=new JSONObject();
     public String name;
     public int wait=0;
@@ -21,6 +23,7 @@ public abstract class Unit {
         return fill(valueStore,false);
     }
     public void printStartExecute(int index){
+        parentLogObject.add(logObject);
         logObject.put("name",this.name);
         String prefix="";
         for(int i=0;i<index;i++)
