@@ -8,6 +8,8 @@ import com.atmaram.jp.model.*;
 import com.atmaram.jp.model.rest.*;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.TemplateType;
+import com.atmaram.tp.template.extractable.json.JSONTemplate;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -225,6 +227,9 @@ public class UnitBuilder {
             }
             if (scanner.hasNextLine()){
                 blockUnit.setFilter(scanner.nextLine().split("=")[1]);
+            }
+            if (scanner.hasNextLine()){
+                blockUnit.setSort((JSONArray) JSONTemplate.stringToJSON(scanner.nextLine().split("=")[1]));
             }
         }
         List<Unit> units=new ArrayList<>();

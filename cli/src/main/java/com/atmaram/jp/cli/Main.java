@@ -225,7 +225,8 @@ public class Main {
                 return name.endsWith(".list");
             }
         });
-        Arrays.sort(varFiles);
+        if(varFiles!=null)
+            Arrays.sort(varFiles);
         for (File file:
              varFiles) {
             Scanner scanner=new Scanner(file);
@@ -308,7 +309,8 @@ public class Main {
                 return name.endsWith(".var");
             }
         });
-        Arrays.sort(varFiles);
+        if(varFiles!=null)
+            Arrays.sort(varFiles);
         File[] files=dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -330,7 +332,10 @@ public class Main {
             units.add(UnitBuilder.buildFromFile(file,valueStore,variableStore,lEnv));
         }
         Command command=new Command();
-        command.setVariables(UnitBuilder.getCommandVariables(varFiles));
+        if(varFiles!=null)
+            command.setVariables(UnitBuilder.getCommandVariables(varFiles));
+        else
+            command.setVariables(new ArrayList<>());
         command.setName(dir.getName());
         command.setUnits(units);
         readDats(baseCommandDir, valueStore, variableStore, lEnv);

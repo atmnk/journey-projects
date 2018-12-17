@@ -26,3 +26,4 @@ sample-service/out/
 template-processor/gradle/
 template-processor/out/
 log/log.json
+build/

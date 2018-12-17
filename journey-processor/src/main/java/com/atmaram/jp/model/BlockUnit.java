@@ -13,15 +13,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 @Data
 public class BlockUnit extends Unit {
     JSONArray stepLogObject=new JSONArray();
     String counterVariable;
     String filter="{}";
+    JSONArray sort=new JSONArray();
     List<Unit> units;
     List<EnvironmentVariable> variables;
 
@@ -95,8 +94,50 @@ public class BlockUnit extends Unit {
             e.printStackTrace();
             System.out.println("Filter Template:"+filter);
         }
+        blockUnit.setSort(this.sort);
         blockUnit.parentLogObject=this.parentLogObject;
         return blockUnit;
+    }
+    public void sortList(List<HashMap<String,Object>> list,JSONArray sort){
+        Collections.sort(list,(o1,o2)-> compare(o1,o2,sort));
+    }
+    public int compare(HashMap<String,Object> o1,HashMap<String,Object> o2,JSONArray sort){
+        int ret=0;
+        for (Object oCriteria:
+             sort) {
+            JSONObject joCriteria=(JSONObject)oCriteria;
+            String field=(String)joCriteria.get("field");
+            String order=(String)joCriteria.get("order");
+            if(o1.containsKey(field) && o2.containsKey(field)){
+                Object val1=o1.get(field);
+                Object val2=o2.get(field);
+                if(val1 instanceof Number && val2 instanceof Number){
+                    double dV1=((Number)val1).doubleValue();
+                    double dV2=((Number)val2).doubleValue();
+                    if(order.toLowerCase().equals("asc")){
+                        ret = Double.compare(dV1,dV2);
+                    } else {
+                        ret = Double.compare(dV2,dV1);
+                    }
+
+                }
+                if((val1 instanceof Number && !(val2 instanceof Number))||(val2 instanceof Number && !(val1 instanceof Number))){
+                    continue;
+                }
+                if(val1 instanceof String && val2 instanceof String){
+                    String sV1=(String)val1;
+                    String sV2=(String)val2;
+                    if(order.toLowerCase().equals("asc")){
+                        ret = sV1.compareTo(sV2);
+                    } else {
+                        ret = sV2.compareTo(sV1);
+                    }
+                }
+                if(ret!=0)
+                    return ret;
+            }
+        }
+        return ret;
     }
     @Override
     public ValueStore execute(ValueStore valueStore,int index){
@@ -104,7 +145,10 @@ public class BlockUnit extends Unit {
         logObject.put("type","block");
         this.printStartExecute(index);
         if(valueStore.getValues().containsKey(counterVariable)) {
-            List<HashMap<String,Object>> counterValues=(List<HashMap<String,Object>>)valueStore.getValues().get(counterVariable);
+            List<HashMap<String,Object>> counterValuesOriginal=(List<HashMap<String,Object>>)valueStore.getValues().get(counterVariable);
+            List<HashMap<String,Object>> counterValues=new ArrayList<>();
+            counterValues.addAll(counterValuesOriginal);
+            sortList(counterValues,sort);
             JSONObject jofilter=new JSONObject();
             try {
                 jofilter= (JSONObject) new JSONParser().parse(filter);
