@@ -5,16 +5,10 @@ import java.util.*;
 
 public enum Operation implements OperationEvaluator{
     ADD("plus",(args)->{
-        Integer result=0;
+        Object result=0;
         for (int i=0;i<args.size();i++){
             Object value=args.get(i);
-            if(value instanceof Integer) {
-                result += (Integer) value;
-            } else if(value instanceof String){
-                result+=Integer.parseInt((String)value);
-            } else if(value instanceof Number){
-                result+=((Number)value).intValue();
-            }
+            result = CalculationUtil.calculate(CalculationUtil.Operation.ADD,result,value);
         }
         return result;
     }),
@@ -108,22 +102,10 @@ public enum Operation implements OperationEvaluator{
         return result;
     }),
     SUBSTRACT("minus",(args)->{
-        Object value=args.get(0);
-        Integer result=0;
-        if(value instanceof Integer) {
-            result = (Integer) value;
-        } else if(value instanceof String){
-            result=Integer.parseInt((String)value);
-        } else if(value instanceof Number){
-            result=((Number)value).intValue();
-        }
-        value=args.get(1);
-        if(value instanceof Integer) {
-            result -= (Integer) value;
-        } else if(value instanceof String){
-            result-=Integer.parseInt((String)value);
-        }else if(value instanceof Number){
-            result-=((Number)value).intValue();
+        Object result=args.get(0);
+        for (int i=1;i<args.size();i++){
+            Object value=args.get(i);
+            result = CalculationUtil.calculate(CalculationUtil.Operation.Substract,result,value);
         }
         return result;
     }),
@@ -153,13 +135,19 @@ public enum Operation implements OperationEvaluator{
         return str.substring(from,from+len);
     }),
     Multiply("mul",(args)->{
-        Integer result=(Integer) args.get(0);
-        result*=(Integer) args.get(1);
+        Object result=1;
+        for (int i=0;i<args.size();i++){
+            Object value=args.get(i);
+            result = CalculationUtil.calculate(CalculationUtil.Operation.Multiply,result,value);
+        }
         return result;
     }),
     Devide("divide",(args)->{
-        Integer result=(Integer) args.get(0);
-        result/=(Integer) args.get(1);
+        Object result=args.get(0);
+        for (int i=1;i<args.size();i++){
+            Object value=args.get(i);
+            result = CalculationUtil.calculate(CalculationUtil.Operation.Devide,result,value);
+        }
         return result;
     }),
     Len("len",(args)->{

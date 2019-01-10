@@ -1,0 +1,2 @@
+Host=http://localhost
+BaseUrl=${Host}:8000

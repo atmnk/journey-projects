@@ -1,0 +1,5 @@
+${BaseUrl}/api/category
+Body={ "name" : ${name}}
+RequestHeader={}
+Response={"id":${id}}
+ResponseHeader={}

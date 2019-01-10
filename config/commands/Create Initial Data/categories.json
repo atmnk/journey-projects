@@ -1,0 +1,58 @@
+[
+  {"name": "Food",
+    "sub": [
+      {"sname": "Snacks"},
+      {"sname": "Ready To Cook"},
+      {"sname": "Pickle"},
+      {"sname": "Papad"}
+    ]
+  },
+  {"name": "Fruits",
+    "sub": [
+      {"sname": "Seasonal"},
+      {"sname": "Alphanso"},
+      {"sname": "Cherry"},
+      {"sname": "Banana"}
+    ]
+  },
+  {"name": "Electronics",
+    "sub": [
+      {"sname": "Mobile"},
+      {"sname": "Laptop"},
+      {"sname": "Desktop"},
+      {"sname": "Acessories"}
+    ]
+  },
+  {"name": "Clothes Men",
+    "sub": [
+      {"sname": "Traditional"},
+      {"sname": "Party"},
+      {"sname": "Functional"},
+      {"sname": "Formal"}
+    ]
+  },
+  {"name": "Clothes Women",
+    "sub": [
+      {"sname": "Traditional"},
+      {"sname": "Party"},
+      {"sname": "Functional"},
+      {"sname": "Formal"}
+    ]
+  },
+  {"name": "Drinks",
+    "sub": [
+      {"sname": "Cold"},
+      {"sname": "Hot"},
+      {"sname": "Alcohol"},
+      {"sname": "Energy"}
+    ]
+  },
+  {"name": "Groceries",
+    "sub": [
+      {"sname": "Nuts"},
+      {"sname": "Dal"},
+      {"sname": "Rice"},
+      {"sname": "Beans"}
+    ]
+  }
+]

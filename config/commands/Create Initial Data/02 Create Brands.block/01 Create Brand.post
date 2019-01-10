@@ -1,0 +1,5 @@
+${BaseUrl}/api/brand
+Body={ "name" : ${bname}}
+RequestHeader={}
+Response={"id":${bid}}
+ResponseHeader={}

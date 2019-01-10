@@ -31,13 +31,14 @@ public class ExpressionProcessor {
                     context.put(processorargs[1], data);
                     return data;
                 } else {
-                    try {
-                        return Integer.parseInt((String) value);
-                    } catch (Exception ex) {
-                        return "${" + value + "}";
+                    Object val= CalculationUtil.getBest(value);
+                    if(val instanceof String){
+                        return "${" + val + "}";
+                    } else if (val instanceof Number){
+                        return val;
+                    } else {
+                        return val.toString();
                     }
-
-
                 }
             } else{
                 return value;
@@ -50,10 +51,13 @@ public class ExpressionProcessor {
                 String data = ((String) value).substring(1, ((String) value).length() - 1);
                 return data;
             } else {
-                try {
-                    return Integer.parseInt((String) value);
-                } catch (Exception ex) {
-                    return "${" + value + "}";
+                Object val= CalculationUtil.getBest(value);
+                if(val instanceof String){
+                    return "${" + val + "}";
+                } else if (val instanceof Number){
+                    return val;
+                } else {
+                    return val.toString();
                 }
             }
         } else {
@@ -101,7 +105,7 @@ public class ExpressionProcessor {
                 if (expression.charAt(i) == '+') {
                     tree.rootProcessor = Operation.ADD;
                     if(faET==null) {
-                        Integer firstArg = Integer.parseInt(expression.substring(0, i));
+                        Object firstArg = CalculationUtil.getBest(expression.substring(0, i));
                         faET = new ExpressionTree();
                         faET.constant = firstArg;
                     }
@@ -110,7 +114,7 @@ public class ExpressionProcessor {
                 } else if (expression.charAt(i) == '-'){
                     tree.rootProcessor = Operation.SUBSTRACT;
                     if(faET==null) {
-                        Integer firstArg = Integer.parseInt(expression.substring(0, i));
+                        Object firstArg = CalculationUtil.getBest(expression.substring(0, i));
                         faET = new ExpressionTree();
                         faET.constant = firstArg;
                     }
@@ -119,7 +123,7 @@ public class ExpressionProcessor {
                 } else if (expression.charAt(i) == '*'){
                     tree.rootProcessor = Operation.Multiply;
                     if(faET==null) {
-                        Integer firstArg = Integer.parseInt(expression.substring(0, i));
+                        Object firstArg = CalculationUtil.getBest(expression.substring(0, i));
                         faET = new ExpressionTree();
                         faET.constant = firstArg;
                     }
@@ -129,7 +133,7 @@ public class ExpressionProcessor {
                 } else if (expression.charAt(i) == '/'){
                     tree.rootProcessor = Operation.Devide;
                     if(faET==null) {
-                        Integer firstArg = Integer.parseInt(expression.substring(0, i));
+                        Object firstArg = CalculationUtil.getBest(expression.substring(0, i));
                         faET = new ExpressionTree();
                         faET.constant = firstArg;
                     }
@@ -139,15 +143,15 @@ public class ExpressionProcessor {
                 }
 
 
-                if(!Character.isDigit(expression.charAt(i)))
+                if(!(Character.isDigit(expression.charAt(i)) || expression.charAt(i)=='.'))
                 {
-                    Integer firstArg=Integer.parseInt(expression.substring(0,i));
+                    Object firstArg = CalculationUtil.getBest(expression.substring(0, i));
                     faET=new ExpressionTree();
                     faET.constant=firstArg;
                 }
             }
             if(faET==null){
-                Integer firstArg=Integer.parseInt(expression);
+                Object firstArg = CalculationUtil.getBest(expression);
                 faET=new ExpressionTree();
                 faET.constant=firstArg;
             }

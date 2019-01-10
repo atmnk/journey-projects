@@ -34,6 +34,11 @@ public class JSONTemplateTest {
         assertThat(obj.size()).isEqualTo(1);
         assertThat(obj.get(0)).isInstanceOf(Long.class);
     }
+    @Test
+    public void should_parse_array() throws TemplateParseException {
+        JSONTemplate obj=JSONTemplate.parse("[{\"match\":\"!=\",\"one\":${Bundle Description},\"two\":${Variant Description}}]");
+    }
+
 
     @Test
     public void should_support_static_array_at_root_level_for_parsing() throws TemplateParseException {

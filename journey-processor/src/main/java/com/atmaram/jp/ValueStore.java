@@ -33,4 +33,25 @@ public class ValueStore {
         jsonObject.put("data",values);
         return jsonObject.toJSONString();
     }
+    private void addAdditionalKeepingOriginal(HashMap<String,Object> original,HashMap<String,Object> additional){
+        if(original!=additional) {
+            for (String key :
+                    additional.keySet()) {
+                if (original.containsKey(key)) {
+                    Object newOriginal = values.get(key);
+                    Object newAddition = additional.get(key);
+                    if (newOriginal != newAddition) {
+                        if (newAddition instanceof HashMap && newAddition instanceof HashMap) {
+                            addAdditionalKeepingOriginal((HashMap<String, Object>) newOriginal, (HashMap<String, Object>) newAddition);
+                        }
+                    }
+                } else {
+                    values.put(key, additional.get(key));
+                }
+            }
+        }
+    }
+    public void addAdditionalKeepingOriginal(HashMap<String,Object> additional){
+        addAdditionalKeepingOriginal(values,additional);
+    }
 }

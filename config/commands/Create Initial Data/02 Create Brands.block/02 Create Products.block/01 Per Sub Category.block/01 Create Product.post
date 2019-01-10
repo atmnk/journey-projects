@@ -1,0 +1,5 @@
+${BaseUrl}/api/product
+Body={ "name" : ${_concat(name,_eval(' '),sname,_eval(' '),bname)},"desc":${_concat(name,_eval(' '),sname,_eval(' '),bname)},"sc":${sid},"brand":${bid}}
+RequestHeader={}
+Response={"id":${bid}}
+ResponseHeader={}

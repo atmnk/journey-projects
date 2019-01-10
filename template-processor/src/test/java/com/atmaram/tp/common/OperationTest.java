@@ -35,7 +35,7 @@ public class OperationTest {
         List data=new ArrayList();
         data.add(obj.get("Var1"));
         data.add(obj.get("Var2"));
-        assertThat(Operation.ADD.toValue(data)).isEqualTo(4);
+        assertThat(Operation.ADD.toValue(data)).isEqualTo(4L);
     }
     //DAY
     @Test
@@ -174,7 +174,7 @@ public class OperationTest {
         List data=new ArrayList();
         data.add(obj.get("Var1"));
         data.add(obj.get("Var2"));
-        assertThat(Operation.SUBSTRACT.toValue(data)).isEqualTo(2);
+        assertThat(Operation.SUBSTRACT.toValue(data)).isEqualTo(2L);
     }
 
     //UPPER

@@ -1,0 +1,5 @@
+${BaseUrl}/api/subcategory
+Body={ "name" : ${sname},"category":${id}}
+RequestHeader={}
+Response={"id":${sid}}
+ResponseHeader={}

@@ -4,6 +4,7 @@ import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
+import com.atmaram.tp.common.CalculationUtil;
 import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.text.TextTemplate;
@@ -96,8 +97,12 @@ public class StaticLoopUnit extends Unit{
         logObject.put("iterations",stepLogObject);
         logObject.put("type","loop");
         this.printStartExecute(index);
-        int iTimes=Integer.parseInt(times);
-        for (int i=0;i<iTimes;i++) {
+        Object oTimes= CalculationUtil.getBest(times);
+        long iTimes=0;
+        if(oTimes instanceof Number){
+            iTimes=((Number)oTimes).longValue();
+        }
+        for (long i=0;i<iTimes;i++) {
             valueStore.add(counterVariable,i+1);
             if(variables!=null) {
                 for (int j = 0; j < variables.size(); i++) {
