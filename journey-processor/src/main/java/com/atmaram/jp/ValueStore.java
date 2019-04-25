@@ -2,22 +2,66 @@ package com.atmaram.jp;
 
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class ValueStore {
     HashMap<String,Object> values;
+    HashMap<String, Stack<Object>> previousValues;
 
     public ValueStore() {
         values=new HashMap<>();
+        previousValues=new HashMap<>();
     }
     public void add(HashMap<String,Object> additional){
-        values.putAll(additional);
+        for (String key:
+             additional.keySet()) {
+            if(previousValues.containsKey(key)){
+                previousValues.get(key).push(values.get(key));
+                values.put(key,additional.get(key));
+            } else {
+                if(values.containsKey(key)){
+                    Stack<Object> val=new Stack<>();
+                    val.push(values.get(key));
+                    previousValues.put(key,val);
+                    values.put(key,additional.get(key));
+                } else {
+                    values.put(key,additional.get(key));
+                }
+            }
+        }
     }
-    public void add(String name,Object value){
-        values.put(name,value);
+    public void add(String key, Object value){
+        if(previousValues.containsKey(key)){
+            previousValues.get(key).push(values.get(key));
+            values.put(key,value);
+        } else {
+            if(values.containsKey(key)){
+                Stack<Object> val=new Stack<>();
+                val.push(values.get(key));
+                previousValues.put(key,val);
+                values.put(key,value);
+            } else {
+                values.put(key,value);
+            }
+        }
     }
     public void remove(String name){
         values.remove(name);
+    }
+    public void pop(String name){
+        if(previousValues.containsKey(name)){
+            values.put(name,previousValues.get(name).pop());
+            if(previousValues.get(name).empty()){
+                previousValues.remove(name);
+            }
+        } else {
+            values.remove(name);
+        }
+    }
+    public void popAll(Set<String> keys){
+        for (String key:keys) {
+            pop(key);
+        }
     }
     public HashMap<String, Object> getValues() {
         return values;
@@ -33,25 +77,28 @@ public class ValueStore {
         jsonObject.put("data",values);
         return jsonObject.toJSONString();
     }
-    private void addAdditionalKeepingOriginal(HashMap<String,Object> original,HashMap<String,Object> additional){
+    private List<String> addAdditionalKeepingOriginal(HashMap<String,Object> original,HashMap<String,Object> additional){
+        List<String> added=new ArrayList<>();
         if(original!=additional) {
             for (String key :
                     additional.keySet()) {
-                if (original.containsKey(key)) {
-                    Object newOriginal = values.get(key);
-                    Object newAddition = additional.get(key);
-                    if (newOriginal != newAddition) {
-                        if (newAddition instanceof HashMap && newAddition instanceof HashMap) {
-                            addAdditionalKeepingOriginal((HashMap<String, Object>) newOriginal, (HashMap<String, Object>) newAddition);
-                        }
-                    }
-                } else {
+                if(!original.containsKey(key)) {
                     values.put(key, additional.get(key));
+                    added.add(key);
                 }
+
             }
         }
+        return added;
     }
-    public void addAdditionalKeepingOriginal(HashMap<String,Object> additional){
-        addAdditionalKeepingOriginal(values,additional);
+    public List<String> addAdditionalKeepingOriginal(HashMap<String,Object> additional){
+        return addAdditionalKeepingOriginal(values,additional);
+    }
+    public void remove(List<String> remove){
+        for (String removeKey:
+             remove) {
+            if(!previousValues.containsKey(removeKey))
+                values.remove(removeKey);
+        }
     }
 }

@@ -11,8 +11,6 @@ import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.json.simple.JSONArray;
 
 import java.util.Arrays;
@@ -22,6 +20,7 @@ public class Command {
     JSONArray logObject;
     String name;
     List<Unit> units;
+    List<EnvironmentVariable> variables;
 
     public void setLogObject(JSONArray logObject) {
         this.logObject = logObject;
@@ -38,7 +37,7 @@ public class Command {
             unit.parentLogObject=this.logObject;
         }
     }
-    List<EnvironmentVariable> variables;
+
     public Command() {
         this.logObject=new JSONArray();
     }

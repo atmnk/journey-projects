@@ -1,10 +1,5 @@
 [
-  {"bname": "Tata"},
-  {"bname": "Reliance"},
-  {"bname": "Wipro"},
-  {"bname": "Suhana"},
-  {"bname": "Niva"},
-  {"bname": "Puneri"},
-  {"bname": "Apple"},
-  {"bname": "Xiome"}
+  {"bname": "Tata", "bfactor": 3.2},
+  {"bname": "Reliance", "bfactor": 4.4},
+  {"bname": "Suhana", "bfactor": 6.5}
 ]

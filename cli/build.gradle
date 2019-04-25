@@ -1,6 +1,5 @@
 dependencies {
     compile project(':journey-processor')
-    compile project(':template-processor')
 }
 jar {
     manifest {

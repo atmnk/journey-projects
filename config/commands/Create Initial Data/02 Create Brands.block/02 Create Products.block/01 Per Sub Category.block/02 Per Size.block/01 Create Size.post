@@ -1,0 +1,5 @@
+${BaseUrl}/api/size
+Body={ "name" : ${szname},"product":${pid}}
+RequestHeader={}
+Response={"id":${szid}}
+ResponseHeader={}

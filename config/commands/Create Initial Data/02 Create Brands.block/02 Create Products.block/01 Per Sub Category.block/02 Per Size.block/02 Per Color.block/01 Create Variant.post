@@ -1,0 +1,5 @@
+${BaseUrl}/api/variant
+Body={ "product" : ${pid},"size":${szid},"color":${clid},"price":${ _mul(szf,bfactor,sfactor,cfactor,100.25)}}
+RequestHeader={}
+Response={"id":${vid}}
+ResponseHeader={}

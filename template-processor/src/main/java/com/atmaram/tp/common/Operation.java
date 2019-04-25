@@ -175,6 +175,27 @@ public enum Operation implements OperationEvaluator{
     size("size",(args)->{
         List result=(List) args.get(0);
         return result.size();
+    }),
+    get("get",(args)->{
+        HashMap<String,Object> result=(HashMap) args.get(0);
+        String key=(String) args.get(1);
+        return result.get(key);
+    }),
+    pathGet("pathGet",(args)->{
+        HashMap<String,Object> result=(HashMap) args.get(0);
+        HashMap<String,Object> target=result;
+        String path=(String) args.get(1);
+        String[] keys=path.split(".");
+        for (String key:
+             keys) {
+            target=(HashMap)target.get(key);
+        }
+        return target;
+    }),
+    isEqual("isEqual",(args)->{
+        Object one=args.get(0);
+        Object two=args.get(1);
+        return one.equals(two);
     });
     public OperationEvaluator evaluator;
     public String function;

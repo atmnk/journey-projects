@@ -9,6 +9,8 @@ import com.atmaram.jp.model.Unit;
 import lombok.Data;
 import org.json.simple.JSONArray;
 
+import java.util.HashMap;
+
 @Data
 public class PollUnit extends Unit {
     JSONArray stepLogObject=new JSONArray();

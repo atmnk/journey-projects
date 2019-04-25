@@ -1,72 +1,19 @@
 package com.atmaram.tp.common;
 
 import java.math.BigDecimal;
-
 public interface CalculationUtil {
-    public static Object add(Object one,Object two){
-        Class returnType=returnType(one,two);
-        return add(returnType,one,two);
-    }
-    public static Object substract(Object one,Object two){
-        Class returnType=returnType(one,two);
-        return substract(returnType,one,two);
-    }
-    public static Object multiply(Object one,Object two){
-        Class returnType=returnType(one,two);
-        return multiply(returnType,one,two);
-    }
-    public static Object devide(Object one,Object two){
-        Class returnType=returnType(one,two);
-        return devide(returnType,one,two);
-    }
-    public static Object add(Class returnType,Object one,Object two){
+    public static Object calculate(Operation operation,Class returnType,Object one,Object two){
         Object convertedOne=getBest(one);
         Object convertedTwo=getBest(two);
         if(convertedOne instanceof String || convertedTwo instanceof String){
             return convertedOne.toString()+convertedTwo.toString();
         } else {
-            return perform(returnType,Operation.ADD,(Number)convertedOne,(Number)convertedTwo);
-        }
-    }
-    public static Object substract(Class returnType,Object one,Object two){
-        Object convertedOne=getBest(one);
-        Object convertedTwo=getBest(two);
-        if(convertedOne instanceof String || convertedTwo instanceof String){
-            return convertedOne.toString()+convertedTwo.toString();
-        } else {
-            return perform(returnType,Operation.Substract,(Number)convertedOne,(Number)convertedTwo);
-        }
-    }
-    public static Object multiply(Class returnType,Object one,Object two){
-        Object convertedOne=getBest(one);
-        Object convertedTwo=getBest(two);
-        if(convertedOne instanceof String || convertedTwo instanceof String){
-            return convertedOne.toString()+convertedTwo.toString();
-        } else {
-            return perform(returnType,Operation.Multiply,(Number)convertedOne,(Number)convertedTwo);
-        }
-    }
-    public static Object devide(Class returnType,Object one,Object two){
-        Object convertedOne=getBest(one);
-        Object convertedTwo=getBest(two);
-        if(convertedOne instanceof String || convertedTwo instanceof String){
-            return convertedOne.toString()+convertedTwo.toString();
-        } else {
-            return perform(returnType,Operation.Devide,(Number)convertedOne,(Number)convertedTwo);
+            return perform(returnType,operation,(Number)convertedOne,(Number)convertedTwo);
         }
     }
     public static Object calculate(Operation operation,Object one,Object two){
-        switch (operation){
-            case ADD:
-                return add(one,two);
-            case Substract:
-                return substract(one,two);
-            case Multiply:
-                return multiply(one,two);
-            case Devide:
-                return devide(one,two);
-        }
-        return add(one,two);
+        Class returnType=returnType(one,two);
+        return calculate(operation,returnType,one,two);
     }
     public static enum Operation{
         ADD,

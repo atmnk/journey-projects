@@ -112,6 +112,8 @@ public class LogHelper {
                 "                item.append(buildTree(object.steps).addClass('nested'));\n" +
                 "            } else if(object.type=='block'){\n" +
                 "                item.append(buildArray(object.iterations).addClass('nested'));\n" +
+                "            } else if(object.type=='file'){\n" +
+                "                item.append(buildFile(object.iterations).addClass('nested'));\n" +
                 "            }else if(object.type=='loop'){\n" +
                 "                item.append(buildArray(object.iterations).addClass('nested'));\n" +
                 "            }else if(object.type=='poll'){\n" +
@@ -135,6 +137,20 @@ public class LogHelper {
                 "            sp.text(\"Iteration \"+i);\n" +
                 "            item.append(sp);\n" +
                 "            item.append(buildTree(json[i]).addClass('nested'));\n" +
+                "        }\n" +
+                "        return tree;\n" +
+                "    }\n" +
+                "    function buildFile(json){\n" +
+                "        var tree=$(\"<ul/>\");\n" +
+                "        var i;\n" +
+                "        for(i=0;i<json.length;i++){\n" +
+                "            var item=$(\"<li/>\");\n" +
+                "            tree.append(item)\n" +
+                "            var sp=$(\"<span/>\")\n" +
+                "            sp.addClass(\"caret\");\n" +
+                "            sp.text(\"Iteration \"+i);\n" +
+                "            item.append(sp);\n" +
+                "            item.append(json[i].value);\n" +
                 "        }\n" +
                 "        return tree;\n" +
                 "    }\n" +

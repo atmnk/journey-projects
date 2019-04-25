@@ -1,58 +1,58 @@
 [
   {"name": "Food",
     "sub": [
-      {"sname": "Snacks"},
-      {"sname": "Ready To Cook"},
-      {"sname": "Pickle"},
-      {"sname": "Papad"}
+      {"sname": "Snacks","sfactor": 2},
+      {"sname": "Ready To Cook","sfactor": 3},
+      {"sname": "Pickle","sfactor": 2},
+      {"sname": "Papad","sfactor": 4}
     ]
   },
   {"name": "Fruits",
     "sub": [
-      {"sname": "Seasonal"},
-      {"sname": "Alphanso"},
-      {"sname": "Cherry"},
-      {"sname": "Banana"}
+      {"sname": "Seasonal","sfactor": 2},
+      {"sname": "Alphanso","sfactor": 5},
+      {"sname": "Cherry","sfactor": 6},
+      {"sname": "Banana","sfactor": 3}
     ]
   },
   {"name": "Electronics",
     "sub": [
-      {"sname": "Mobile"},
-      {"sname": "Laptop"},
-      {"sname": "Desktop"},
-      {"sname": "Acessories"}
+      {"sname": "Mobile","sfactor": 7},
+      {"sname": "Laptop","sfactor": 10},
+      {"sname": "Desktop","sfactor": 8},
+      {"sname": "Acessories","sfactor": 4}
     ]
   },
   {"name": "Clothes Men",
     "sub": [
-      {"sname": "Traditional"},
-      {"sname": "Party"},
-      {"sname": "Functional"},
-      {"sname": "Formal"}
+      {"sname": "Traditional","sfactor": 2},
+      {"sname": "Party","sfactor": 3},
+      {"sname": "Functional","sfactor": 3},
+      {"sname": "Formal","sfactor": 2}
     ]
   },
   {"name": "Clothes Women",
     "sub": [
-      {"sname": "Traditional"},
-      {"sname": "Party"},
-      {"sname": "Functional"},
-      {"sname": "Formal"}
+      {"sname": "Traditional","sfactor": 2},
+      {"sname": "Party","sfactor": 3},
+      {"sname": "Functional","sfactor": 3},
+      {"sname": "Formal","sfactor": 2}
     ]
   },
   {"name": "Drinks",
     "sub": [
-      {"sname": "Cold"},
-      {"sname": "Hot"},
-      {"sname": "Alcohol"},
-      {"sname": "Energy"}
+      {"sname": "Cold","sfactor": 3},
+      {"sname": "Hot","sfactor": 2},
+      {"sname": "Alcohol","sfactor": 4},
+      {"sname": "Energy","sfactor": 2}
     ]
   },
   {"name": "Groceries",
     "sub": [
-      {"sname": "Nuts"},
-      {"sname": "Dal"},
-      {"sname": "Rice"},
-      {"sname": "Beans"}
+      {"sname": "Nuts","sfactor": 5},
+      {"sname": "Dal","sfactor": 3},
+      {"sname": "Rice","sfactor": 2},
+      {"sname": "Beans","sfactor": 3}
     ]
   }
 ]

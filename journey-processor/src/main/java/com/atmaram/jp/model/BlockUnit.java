@@ -1,9 +1,7 @@
 package com.atmaram.jp.model;
-import com.atmaram.jp.Runtime;
 import com.atmaram.jp.ValueStore;
 import com.atmaram.jp.VariableStore;
 import com.atmaram.jp.exceptions.UnitConfigurationException;
-import com.atmaram.tp.template.Template;
 import com.atmaram.tp.template.Variable;
 import com.atmaram.tp.common.exceptions.TemplateParseException;
 import com.atmaram.tp.template.extractable.json.JSONTemplate;
@@ -11,8 +9,6 @@ import com.atmaram.tp.template.text.TextTemplate;
 import lombok.Data;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
@@ -77,7 +73,7 @@ public class BlockUnit extends Unit {
         List<Unit> newUnits=new ArrayList<>();
         for (Unit unit:
                 units) {
-            Unit newUnit=unit.fill(valueStore,true);
+            Unit newUnit=unit.fill(new ValueStore(),true);
             newUnits.add(newUnit);
         }
         blockUnit.setName(this.getName());
@@ -140,7 +136,7 @@ public class BlockUnit extends Unit {
         return ret;
     }
     @Override
-    public ValueStore execute(ValueStore valueStore,int index){
+    public ValueStore execute(ValueStore valueStore, int index){
         logObject.put("iterations",stepLogObject);
         logObject.put("type","block");
         this.printStartExecute(index);
@@ -151,8 +147,7 @@ public class BlockUnit extends Unit {
             sortList(counterValues,sort);
             int counter=1;
             JSONArray jaFilter=new JSONArray();
-            ValueStore newValueStore=new ValueStore();
-            newValueStore.add(valueStore.getValues());
+
             for (HashMap<String,Object> counterValue:
                  counterValues) {
                 boolean continueLoop=false;
@@ -177,9 +172,11 @@ public class BlockUnit extends Unit {
                         }
                     }
                 }
+                ValueStore newValueStore=new ValueStore();
+                newValueStore.setValues(counterValue);
                 if(continueLoop)
                     continue;
-                newValueStore.add(counterValue);
+                List<String> added=newValueStore.addAdditionalKeepingOriginal(valueStore.getValues());
                 if(variables!=null) {
                     for (int i = 0; i < variables.size(); i++) {
                         EnvironmentVariable environmentVariable = variables.get(i);
@@ -205,14 +202,15 @@ public class BlockUnit extends Unit {
                     filledUnit.parentLogObject=loopLogObject;
                     filledUnit.execute(newValueStore,index+2);
                 }
+                newValueStore.remove(added);
                 try {
                     Thread.sleep(wait);
                 } catch (InterruptedException ex){
                     ex.printStackTrace();
                 }
+
                 this.print(index+1,"Done Loop "+counter++);
             }
-            valueStore.addAdditionalKeepingOriginal(newValueStore.getValues());
         }
         this.printDoneExecute(index);
         return valueStore;

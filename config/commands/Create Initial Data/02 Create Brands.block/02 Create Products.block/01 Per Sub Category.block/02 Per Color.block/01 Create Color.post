@@ -1,0 +1,5 @@
+${BaseUrl}/api/color
+Body={ "name" : ${clname},"product":${pid}}
+RequestHeader={}
+Response={"id":${clid}}
+ResponseHeader={}

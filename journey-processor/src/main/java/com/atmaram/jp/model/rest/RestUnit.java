@@ -180,7 +180,7 @@ public  abstract class RestUnit extends Unit {
             System.out.println("Response:Response:"+output.getBody());
         }
         try {
-            ValueStore valueStore1 = processOutput(valueStore, output);
+            ValueStore valueStore1 = processOutput(valueStore,output);
             this.printDoneExecute(index);
             return valueStore1;
         } catch (RuntimeException ex){
@@ -199,6 +199,7 @@ public  abstract class RestUnit extends Unit {
             if (responseHeaders != null) {
                 for (int j = 0; j < responseHeaders.size(); j++) {
                     ResponseHeader responseHeader = responseHeaders.get(j);
+
                     valueStore.add(responseHeader.getVariable(), output.getHeaders().getFirst(responseHeader.getName()));
                 }
             }

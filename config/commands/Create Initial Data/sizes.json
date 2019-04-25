@@ -1,6 +1,5 @@
 [
-  {"szname": "S"},
-  {"szname": "M"},
-  {"szname": "L"},
-  {"szname": "XL"}
+  {"szname": "S","szf": 2.4},
+  {"szname": "M","szf": 3.5},
+  {"szname": "L","szf": 4.6}
 ]

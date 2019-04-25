@@ -10,6 +10,7 @@ import lombok.Data;
 import org.json.simple.JSONArray;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 @Data
 public class CommandUnit extends Unit {

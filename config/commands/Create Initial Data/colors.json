@@ -1,6 +1,5 @@
 [
-  {"clname": "Red"},
-  {"clname": "Green"},
-  {"clname": "Blue"},
-  {"clname": "Yellow"}
+  {"clname": "Red","cfactor": 2.5},
+  {"clname": "Green","cfactor": 3.9},
+  {"clname": "Blue","cfactor": 4.6}
 ]

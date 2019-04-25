@@ -36,6 +36,10 @@ public class UnitBuilder {
         getUnit.setResponseTemplateType(request.responseType);
         return getUnit;
     });
+    private static VerbProcessor<FileUnit> file=new VerbProcessor<>(".file",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
+        FileUnit fileUnit=buildFileUnit(file,valueStore,variableStore,lEnv);
+        return fileUnit;
+    });
     private static VerbProcessor<PostUnit> post=new VerbProcessor<>(".post",(File file, ValueStore valueStore,VariableStore variableStore,List<String> lEnv)->{
         Request request=buildRequestFromFile(file,true);
         PostUnit postUnit = new PostUnit(RestClient.get());
@@ -127,7 +131,7 @@ public class UnitBuilder {
             return null;
         }
     });
-    public static List<VerbProcessor> verbProcessors=Arrays.asList(get,post,delete,patch,put,block,loop,poll,command);
+    public static List<VerbProcessor> verbProcessors=Arrays.asList(get,post,delete,patch,put,block,loop,poll,command,file);
     public static Request buildRequestFromFile(File file,boolean withBody) throws FileNotFoundException, ParseException {
         Request request=new Request();
         Scanner scanner = new Scanner(file);
@@ -261,6 +265,28 @@ public class UnitBuilder {
         blockUnit.setUnits(units);
         blockUnit.setVariables(getCommandVariables(varFiles));
         return blockUnit;
+    }
+    private static FileUnit buildFileUnit(File file,ValueStore valueStore,VariableStore variableStore,List<String> lEnv) throws FileNotFoundException, ParseException {
+        FileUnit fileUnit=new FileUnit();
+        fileUnit.setName(file.getName());
+
+            Scanner scanner=new Scanner(file);
+            fileUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
+            fileUnit.setLineTemplate(scanner.nextLine().split("=")[1]);
+            if (scanner.hasNextLine()){
+                fileUnit.setFilename(scanner.nextLine().split("=")[1]);
+            }
+            if (scanner.hasNextLine()){
+                fileUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+            }
+            if (scanner.hasNextLine()){
+                fileUnit.setFilter(scanner.nextLine().split("=")[1]);
+            }
+            if (scanner.hasNextLine()){
+                fileUnit.setSort((JSONArray) JSONTemplate.stringToJSON(scanner.nextLine().split("=")[1]));
+            }
+
+        return fileUnit;
     }
     private static StaticLoopUnit readLoopUnit(File dir,ValueStore valueStore,VariableStore variableStore,List<String> lEnv) throws FileNotFoundException, ParseException {
         StaticLoopUnit staticLoopUnit=new StaticLoopUnit();
