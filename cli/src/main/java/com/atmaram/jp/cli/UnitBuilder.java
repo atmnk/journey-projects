@@ -140,7 +140,7 @@ public class UnitBuilder {
         TemplateType requestTemplateType=TemplateType.Text;
         TemplateType responseTemplateType=TemplateType.Extractable;
         if (withBody) {
-            String[] bodyData=scanner.nextLine().split("=");
+            String[] bodyData=scanner.nextLine().split(Main.saparator);
             if(bodyData.length==3){
                 requestTemplateType=TemplateType.fromString(bodyData[1]);
                 body=bodyData[2];
@@ -155,7 +155,7 @@ public class UnitBuilder {
         }
         request.setBodyType(requestTemplateType);
         request.setBody(body);
-        String requestHeader = scanner.nextLine().split("=")[1];
+        String requestHeader = scanner.nextLine().split(Main.saparator)[1];
         JSONParser jsonParser = new JSONParser();
         JSONObject rqjo = (JSONObject) jsonParser.parse(requestHeader);
         List<RequestHeader> requestHeaders = new ArrayList<>();
@@ -168,7 +168,7 @@ public class UnitBuilder {
         }
         requestHeaders.addAll(Main.globalHeaders);
         request.setRequestHeaders(requestHeaders);
-        String[] responseData=scanner.nextLine().split("=");
+        String[] responseData=scanner.nextLine().split(Main.saparator);
         String response="";
         if(responseData.length==3){
             responseTemplateType=TemplateType.fromString(responseData[1]);
@@ -185,7 +185,7 @@ public class UnitBuilder {
         request.setResponseType(responseTemplateType);
         request.setResponse(response);
 
-        String responseHeader = scanner.nextLine().split("=")[1];
+        String responseHeader = scanner.nextLine().split(Main.saparator)[1];
         JSONObject rsjo = (JSONObject) jsonParser.parse(responseHeader);
         List<ResponseHeader> responseHeaders = new ArrayList<>();
         for (Object key :
@@ -198,7 +198,7 @@ public class UnitBuilder {
         request.setResponseHeaders(responseHeaders);
         int wait = 0;
         if (scanner.hasNextLine()) {
-            wait = Integer.parseInt(scanner.nextLine().split("=")[1]);
+            wait = Integer.parseInt(scanner.nextLine().split(Main.saparator)[1]);
         }
         request.setWait(wait);
         return request;
@@ -225,15 +225,15 @@ public class UnitBuilder {
         for (File file:
                 infoFiles) {
             Scanner scanner=new Scanner(file);
-            blockUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
+            blockUnit.setCounterVariable(scanner.nextLine().split(Main.saparator)[1]);
             if (scanner.hasNextLine()){
-                blockUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+                blockUnit.setWait(Integer.parseInt(scanner.nextLine().split(Main.saparator)[1]));
             }
             if (scanner.hasNextLine()){
-                blockUnit.setFilter(scanner.nextLine().split("=")[1]);
+                blockUnit.setFilter(scanner.nextLine().split(Main.saparator)[1]);
             }
             if (scanner.hasNextLine()){
-                blockUnit.setSort((JSONArray) JSONTemplate.stringToJSON(scanner.nextLine().split("=")[1]));
+                blockUnit.setSort((JSONArray) JSONTemplate.stringToJSON(scanner.nextLine().split(Main.saparator)[1]));
             }
         }
         List<Unit> units=new ArrayList<>();
@@ -271,19 +271,19 @@ public class UnitBuilder {
         fileUnit.setName(file.getName());
 
             Scanner scanner=new Scanner(file);
-            fileUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
-            fileUnit.setLineTemplate(scanner.nextLine().split("=")[1]);
+            fileUnit.setCounterVariable(scanner.nextLine().split(Main.saparator)[1]);
+            fileUnit.setLineTemplate(scanner.nextLine().split(Main.saparator)[1]);
             if (scanner.hasNextLine()){
-                fileUnit.setFilename(scanner.nextLine().split("=")[1]);
+                fileUnit.setFilename(scanner.nextLine().split(Main.saparator)[1]);
             }
             if (scanner.hasNextLine()){
-                fileUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+                fileUnit.setWait(Integer.parseInt(scanner.nextLine().split(Main.saparator)[1]));
             }
             if (scanner.hasNextLine()){
-                fileUnit.setFilter(scanner.nextLine().split("=")[1]);
+                fileUnit.setFilter(scanner.nextLine().split(Main.saparator)[1]);
             }
             if (scanner.hasNextLine()){
-                fileUnit.setSort((JSONArray) JSONTemplate.stringToJSON(scanner.nextLine().split("=")[1]));
+                fileUnit.setSort((JSONArray) JSONTemplate.stringToJSON(scanner.nextLine().split(Main.saparator)[1]));
             }
 
         return fileUnit;
@@ -301,12 +301,12 @@ public class UnitBuilder {
         for (File file:
                 infoFiles) {
             Scanner scanner=new Scanner(file);
-            staticLoopUnit.setCounterVariable(scanner.nextLine().split("=")[1]);
+            staticLoopUnit.setCounterVariable(scanner.nextLine().split(Main.saparator)[1]);
             if (scanner.hasNextLine()){
-                staticLoopUnit.setTimes(scanner.nextLine().split("=")[1]);
+                staticLoopUnit.setTimes(scanner.nextLine().split(Main.saparator)[1]);
             }
             if (scanner.hasNextLine()){
-                staticLoopUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+                staticLoopUnit.setWait(Integer.parseInt(scanner.nextLine().split(Main.saparator)[1]));
             }
         }
         List<Unit> units=new ArrayList<>();
@@ -353,12 +353,12 @@ public class UnitBuilder {
         for (File file:
                 infoFiles) {
             Scanner scanner=new Scanner(file);
-            String[] pollArgs=scanner.nextLine().split("=");
+            String[] pollArgs=scanner.nextLine().split(Main.saparator);
             pollUnit.setPollVariableName(pollArgs[0]);
             pollUnit.setPollVariableValue(pollArgs[1]);
 
             if (scanner.hasNextLine()){
-                pollUnit.setWait(Integer.parseInt(scanner.nextLine().split("=")[1]));
+                pollUnit.setWait(Integer.parseInt(scanner.nextLine().split(Main.saparator)[1]));
             }
         }
         File[] varFiles=dir.listFiles(new FilenameFilter() {
@@ -391,7 +391,7 @@ public class UnitBuilder {
         CommandUnit commandUnit=new CommandUnit();
         Scanner scanner = new Scanner(file);
         commandUnit.setName(file.getName());
-        String[] commandArgs=scanner.nextLine().split("=");
+        String[] commandArgs=scanner.nextLine().split(Main.saparator);
         String commandDir=commandArgs[1];
         Path baseCommandDir = Paths.get("config/commands/"+commandDir.trim());
         Command command=Main.readCommand(baseCommandDir,valueStore,variableStore,lEnv);
@@ -405,7 +405,7 @@ public class UnitBuilder {
             Scanner scanner=new Scanner(file);
             while (scanner.hasNextLine()){
                 String line=scanner.nextLine();
-                String[] strings=line.split("=");
+                String[] strings=line.split(Main.saparator);
                 EnvironmentVariable environmentVariable=new EnvironmentVariable(strings[0],strings[1]);
                 variables.add(environmentVariable);
             }

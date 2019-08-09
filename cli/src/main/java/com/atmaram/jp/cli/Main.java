@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 public class Main {
+    public static String saparator=System.getenv("sep")==null?"=":System.getenv("sep");
     public static List<String> commands;
     public static List<RequestHeader> globalHeaders;
     public static void main(String[] args) throws IOException, ParseException, CommandConfigurationException, TemplateParseException {
@@ -264,7 +265,7 @@ public class Main {
             Scanner scanner=new Scanner(file);
             while (scanner.hasNextLine()){
                 String line=scanner.nextLine();
-                String[] strings=line.split("=");
+                String[] strings=line.split(Main.saparator);
                 RequestHeader header=new RequestHeader();
                 header.setName(strings[0]);
                 header.setValueTemplate(strings[1]);
@@ -295,7 +296,7 @@ public class Main {
         environment.setVariables(new ArrayList<>());
         while (fileScanner.hasNextLine()){
             String line=fileScanner.nextLine();
-            String[] split=line.split("=");
+            String[] split=line.split(Main.saparator);
             environment.getVariables().add(new EnvironmentVariable(split[0],split[1]));
         }
         return environment;
