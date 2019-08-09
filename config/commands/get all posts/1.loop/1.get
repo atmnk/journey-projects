@@ -1,4 +1,4 @@
 ${BaseUrl}/posts
-RequestHeader={"content-type":"application/json"}
+RequestHeader={}
 Response=[{{#posts}}{"userId":${userId},"id":${id},"title":${title},"body":${body}}{{/posts}}]
 ResponseHeader={}

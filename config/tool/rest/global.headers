@@ -1,2 +1,1 @@
-CallTreeId=${_concat('OFDM-DJ-',_uuid)}
 content-type=application/json
